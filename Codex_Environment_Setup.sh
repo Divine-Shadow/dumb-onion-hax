@@ -61,9 +61,3 @@ export PATH="/opt/sbt/bin:$PATH"
 java  -version
 sbt   --script-version
 
-###############################################################################
-# [5] Warm cache + bloop (if build present)
-###############################################################################
-if [[ -f build.sbt ]]; then
-  sbt update compile bloopInstall
-fi
