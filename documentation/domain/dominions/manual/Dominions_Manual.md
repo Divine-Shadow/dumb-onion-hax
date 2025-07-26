@@ -37,3 +37,19 @@ This directory breaks the original manual into smaller linked sections.
   * [8.4 Uploading to Workshop](sections/8_steam_workshop.md#84-uploading-to-workshop)
   * [8.5 Important Note](sections/8_steam_workshop.md#85-important-note)
 * [9 Dominions 4 Maps](sections/9_dominions_4_maps.md)
+
+## File Guide
+
+The manual is divided into topics that serve different needs.
+
+* **Interface how-to** – using the in-game tools:
+  * [5 The Map Editor](sections/5_map_editor.md)
+  * [7 Random Map Generator](sections/7_random_map_generator.md)
+  * [8 Steam Workshop](sections/8_steam_workshop.md)
+* **Underlying mechanics** – details on map files and how the editor stores data:
+  * [4 The Map Image File](sections/4_map_image_file.md)
+  * [6 The Map File Commands](sections/6_map_file_commands/README.md)
+* **Reference tables** – directives and number lists useful while editing:
+  * [6.4 Terrain Type in the Map File](sections/6_map_file_commands/6.4_terrain_type_in_the_map_file.md)
+  * [6.5 Advanced Map Commands](sections/6_map_file_commands/6.5_advanced_map_commands.md)
+  * [6.7 Province Commands](sections/6_map_file_commands/6.7_province_commands.md)
