@@ -1,5 +1,22 @@
 import sbt._
 
 object Dependencies {
-  lazy val munit = "org.scalameta" %% "munit" % "0.7.29"
+  private val scalacheckVersion = "1.17.0"
+  private val catsVersion       = "2.10.0"
+  private val fs2Version        = "3.10.2"
+  private val log4catsVersion   = "2.7.0"
+
+  lazy val core = Seq(
+    "org.typelevel" %% "cats-core"     % catsVersion,
+    "co.fs2"       %% "fs2-core"      % fs2Version,
+    "org.typelevel" %% "log4cats-core" % log4catsVersion
+  )
+
+  lazy val tests = Seq(
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion
+  )
+
+  lazy val apps = Seq(
+    "org.typelevel" %% "log4cats-slf4j" % log4catsVersion
+  )
 }

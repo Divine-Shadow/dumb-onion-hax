@@ -1,6 +1,10 @@
 # dumb-onion-hax
 High end hax for dominions 6 maps.
 
+Built on the Typelevel stack with Cats, FS2, Log4cats, and property-based tests via ScalaCheck.
+
+See [documentation/engineering/architecture/project_structure.md](documentation/engineering/architecture/project_structure.md) for the module layout and consult [AGENTS.md](AGENTS.md) before contributing.
+
 
 ## License
 
