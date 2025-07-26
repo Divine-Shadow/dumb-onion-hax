@@ -16,3 +16,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 7. [Testing Strategies](testing_strategies.md) – [Full Context](../README_Architecture_And_Development_Guide.md#7-testing-strategies)
 8. [Development Workflow](development_workflow.md) – [Full Context](../README_Architecture_And_Development_Guide.md#8-development-workflow)
 9. [Tech Stack](tech_stack.md) – [Full Context](../README_Architecture_And_Development_Guide.md#9-tech-stack)
+10. [Project Structure](project_structure.md)
