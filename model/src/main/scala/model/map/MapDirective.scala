@@ -1,4 +1,5 @@
-package com.crib.bills.dom6maps.model.map
+package com.crib.bills.dom6maps
+package model.map
 
 sealed trait MapDirective
 
