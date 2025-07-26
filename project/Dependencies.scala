@@ -9,6 +9,7 @@ object Dependencies {
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
     "co.fs2"       %% "fs2-core"      % fs2Version,
+    "co.fs2"       %% "fs2-io"        % fs2Version,
     "org.typelevel" %% "log4cats-core" % log4catsVersion
   )
 
