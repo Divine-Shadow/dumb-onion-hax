@@ -19,8 +19,10 @@ final case class FloatColor(red: ColorComponent, green: ColorComponent, blue: Co
 final case class MapTextColor(color: FloatColor) extends MapDirective
 final case class MapDomColor(red: Int, green: Int, blue: Int, alpha: Int) extends MapDirective
 
-import com.crib.bills.dom6maps.model.Nation
+import com.crib.bills.dom6maps.model.{Nation, ProvinceId, BorderFlag}
 final case class AllowedPlayer(nation: Nation) extends MapDirective
-final case class SpecStart(nation: Nation, province: Int) extends MapDirective
-final case class Terrain(province: Int, mask: Int) extends MapDirective
-final case class LandName(province: Int, name: String) extends MapDirective
+final case class SpecStart(nation: Nation, province: ProvinceId) extends MapDirective
+final case class Terrain(province: ProvinceId, mask: Int) extends MapDirective
+final case class LandName(province: ProvinceId, name: String) extends MapDirective
+final case class Neighbour(a: ProvinceId, b: ProvinceId) extends MapDirective
+final case class NeighbourSpec(a: ProvinceId, b: ProvinceId, border: BorderFlag) extends MapDirective
