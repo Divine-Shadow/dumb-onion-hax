@@ -20,6 +20,7 @@ object Dependencies {
   )
 
   lazy val apps = Seq(
-    "org.typelevel" %% "log4cats-slf4j" % log4catsVersion
+    "org.typelevel" %% "log4cats-slf4j" % log4catsVersion,
+    "com.lihaoyi" %% "fastparse"          % "3.1.0",
   )
 }
