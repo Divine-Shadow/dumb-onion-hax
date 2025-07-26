@@ -23,12 +23,12 @@ When reviewing documentation, agents are expected to reference linked pages when
 
 ## Supplemental Guidelines
 - Follow and apply architectural and structural patterns established by the project.
-- Focus only on implementing the solution or fixing the issue. Do not refactor, modify, or delete any existing code or comment unless directly related to the solution / fix.
 - Follow and apply common coding and naming conventions used in the project. For example, to resolve shadowing, use the "underscore suffix" pattern. See `conversion/Impl.scala` and `compatibility/Impl.scala` for examples.
 - Proactively review comments affected by your changes and update/delete them as needed. Delete obsolete and orphaned comments.
 - Aside from compile errors, you must also resolve all warnings.
 - When grepping, it's recommended to exclude target files as they can create noise that overwhelms the results.
 - Do not use abbreviations in your naming.
+- This project uses package chaining, ensure `package com.crib.bills.dom6maps` appears on its own line.
 
 ## Living Documents
 Many projects have living progress documents associated with them. The workflow for these looks like:

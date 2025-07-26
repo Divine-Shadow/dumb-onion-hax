@@ -1,4 +1,5 @@
-package com.crib.bills.dom6maps.model
+package com.crib.bills.dom6maps
+package model
 
 enum Nation(val id: Int, val epithet: String):
   // Early Era

@@ -1,4 +1,5 @@
-package com.crib.bills.dom6maps.model
+package com.crib.bills.dom6maps
+package model
 
 enum TerrainFlag(val mask: Int):
   case Plains            extends TerrainFlag(0)

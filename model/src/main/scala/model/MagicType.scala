@@ -1,4 +1,5 @@
-package com.crib.bills.dom6maps.model
+package com.crib.bills.dom6maps
+package model
 
 enum MagicType(val mask: Int):
   case Fire   extends MagicType(8192)
