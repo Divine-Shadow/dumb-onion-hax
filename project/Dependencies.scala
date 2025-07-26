@@ -5,12 +5,14 @@ object Dependencies {
   private val catsVersion       = "2.10.0"
   private val fs2Version        = "3.10.2"
   private val log4catsVersion   = "2.7.0"
+  private val fastparseVersion  = "3.1.1"
 
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
     "co.fs2"       %% "fs2-core"      % fs2Version,
     "co.fs2"       %% "fs2-io"        % fs2Version,
-    "org.typelevel" %% "log4cats-core" % log4catsVersion
+    "org.typelevel" %% "log4cats-core" % log4catsVersion,
+    "com.lihaoyi"  %% "fastparse"     % fastparseVersion
   )
 
   lazy val tests = Seq(

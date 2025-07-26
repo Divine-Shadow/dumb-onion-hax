@@ -39,6 +39,7 @@ object MapFileParserSpec extends Properties("MapFileParser") {
       AllowedPlayer(Nation.Xibalba_Early),
       SpecStart(Nation.Xibalba_Early, ProvinceId(1)),
       Terrain(ProvinceId(1), 264),
+      LandName(ProvinceId(1), "Province One"),
       Neighbour(ProvinceId(1), ProvinceId(2)),
       NeighbourSpec(ProvinceId(1), ProvinceId(2), BorderFlag.MountainPass)
     )
