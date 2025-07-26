@@ -29,6 +29,7 @@ When reviewing documentation, agents are expected to reference linked pages when
 - When grepping, it's recommended to exclude target files as they can create noise that overwhelms the results.
 - Do not use abbreviations in your naming.
 - This project uses package chaining, ensure `package com.crib.bills.dom6maps` appears on its own line.
+- Avoid primitives in anything other than value classes, see existing models for examples of this.
 
 ## Living Documents
 Many projects have living progress documents associated with them. The workflow for these looks like:
