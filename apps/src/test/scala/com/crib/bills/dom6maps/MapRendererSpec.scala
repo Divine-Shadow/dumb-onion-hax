@@ -1,32 +1,35 @@
 package com.crib.bills.dom6maps
 
-import cats.effect.{IO, Sync}
-import cats.effect.unsafe.implicits.global
+import cats.effect.IO
+import cats.Show
 import fs2.Stream
 import java.nio.charset.StandardCharsets
-import org.scalacheck.Prop.forAll
-import org.scalacheck.Properties
+import weaver.SimpleIOSuite
+import weaver.scalacheck.Checkers
 import model.*
 import model.map.*
 import Arbitraries.given
 import Renderer.*
 
-object MapRendererSpec extends Properties("MapRenderer"):
-  private def parseOne(line: String): Option[MapDirective] =
+object MapRendererSpec extends SimpleIOSuite with Checkers:
+  given Show[MapDirective] = Show.show(_.toString)
+  private def parseOne(line: String): IO[Option[MapDirective]] =
     MapFileParser
       .parse[IO]
       .apply(Stream.emits((line + "\n").getBytes(StandardCharsets.UTF_8)).covary[IO])
       .compile
       .last
-      .unsafeRunSync()
 
-  property("render round trip") =
-    forAll { (directive: MapDirective) =>
-      parseOne(directive.render).contains(directive)
+  test("render round trip") {
+    forall { (directive: MapDirective) =>
+      parseOne(directive.render).map(result => expect(result.contains(directive)))
     }
+  }
 
-  property("sample rendering") =
-    Dom2Title("foo").render == "#dom2title foo" &&
-    ImageFile("bar.tga").render == "#imagefile bar.tga" &&
-    MapSize(MapWidth(1), MapHeight(2)).render == "#mapsize 1 2" &&
-    LandName(ProvinceId(1), "name").render == "#landname 1 \"name\""
+  test("sample rendering") {
+    val e1 = expect(Dom2Title("foo").render == "#dom2title foo")
+    val e2 = expect(ImageFile("bar.tga").render == "#imagefile bar.tga")
+    val e3 = expect(MapSize(MapWidth(1), MapHeight(2)).render == "#mapsize 1 2")
+    val e4 = expect(LandName(ProvinceId(1), "name").render == "#landname 1 \"name\"")
+    IO.pure(e1 and e2 and e3 and e4)
+  }

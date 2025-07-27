@@ -11,7 +11,8 @@ Global / excludeLintKeys := Set(idePackagePrefix)
 
 lazy val commonSettings = Seq(
   idePackagePrefix := Some("com.crib.bills.dom6maps"),
-  testFrameworks += new TestFramework("org.scalacheck.ScalaCheckFramework")
+  testFrameworks += new TestFramework("org.scalacheck.ScalaCheckFramework"),
+  testFrameworks += new TestFramework("weaver.framework.CatsEffect")
 )
 
 lazy val model = (project in file("model"))
