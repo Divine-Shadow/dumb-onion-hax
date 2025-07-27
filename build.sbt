@@ -3,7 +3,7 @@ import sbt.Keys.*
 
 val idePackagePrefix = settingKey[Option[String]]("IDE package prefix")
 
-ThisBuild / scalaVersion := "3.4.2"
+ThisBuild / scalaVersion := "3.7.1"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.crib.bills"
 ThisBuild / organizationName := "Bill's Crib"
