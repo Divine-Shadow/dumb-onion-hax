@@ -7,6 +7,7 @@ object Dependencies {
   private val log4catsVersion   = "2.7.0"
   private val fastparseVersion  = "3.1.1"
   private val weaverVersion     = "0.8.3"
+  private val mcpVersion        = "0.2.0"
 
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
@@ -25,5 +26,7 @@ object Dependencies {
   lazy val apps = Seq(
     "org.typelevel" %% "log4cats-slf4j" % log4catsVersion,
     "com.lihaoyi" %% "fastparse"          % "3.1.0",
+    "ch.linkyard.mcp" %% "mcp-server"     % mcpVersion,
+    "ch.linkyard.mcp" %% "jsonrpc2-stdio" % mcpVersion,
   )
 }
