@@ -6,6 +6,7 @@ object Dependencies {
   private val fs2Version        = "3.10.2"
   private val log4catsVersion   = "2.7.0"
   private val fastparseVersion  = "3.1.1"
+  private val weaverVersion     = "0.8.3"
 
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
@@ -16,7 +17,9 @@ object Dependencies {
   )
 
   lazy val tests = Seq(
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion
+    "org.scalacheck" %% "scalacheck"     % scalacheckVersion,
+    "com.disneystreaming" %% "weaver-cats"      % weaverVersion,
+    "com.disneystreaming" %% "weaver-scalacheck" % weaverVersion
   )
 
   lazy val apps = Seq(
