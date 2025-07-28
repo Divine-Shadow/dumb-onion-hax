@@ -1,22 +1,20 @@
 package com.crib.bills.dom6maps
 package apps
 
-import cats.effect.{IO, IOApp, Resource}
-import cats.effect.ExitCode
-import cats.implicits.*
+import cats.effect.{IO, IOApp, Resource, ExitCode, Async}
 import ch.linkyard.mcp.jsonrpc2.transport.StdioJsonRpcConnection
 import ch.linkyard.mcp.server.*
 import ch.linkyard.mcp.server.ToolFunction.Effect
-import fs2.Stream
-import java.nio.charset.StandardCharsets
+import io.circe.syntax.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.circe.generic.semiauto.*
 import io.circe.generic.auto.given
 import com.melvinlow.json.schema.generic.auto.given
-import io.circe.syntax.*
 
 import model.map.*
 import model.map.Renderer.*
+import model.map.{MapUploadRequest, MapUploadConfig}
+import apps.services.map.{Impl as UploadServiceImpl}
 
 /**
  * MCP server that accepts map uploads, applies configuration, and
@@ -24,36 +22,25 @@ import model.map.Renderer.*
  */
 object McpMapServer extends IOApp:
 
-  final case class MapUploadConfig(mapSize: MapSize)
-  object MapUploadConfig:
-    given Codec[MapWidth] =
-      Codec.from(Decoder[Int].map(MapWidth.apply), Encoder[Int].contramap(_.value))
-    given Codec[MapHeight] =
-      Codec.from(Decoder[Int].map(MapHeight.apply), Encoder[Int].contramap(_.value))
-    given Codec[MapSize] =
-      Codec.forProduct2("x", "y")(MapSize.apply)(ms => (ms.width, ms.height))
-    given Codec[MapUploadConfig] =
-      Codec.forProduct1("map-size")(MapUploadConfig.apply)(_.mapSize)
-    given com.melvinlow.json.schema.JsonSchemaEncoder[MapUploadConfig] =
-      new com.melvinlow.json.schema.JsonSchemaEncoder[MapUploadConfig]:
-        def schema: io.circe.Json = io.circe.Json.obj()
+  given Codec[MapWidth] =
+    Codec.from(Decoder[Int].map(MapWidth.apply), Encoder[Int].contramap(_.value))
+  given Codec[MapHeight] =
+    Codec.from(Decoder[Int].map(MapHeight.apply), Encoder[Int].contramap(_.value))
+  given Codec[MapSize] =
+    Codec.forProduct2("x", "y")(MapSize.apply)(ms => (ms.width, ms.height))
+  given Codec[MapUploadConfig] =
+    Codec.forProduct1("map-size")(MapUploadConfig.apply)(_.mapSize)
+  given com.melvinlow.json.schema.JsonSchemaEncoder[MapUploadConfig] =
+    new com.melvinlow.json.schema.JsonSchemaEncoder[MapUploadConfig]:
+      def schema: io.circe.Json = io.circe.Json.obj()
+  given Codec[MapUploadRequest] =
+    Codec.forProduct2("config", "map")(MapUploadRequest.apply)(r => (r.config, r.map))
 
-  import MapUploadConfig.given
+  private object uploadService extends UploadServiceImpl[IO]:
+    protected given sequencer: Async[IO] = IO.asyncForIO
 
-  final case class UploadRequest(config: MapUploadConfig, map: String)
-
-  private def processMap(request: UploadRequest): IO[String] =
-    val mapBytes = request.map.getBytes(StandardCharsets.UTF_8)
-    MapFileParser
-      .parse[IO]
-      .apply(Stream.emits(mapBytes).covary[IO])
-      .compile
-      .toVector
-      .map { directives =>
-        val rest = directives.filterNot(_.isInstanceOf[MapSize])
-        val newDirectives = MapSize(request.config.mapSize.width, request.config.mapSize.height) +: rest
-        newDirectives.map(_.render).mkString("\n")
-      }
+  private def processMap(request: MapUploadRequest): IO[String] =
+    uploadService.processUpload(request)
 
   private def uploadTool: ToolFunction[IO] = ToolFunction.text(
     ToolFunction.Info(
@@ -63,7 +50,7 @@ object McpMapServer extends IOApp:
       Effect.Destructive(false),
       isOpenWorld = false
     ),
-    (input: UploadRequest, _) => processMap(input)
+    (input: MapUploadRequest, _) => processMap(input)
   )
 
   private class Session extends McpServer.Session[IO] with McpServer.ToolProvider[IO]:
