@@ -22,7 +22,8 @@ object MapFileParser:
       .collect { case Some(directive) => directive }
 
   private def ws[$: P]: P[Unit] = P(CharIn(" \t").rep(1))
-  private def int[$: P]: P[Int] = P(CharIn("0-9").rep(1).!.map(_.toInt))
+  private def int[$: P]: P[Int] =
+    P(CharIn("0-9").rep(1).!.map(_.toLong.toInt))
   private def dbl[$: P]: P[Double] = P(CharIn("0-9.").rep(1).!.map(_.toDouble))
   private def rest[$: P]: P[String] = P(CharsWhile(_ != '\n').!.map(_.trim))
   private def quoted[$: P]: P[String] = P("\"" ~/ CharsWhile(_ != '"').! ~ "\"")
