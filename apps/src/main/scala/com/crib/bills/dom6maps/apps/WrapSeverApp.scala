@@ -1,0 +1,27 @@
+package com.crib.bills.dom6maps
+package apps
+
+import cats.effect.{IO, IOApp}
+import fs2.Stream
+import fs2.io.file.{Files, Path}
+import com.crib.bills.dom6maps.model.map.MapFileParser
+import com.crib.bills.dom6maps.model.map.Renderer.*
+
+object WrapSeverApp extends IOApp.Simple:
+  private val inputFile = Path("data") / "five-by-twelve.map"
+  private val outputFile = Path("data") / "five-by-twelve.hwrap.map"
+
+  def run: IO[Unit] =
+    MapFileParser
+      .parseFile[IO](inputFile)
+      .compile
+      .toVector
+      .map(WrapSever.process)
+      .flatMap { ds =>
+        Stream
+          .emit(ds.map(_.render).mkString("\n"))
+          .through(fs2.text.utf8.encode)
+          .through(Files[IO].writeAll(outputFile))
+          .compile
+          .drain
+      }

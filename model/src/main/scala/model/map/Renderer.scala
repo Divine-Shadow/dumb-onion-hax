@@ -18,6 +18,7 @@ object Renderer:
         case MapSize(w, h)         => s"#mapsize ${w.value} ${h.value}"
         case DomVersion(v)         => s"#domversion $v"
         case HWrapAround           => "#hwraparound"
+        case NoWrapAround          => "#nowraparound"
         case NoDeepCaves           => "#nodeepcaves"
         case NoDeepChoice          => "#nodeepchoice"
         case MapNoHide             => "#mapnohide"

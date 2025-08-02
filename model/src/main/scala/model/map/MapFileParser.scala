@@ -44,6 +44,9 @@ object MapFileParser:
   private def hwrapAroundP[$: P]: P[Option[MapDirective]] =
     P("#hwraparound").map(_ => Some(HWrapAround))
 
+  private def nowrapAroundP[$: P]: P[Option[MapDirective]] =
+    P("#nowraparound").map(_ => Some(NoWrapAround))
+
   private def nodeepcavesP[$: P]: P[Option[MapDirective]] =
     P("#nodeepcaves").map(_ => Some(NoDeepCaves))
 
@@ -112,6 +115,7 @@ object MapFileParser:
       mapSizeP |
       domVersionP |
       hwrapAroundP |
+      nowrapAroundP |
       nodeepcavesP |
       nodeepchoiceP |
       mapnohideP |
