@@ -3,7 +3,7 @@
 #imagefile sample_5x12.tga
 #mapsize 5 12
 #domversion 550
-#nowraparound
+#wraparound
 #neighbour 1 56
 #neighbour 2 57
 #neighbour 3 58

@@ -3,8 +3,7 @@ package apps
 
 import cats.effect.{IO, IOApp}
 import fs2.io.file.{Files, Path}
-import com.crib.bills.dom6maps.model.ProvinceId
-import com.crib.bills.dom6maps.model.map.{MapDirective, MapFileParser, Neighbour, NeighbourSpec, HWrapAround, MapWidth, MapHeight}
+import com.crib.bills.dom6maps.model.map.{MapFileParser, MapWidth, MapHeight}
 import com.crib.bills.dom6maps.model.map.Renderer.*
 
 object WrapSeverApp extends IOApp.Simple:
@@ -14,15 +13,11 @@ object WrapSeverApp extends IOApp.Simple:
   def run: IO[Unit] =
     MapFileParser
       .parseFile[IO](inputFile)
+      .through(WrapSever.verticalPipe[IO](MapWidth(5), MapHeight(12)))
+      .map(_.render)
+      .intersperse("\n")
+      .through(fs2.text.utf8.encode)
+      .through(Files[IO].writeAll(outputFile))
       .compile
-      .toVector
-      .map(WrapSever.process)
-      .flatMap { ds =>
-        Stream
-          .emit(ds.map(_.render).mkString("\n"))
-          .through(fs2.text.utf8.encode)
-          .through(Files[IO].writeAll(outputFile))
-          .compile
-          .drain
-      }
+      .drain
 

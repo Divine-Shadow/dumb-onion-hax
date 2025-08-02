@@ -41,8 +41,14 @@ object MapFileParser:
   private def domVersionP[$: P]: P[Option[MapDirective]] =
     P("#domversion" ~ ws ~ int).map(v => Some(DomVersion(v)))
 
+  private def wrapAroundP[$: P]: P[Option[MapDirective]] =
+    P("#wraparound").map(_ => Some(WrapAround))
+
   private def hwrapAroundP[$: P]: P[Option[MapDirective]] =
     P("#hwraparound").map(_ => Some(HWrapAround))
+
+  private def vwrapAroundP[$: P]: P[Option[MapDirective]] =
+    P("#vwraparound").map(_ => Some(VWrapAround))
 
   private def nowrapAroundP[$: P]: P[Option[MapDirective]] =
     P("#nowraparound").map(_ => Some(NoWrapAround))
@@ -114,7 +120,9 @@ object MapFileParser:
       imageFileP |
       mapSizeP |
       domVersionP |
+      wrapAroundP |
       hwrapAroundP |
+      vwrapAroundP |
       nowrapAroundP |
       nodeepcavesP |
       nodeepchoiceP |

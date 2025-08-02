@@ -10,7 +10,9 @@ final case class Dom2Title(value: String) extends MapDirective
 final case class ImageFile(value: String) extends MapDirective
 final case class MapSize(width: MapWidth, height: MapHeight) extends MapDirective
 final case class DomVersion(value: Int) extends MapDirective
+case object WrapAround extends MapDirective
 case object HWrapAround extends MapDirective
+case object VWrapAround extends MapDirective
 case object NoWrapAround extends MapDirective
 case object NoDeepCaves extends MapDirective
 case object NoDeepChoice extends MapDirective
