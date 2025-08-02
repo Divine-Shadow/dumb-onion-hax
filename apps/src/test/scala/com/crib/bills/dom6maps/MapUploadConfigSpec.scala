@@ -4,8 +4,8 @@ import cats.effect.IO
 import weaver.SimpleIOSuite
 import io.circe.syntax.*
 import io.circe.parser.decode
-import apps.McpMapServer.MapUploadConfig
-import apps.McpMapServer.MapUploadConfig.given
+import model.map.MapUploadConfig
+import apps.McpMapServer.given
 import model.map.{MapHeight, MapSize, MapWidth}
 
 object MapUploadConfigSpec extends SimpleIOSuite:
