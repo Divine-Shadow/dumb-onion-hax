@@ -1,0 +1,11 @@
+-- Example 5x12 map
+#dom2title Sample 5x12 Map
+#imagefile sample_5x12.tga
+#mapsize 5 12
+#domversion 550
+#neighbour 1 56
+#neighbour 2 57
+#neighbour 3 58
+#neighbour 4 59
+#neighbour 5 60
+#neighbour 6 7
