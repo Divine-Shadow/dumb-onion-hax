@@ -16,6 +16,13 @@ object MapFileParserSpec extends SimpleIOSuite:
       .compile
       .toVector
 
+  private val largeMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#terrain 1 2147483712\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
   test("parses sample directives") {
     parsedIO.map { parsed =>
       expect(
@@ -44,5 +51,11 @@ object MapFileParserSpec extends SimpleIOSuite:
           NeighbourSpec(ProvinceId(1), ProvinceId(2), BorderFlag.MountainPass)
         )
       )
+    }
+  }
+
+  test("parses terrain mask above Int.MaxValue") {
+    largeMaskParsedIO.map { parsed =>
+      expect(parsed == Vector(Terrain(ProvinceId(1), -2147483584)))
     }
   }

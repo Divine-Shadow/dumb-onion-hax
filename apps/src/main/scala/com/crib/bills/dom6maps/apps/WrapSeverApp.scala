@@ -2,6 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.{IO, IOApp}
+import fs2.{Stream}
 import fs2.io.file.{Files, Path}
 import com.crib.bills.dom6maps.model.ProvinceId
 import com.crib.bills.dom6maps.model.map.{MapDirective, MapFileParser, Neighbour, NeighbourSpec, HWrapAround, MapWidth, MapHeight}
@@ -17,9 +18,9 @@ object WrapSeverApp extends IOApp.Simple:
       .compile
       .toVector
       .map(WrapSever.process)
-      .flatMap { ds =>
+      .flatMap { directives =>
         Stream
-          .emit(ds.map(_.render).mkString("\n"))
+          .emit(directives.map(_.render).mkString("\n"))
           .through(fs2.text.utf8.encode)
           .through(Files[IO].writeAll(outputFile))
           .compile
