@@ -18,3 +18,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 9. [Tech Stack](tech_stack.md) – [Full Context](../README_Architecture_And_Development_Guide.md#9-tech-stack)
 10. [Project Structure](project_structure.md)
 11. [MCP Map Server](../mcp_server.md)
+12. [Map Editor Processing Pipeline](map_editor_pipeline.md)
