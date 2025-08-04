@@ -2,6 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
+import cats.syntax.all.*
 import fs2.io.file.{Files => Fs2Files, Path}
 import com.crib.bills.dom6maps.model.map.{
   HWrapAround,
@@ -25,7 +26,9 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destDir)).compile.toList
       mapPath = Path.fromNioPath(destDir.resolve("map.hwrap.map"))
       directives <- MapFileParser.parseFile[IO](mapPath).compile.toVector
-      size = directives.collectFirst { case MapSize(w, h) => (w, h) }.get
+      size <- IO.fromOption(directives.collectFirst { case MapSize(w, h) => (w, h) })(
+        new NoSuchElementException("#mapsize not found")
+      )
       (w, h) = size
       hasTopBottom = directives.exists {
         case Neighbour(a, b)     => isTopBottom(a, b, w, h)
