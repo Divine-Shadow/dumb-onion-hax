@@ -11,7 +11,7 @@ import services.mapeditor.{MapEditorCopierImpl, MapWriterImpl}
 object MapEditorWrapApp extends IOApp:
   private type ErrorOr[A] = Either[Throwable, A]
   val src = Path("C:\\Users\\Shadow's Throne\\3D Objects\\WINDOWS\\MapNuke_Data\\Export")
-  val dst =Path("C:\\Users\\Shadow's Throne\\AppData\\Roaming\\Dominions6\\maps\\new")
+  val dst =Path("C:\\Users\\Shadow's Throne\\AppData\\Roaming\\Dominions6\\maps")
   override def run(args: List[String]): IO[ExitCode] =
     true match
       case true =>
