@@ -72,8 +72,9 @@ This document captures the initial plan for processing map-editor directories an
    - Implement rendering/writing logic and integration tests covering the full pipeline.
 5. **Documentation & examples**
    - Update architecture docs with links to new services and provide an example module demonstrating end-to-end usage.
-   - Example: [MapEditorWrapApp](../../../apps/src/main/scala/com/crib/bills/dom6maps/apps/MapEditorWrapApp.scala) copies a
-     map-editor directory and severs the map to horizontal wrap.
+   - Example: [MapEditorWrapApp](../../../apps/src/main/scala/com/crib/bills/dom6maps/apps/MapEditorWrapApp.scala) selects the
+     most recent map-editor output directory, copies it to the game's map folder under a matching name, and severs the map to
+     horizontal wrap.
 
 ## Service Contract Boundaries
 - Each service is a small, single-responsibility trait following the capability pattern and accepting abstract `Sequencer` and `ErrorChannel` type parameters.

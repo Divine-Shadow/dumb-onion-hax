@@ -14,17 +14,26 @@ import com.crib.bills.dom6maps.model.map.{
 import WrapSever.isTopBottom
 import weaver.SimpleIOSuite
 import java.nio.file.Files
+import java.nio.file.attribute.FileTime
 
 object MapEditorWrapAppSpec extends SimpleIOSuite:
-  test("copies editor and severs map to hwrap") {
+  test("copies latest editor and severs map to hwrap") {
     for
-      srcDir <- IO(Files.createTempDirectory("source-editor"))
-      _ <- IO(Files.copy(Path("data/five-by-twelve.map").toNioPath, srcDir.resolve("map.map")))
-      _ <- IO(Files.write(srcDir.resolve("image.tga"), Array[Byte](1,2,3)))
-      destDir <- IO(Files.createTempDirectory("dest-editor"))
-      _ <- MapEditorWrapApp.run(List(srcDir.toString, destDir.toString))
-      destEntries <- Fs2Files[IO].list(Path.fromNioPath(destDir)).compile.toList
-      mapPath = Path.fromNioPath(destDir.resolve("map.hwrap.map"))
+      rootDir <- IO(Files.createTempDirectory("root-editor"))
+      older <- IO(Files.createDirectory(rootDir.resolve("older")))
+      newer <- IO(Files.createDirectory(rootDir.resolve("newer")))
+      _ <- IO(Files.copy(Path("data/five-by-twelve.map").toNioPath, older.resolve("old.map")))
+      _ <- IO(Files.write(older.resolve("old.tga"), Array[Byte](1,2,3)))
+      _ <- IO(Files.setLastModifiedTime(older, FileTime.fromMillis(1000)))
+      _ <- IO(Files.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map.map")))
+      _ <- IO(Files.write(newer.resolve("image.tga"), Array[Byte](1,2,3)))
+      _ <- IO(Files.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
+      destRoot <- IO(Files.createTempDirectory("dest-editor"))
+      _ <- MapEditorWrapApp.run(List(rootDir.toString, destRoot.toString))
+      destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
+      destDir = Path.fromNioPath(destRoot.resolve("newer"))
+      copiedEntries <- Fs2Files[IO].list(destDir).compile.toList
+      mapPath = destDir / "map.hwrap.map"
       directives <- MapFileParser.parseFile[IO](mapPath).compile.toVector
       size <- IO.fromOption(directives.collectFirst { case MapSize(w, h) => (w, h) })(
         new NoSuchElementException("#mapsize not found")
@@ -36,9 +45,10 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
         case _                   => false
       }
     yield expect.all(
-      destEntries.exists(_.fileName.toString == "image.tga"),
-      destEntries.exists(_.fileName.toString == "map.hwrap.map"),
-      !destEntries.exists(_.fileName.toString == "map.map"),
+      destEntries.exists(_.fileName.toString == "newer"),
+      copiedEntries.exists(_.fileName.toString == "image.tga"),
+      copiedEntries.exists(_.fileName.toString == "map.hwrap.map"),
+      !copiedEntries.exists(_.fileName.toString == "map.map"),
       directives.contains(HWrapAround),
       !hasTopBottom
     )
