@@ -6,20 +6,25 @@ import cats.instances.either.*
 import cats.syntax.all.*
 import fs2.io.file.Path
 import model.map.{MapFileParser, MapSize}
-import services.mapeditor.{MapEditorCopierImpl, MapWriterImpl}
+import services.mapeditor.{LatestEditorFinderImpl, MapEditorCopierImpl, MapWriterImpl}
 
 object MapEditorWrapApp extends IOApp:
   private type ErrorOr[A] = Either[Throwable, A]
-  val src = Path("C:\\Users\\Shadow's Throne\\3D Objects\\WINDOWS\\MapNuke_Data\\Export")
-  val dst =Path("C:\\Users\\Shadow's Throne\\AppData\\Roaming\\Dominions6\\maps")
+
   override def run(args: List[String]): IO[ExitCode] =
-    true match
-      case true =>
+    args match
+      case srcStr :: destStr :: Nil =>
+        val finder = new LatestEditorFinderImpl[IO]
         val copier = new MapEditorCopierImpl[IO]
         val writer = new MapWriterImpl[IO]
+        val srcRoot = Path(srcStr)
+        val destRoot = Path(destStr)
         val action =
           for
-            res <- copier.copyWithoutMap[ErrorOr](src, dst)
+            latestEC <- finder.mostRecentFolder[ErrorOr](srcRoot)
+            latest <- IO.fromEither(latestEC)
+            targetDir = destRoot / latest.fileName.toString
+            res <- copier.copyWithoutMap[ErrorOr](latest, targetDir)
             (bytes, outPath) <- IO.fromEither(res)
             directives <- bytes.through(MapFileParser.parse[IO]).compile.toVector
             (w, h) <- IO.fromOption(directives.collectFirst { case MapSize(w, h) => (w, h) })(
@@ -27,10 +32,11 @@ object MapEditorWrapApp extends IOApp:
             )
             severed = WrapSever.severVertically(directives, w, h)
             fileName = outPath.fileName.toString.stripSuffix(".map") + ".hwrap.map"
-            target = dst / fileName
-            written <- writer.write[ErrorOr](severed, target)
+            finalPath = outPath.parent.getOrElse(targetDir) / fileName
+            written <- writer.write[ErrorOr](severed, finalPath)
             _ <- IO.fromEither(written)
           yield ExitCode.Success
         action
       case _ =>
         IO.println("Usage: MapEditorWrapApp <input-dir> <output-dir>").as(ExitCode(2))
+
