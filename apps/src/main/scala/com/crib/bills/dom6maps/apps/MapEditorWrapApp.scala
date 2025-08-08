@@ -9,7 +9,7 @@ import model.map.{MapFileParser, MapSize}
 import services.mapeditor.{LatestEditorFinderImpl, MapEditorCopierImpl, MapWriterImpl}
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
-import java.nio.file.Path as NioPath
+import java.nio.file.{Files as JFiles, Path as NioPath}
 
 object MapEditorWrapApp extends IOApp:
   private type ErrorOr[A] = Either[Throwable, A]
@@ -17,6 +17,10 @@ object MapEditorWrapApp extends IOApp:
   private final case class PathsConfig(source: NioPath, dest: NioPath) derives ConfigReader
 
   private val configFileName = "map-editor-wrap.conf"
+  private val sampleConfig =
+    """source="/path/to/source"
+dest="/path/to/destination"
+"""
 
   override def run(args: List[String]): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
@@ -24,6 +28,12 @@ object MapEditorWrapApp extends IOApp:
     val writer = new MapWriterImpl[IO]
     val action =
       for
+        exists <- IO(JFiles.exists(NioPath.of(configFileName)))
+        _ <-
+          if exists then IO.unit
+          else
+            IO(JFiles.writeString(NioPath.of(configFileName), sampleConfig)) *>
+              IO.raiseError(new RuntimeException(s"$configFileName created; please edit and rerun"))
         cfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
         srcRoot = Path.fromNioPath(cfg.source)
         destRoot = Path.fromNioPath(cfg.dest)
