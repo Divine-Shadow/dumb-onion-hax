@@ -29,8 +29,8 @@ lazy val apps = (project in file("apps"))
     name := "apps",
     libraryDependencies ++= Dependencies.tests.map(_ % Test) ++ Dependencies.apps,
     commonSettings,
-    assembly / mainClass := Some("com.crib.bills.dom6maps.apps.HelloApp"),
-    Compile / mainClass := Some("com.crib.bills.dom6maps.apps.HelloApp"),
+    assembly / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
+    Compile / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
     assembly / assemblyJarName := "apps-assembly.jar"
   )
 
