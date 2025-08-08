@@ -1,5 +1,6 @@
 import Dependencies.*
 import sbt.Keys.*
+import sbtassembly.AssemblyPlugin.autoImport._
 
 val idePackagePrefix = settingKey[Option[String]]("IDE package prefix")
 
@@ -27,7 +28,10 @@ lazy val apps = (project in file("apps"))
   .settings(
     name := "apps",
     libraryDependencies ++= Dependencies.tests.map(_ % Test) ++ Dependencies.apps,
-    commonSettings
+    commonSettings,
+    assembly / mainClass := Some("com.crib.bills.dom6maps.apps.HelloApp"),
+    Compile / mainClass := Some("com.crib.bills.dom6maps.apps.HelloApp"),
+    assembly / assemblyJarName := "apps-assembly.jar"
   )
 
 lazy val root = (project in file("."))
