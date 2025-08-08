@@ -8,6 +8,7 @@ object Dependencies {
   private val fastparseVersion  = "3.1.1"
   private val weaverVersion     = "0.8.3"
   private val mcpVersion        = "0.2.0"
+  private val pureconfigVersion = "0.17.7"
 
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
@@ -28,5 +29,7 @@ object Dependencies {
     "com.lihaoyi" %% "fastparse"          % "3.1.0",
     "ch.linkyard.mcp" %% "mcp-server"     % mcpVersion,
     "ch.linkyard.mcp" %% "jsonrpc2-stdio" % mcpVersion,
+    "com.github.pureconfig" %% "pureconfig-core"           % pureconfigVersion,
+    "com.github.pureconfig" %% "pureconfig-generic-scala3" % pureconfigVersion,
   )
 }
