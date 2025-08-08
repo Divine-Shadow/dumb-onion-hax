@@ -17,6 +17,17 @@ import java.nio.file.{Files as JFiles, Path as JPath}
 import java.nio.file.attribute.FileTime
 
 object MapEditorWrapAppSpec extends SimpleIOSuite:
+  test("creates sample config when missing") {
+    for
+      configFile <- IO(JPath.of("map-editor-wrap.conf"))
+      _ <- IO(JFiles.deleteIfExists(configFile))
+      res <- MapEditorWrapApp.run(Nil).attempt
+      exists <- IO(JFiles.exists(configFile))
+      content <- IO(JFiles.readString(configFile))
+      _ <- IO(JFiles.deleteIfExists(configFile))
+    yield expect.all(res.isLeft, exists, content.contains("source="), content.contains("dest="))
+  }
+
   test("copies latest editor and severs map to hwrap") {
     for
       rootDir <- IO(JFiles.createTempDirectory("root-editor"))
