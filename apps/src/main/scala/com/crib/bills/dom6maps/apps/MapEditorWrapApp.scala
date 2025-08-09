@@ -6,7 +6,9 @@ import cats.instances.either.*
 import cats.syntax.all.*
 import fs2.io.file.Path
 import model.map.{MapFileParser, MapSizePixels}
+import model.version.{UpdateStatus, Version}
 import services.mapeditor.{LatestEditorFinderImpl, MapEditorCopierImpl, MapWriterImpl}
+import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 import java.nio.file.{Files as JFiles, Path as NioPath}
@@ -22,12 +24,23 @@ object MapEditorWrapApp extends IOApp:
 dest="/path/to/dominions/maps"
 """
 
+  private val currentVersion = Version("1.1")
+
   override def run(args: List[String]): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
     val copier = new MapEditorCopierImpl[IO]
     val writer = new MapWriterImpl[IO]
+    val checker = new GithubReleaseCheckerImpl[IO]
     val action =
       for
+        updateCheck <- checker.checkForUpdate[ErrorOr](currentVersion)
+        _ <- updateCheck match
+          case Right(UpdateStatus.UpdateAvailable) =>
+            IO.println("A new version of the app is available.")
+          case Right(UpdateStatus.CurrentVersionIsLatest) =>
+            IO.unit
+          case Left(_) =>
+            IO.println("Checking for updates failed.")
         exists <- IO(JFiles.exists(NioPath.of(configFileName)))
         _ <-
           if exists then IO.unit
