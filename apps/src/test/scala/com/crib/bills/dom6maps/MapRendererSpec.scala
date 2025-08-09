@@ -29,8 +29,11 @@ object MapRendererSpec extends SimpleIOSuite with Checkers:
   test("sample rendering") {
     val e1 = expect(Dom2Title("foo").render == "#dom2title foo")
     val e2 = expect(ImageFile("bar.tga").render == "#imagefile bar.tga")
-    val e3 = expect(MapSize(MapWidth(1), MapHeight(2)).render == "#mapsize 1 2")
-    val e4 = expect(LandName(ProvinceId(1), "name").render == "#landname 1 \"name\"")
-    val e5 = expect(ProvincePixels(1, 2, 3, ProvinceId(4)).render == "#pb 1 2 3 4")
-    IO.pure(e1 and e2 and e3 and e4 and e5)
+    val e3 = expect(WinterImageFile("baz.tga").render == "#winterimagefile baz.tga")
+    val e4 = expect(MapSize(MapWidth(1), MapHeight(2)).render == "#mapsize 1 2")
+    val e5 = expect(Description("d").render == "#description \"d\"")
+    val e6 = expect(LandName(ProvinceId(1), "name").render == "#landname 1 \"name\"")
+    val e7 = expect(Gate(ProvinceId(1), ProvinceId(2)).render == "#gate 1 2")
+    val e8 = expect(ProvincePixels(1, 2, 3, ProvinceId(4)).render == "#pb 1 2 3 4")
+    IO.pure(e1 and e2 and e3 and e4 and e5 and e6 and e7 and e8)
   }

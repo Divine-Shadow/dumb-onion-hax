@@ -15,8 +15,10 @@ object Renderer:
       directive match
         case Dom2Title(value)      => s"#dom2title $value"
         case ImageFile(value)      => s"#imagefile $value"
+        case WinterImageFile(value) => s"#winterimagefile $value"
         case MapSize(w, h)         => s"#mapsize ${w.value} ${h.value}"
         case DomVersion(v)         => s"#domversion $v"
+        case Description(value)    => s"#description \"$value\""
         case WrapAround            => "#wraparound"
         case HWrapAround           => "#hwraparound"
         case VWrapAround           => "#vwraparound"
@@ -33,5 +35,6 @@ object Renderer:
         case ProvincePixels(x,y,l,p) => s"#pb $x $y $l ${p.value}"
         case Terrain(p,m)          => s"#terrain ${p.value} $m"
         case LandName(p,n)         => s"#landname ${p.value} \"$n\""
+        case Gate(a,b)             => s"#gate ${a.value} ${b.value}"
         case Neighbour(a,b)        => s"#neighbour ${a.value} ${b.value}"
         case NeighbourSpec(a,b,f)  => s"#neighbourspec ${a.value} ${b.value} ${f.mask}"

@@ -26,6 +26,9 @@ object Arbitraries:
   given Arbitrary[ImageFile] =
     Arbitrary(Gen.nonEmptyListOf(Gen.alphaChar).map(n => ImageFile(s"$n.tga")))
 
+  given Arbitrary[WinterImageFile] =
+    Arbitrary(Gen.nonEmptyListOf(Gen.alphaChar).map(n => WinterImageFile(s"$n.tga")))
+
   given Arbitrary[MapSize] =
     Arbitrary(for
       w <- summon[Arbitrary[MapWidth]].arbitrary
@@ -34,6 +37,13 @@ object Arbitraries:
 
   given Arbitrary[DomVersion] =
     Arbitrary(Gen.choose(500, 600).map(DomVersion.apply))
+
+  given Arbitrary[Description] =
+    Arbitrary(
+      Gen.nonEmptyListOf(Gen.frequency((5, Gen.alphaChar), (1, Gen.const(' '))))
+        .map(_.mkString)
+        .map(Description.apply)
+    )
 
   given Arbitrary[ColorComponent] =
     Arbitrary(Gen.choose(0.0, 1.0).map(ColorComponent.apply))
@@ -86,6 +96,12 @@ object Arbitraries:
       n <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
     yield LandName(p, n))
 
+  given Arbitrary[Gate] =
+    Arbitrary(for
+      a <- summon[Arbitrary[ProvinceId]].arbitrary
+      b <- summon[Arbitrary[ProvinceId]].arbitrary
+    yield Gate(a, b))
+
   given Arbitrary[Neighbour] =
     Arbitrary(for
       a <- summon[Arbitrary[ProvinceId]].arbitrary
@@ -104,8 +120,10 @@ object Arbitraries:
       MapDirective](
       summon[Arbitrary[Dom2Title]].arbitrary,
       summon[Arbitrary[ImageFile]].arbitrary,
+      summon[Arbitrary[WinterImageFile]].arbitrary,
       summon[Arbitrary[MapSize]].arbitrary,
       summon[Arbitrary[DomVersion]].arbitrary,
+      summon[Arbitrary[Description]].arbitrary,
       Gen.const(WrapAround),
       Gen.const(HWrapAround),
       Gen.const(VWrapAround),
@@ -120,6 +138,7 @@ object Arbitraries:
       summon[Arbitrary[ProvincePixels]].arbitrary,
       summon[Arbitrary[Terrain]].arbitrary,
       summon[Arbitrary[LandName]].arbitrary,
+      summon[Arbitrary[Gate]].arbitrary,
       summon[Arbitrary[Neighbour]].arbitrary,
       summon[Arbitrary[NeighbourSpec]].arbitrary
     )

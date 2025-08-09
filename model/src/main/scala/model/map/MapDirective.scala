@@ -8,8 +8,10 @@ final case class MapHeight(value: Int) extends AnyVal
 
 final case class Dom2Title(value: String) extends MapDirective
 final case class ImageFile(value: String) extends MapDirective
+final case class WinterImageFile(value: String) extends MapDirective
 final case class MapSize(width: MapWidth, height: MapHeight) extends MapDirective
 final case class DomVersion(value: Int) extends MapDirective
+final case class Description(value: String) extends MapDirective
 case object WrapAround extends MapDirective
 case object HWrapAround extends MapDirective
 case object VWrapAround extends MapDirective
@@ -28,5 +30,6 @@ final case class SpecStart(nation: Nation, province: ProvinceId) extends MapDire
 final case class ProvincePixels(x: Int, y: Int, length: Int, province: ProvinceId) extends MapDirective
 final case class Terrain(province: ProvinceId, mask: Int) extends MapDirective
 final case class LandName(province: ProvinceId, name: String) extends MapDirective
+final case class Gate(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class Neighbour(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class NeighbourSpec(a: ProvinceId, b: ProvinceId, border: BorderFlag) extends MapDirective
