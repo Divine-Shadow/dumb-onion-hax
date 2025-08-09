@@ -38,6 +38,22 @@ object WrapSeverAppSpec extends SimpleIOSuite:
       }
   }
 
+  test("vertical sever removes 1-57 border in duel map") {
+    MapFileParser
+      .parseFile[IO](Path("data/duel-map-example.map"))
+      .through(WrapSever.verticalPipe[IO](MapWidth(5), MapHeight(12)))
+      .compile
+      .toVector
+      .map { directives =>
+        val stillConnected = directives.exists {
+          case Neighbour(a, b) =>
+            (a.value == 1 && b.value == 57) || (a.value == 57 && b.value == 1)
+          case _ => false
+        }
+        expect(!stillConnected)
+      }
+  }
+
   test("run writes processed directives to file") {
     val output = Path("data/five-by-twelve.hwrap.map")
     Files[IO]
