@@ -29,7 +29,7 @@ object MapFileParserSpec extends SimpleIOSuite:
         parsed == Vector(
           Dom2Title("Sample Map"),
           ImageFile("sample.tga"),
-          MapSize(MapWidth(100), MapHeight(100)),
+          MapSizePixels(MapWidthPixels(100), MapHeightPixels(100)),
           DomVersion(550),
           HWrapAround,
           NoDeepCaves,

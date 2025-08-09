@@ -5,7 +5,7 @@ import cats.effect.{ExitCode, IO, IOApp}
 import cats.instances.either.*
 import cats.syntax.all.*
 import fs2.io.file.Path
-import model.map.{MapFileParser, MapSize}
+import model.map.{MapFileParser, MapSizePixels}
 import services.mapeditor.{LatestEditorFinderImpl, MapEditorCopierImpl, MapWriterImpl}
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
@@ -43,10 +43,11 @@ dest="/path/to/dominions/maps"
         res <- copier.copyWithoutMap[ErrorOr](latest, targetDir)
         (bytes, outPath) <- IO.fromEither(res)
         directives <- bytes.through(MapFileParser.parse[IO]).compile.toVector
-        (w, h) <- IO.fromOption(directives.collectFirst { case MapSize(w, h) => (w, h) })(
+        sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
           new NoSuchElementException("#mapsize not found")
         )
-        severed = WrapSever.severVertically(directives, w, h)
+        provinceSize = sizePixels.toProvinceSize
+        severed = WrapSever.severVertically(directives, provinceSize.width, provinceSize.height)
         written <- writer.write[ErrorOr](severed, outPath)
         _ <- IO.fromEither(written)
       yield ExitCode.Success

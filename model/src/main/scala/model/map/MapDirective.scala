@@ -6,10 +6,21 @@ sealed trait MapDirective
 final case class MapWidth(value: Int) extends AnyVal
 final case class MapHeight(value: Int) extends AnyVal
 
+final case class MapWidthPixels(value: Int) extends AnyVal
+final case class MapHeightPixels(value: Int) extends AnyVal
+
+final case class ProvinceSize(width: MapWidth, height: MapHeight)
+
+final case class MapSizePixels(width: MapWidthPixels, height: MapHeightPixels) extends MapDirective:
+  def toProvinceSize: ProvinceSize =
+    ProvinceSize(
+      MapWidth(width.value / 256),
+      MapHeight(height.value / 160)
+    )
+
 final case class Dom2Title(value: String) extends MapDirective
 final case class ImageFile(value: String) extends MapDirective
 final case class WinterImageFile(value: String) extends MapDirective
-final case class MapSize(width: MapWidth, height: MapHeight) extends MapDirective
 final case class DomVersion(value: Int) extends MapDirective
 final case class Description(value: String) extends MapDirective
 case object WrapAround extends MapDirective

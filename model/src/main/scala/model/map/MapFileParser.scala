@@ -39,7 +39,7 @@ object MapFileParser:
 
   private def mapSizeP[$: P]: P[Option[MapDirective]] =
     P("#mapsize" ~ ws ~ int ~ ws ~ int).map { case (w, h) =>
-      Some(MapSize(MapWidth(w), MapHeight(h)))
+      Some(MapSizePixels(MapWidthPixels(w), MapHeightPixels(h)))
     }
 
   private def domVersionP[$: P]: P[Option[MapDirective]] =

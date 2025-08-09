@@ -14,11 +14,11 @@ object Arbitraries:
   given Arbitrary[BorderFlag] =
     Arbitrary(Gen.oneOf(BorderFlag.values.toSeq))
 
-  given Arbitrary[MapWidth] =
-    Arbitrary(Gen.choose(10, 5000).map(MapWidth.apply))
+  given Arbitrary[MapWidthPixels] =
+    Arbitrary(Gen.choose(10, 5000).map(MapWidthPixels.apply))
 
-  given Arbitrary[MapHeight] =
-    Arbitrary(Gen.choose(10, 5000).map(MapHeight.apply))
+  given Arbitrary[MapHeightPixels] =
+    Arbitrary(Gen.choose(10, 5000).map(MapHeightPixels.apply))
 
   given Arbitrary[Dom2Title] =
     Arbitrary(Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString).map(Dom2Title.apply))
@@ -29,11 +29,11 @@ object Arbitraries:
   given Arbitrary[WinterImageFile] =
     Arbitrary(Gen.nonEmptyListOf(Gen.alphaChar).map(n => WinterImageFile(s"$n.tga")))
 
-  given Arbitrary[MapSize] =
+  given Arbitrary[MapSizePixels] =
     Arbitrary(for
-      w <- summon[Arbitrary[MapWidth]].arbitrary
-      h <- summon[Arbitrary[MapHeight]].arbitrary
-    yield MapSize(w, h))
+      w <- summon[Arbitrary[MapWidthPixels]].arbitrary
+      h <- summon[Arbitrary[MapHeightPixels]].arbitrary
+    yield MapSizePixels(w, h))
 
   given Arbitrary[DomVersion] =
     Arbitrary(Gen.choose(500, 600).map(DomVersion.apply))
@@ -121,7 +121,7 @@ object Arbitraries:
       summon[Arbitrary[Dom2Title]].arbitrary,
       summon[Arbitrary[ImageFile]].arbitrary,
       summon[Arbitrary[WinterImageFile]].arbitrary,
-      summon[Arbitrary[MapSize]].arbitrary,
+      summon[Arbitrary[MapSizePixels]].arbitrary,
       summon[Arbitrary[DomVersion]].arbitrary,
       summon[Arbitrary[Description]].arbitrary,
       Gen.const(WrapAround),
