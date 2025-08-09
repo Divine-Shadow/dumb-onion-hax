@@ -19,6 +19,6 @@ trait Impl[Sequencer[_]] extends Service[Sequencer]:
                       .apply(Stream.emits(bytes).covary[Sequencer])
                       .compile
                       .toVector
-      rest = directives.filterNot(_.isInstanceOf[MapSize])
-      newDirectives = MapSize(request.config.mapSize.width, request.config.mapSize.height) +: rest
+      rest = directives.filterNot(_.isInstanceOf[MapSizePixels])
+      newDirectives = MapSizePixels(request.config.mapSize.width, request.config.mapSize.height) +: rest
     yield newDirectives.map(_.render).mkString("\n")

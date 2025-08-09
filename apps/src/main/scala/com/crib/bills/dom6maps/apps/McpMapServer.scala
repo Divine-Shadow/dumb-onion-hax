@@ -22,12 +22,12 @@ import apps.services.map.{Impl as UploadServiceImpl}
  */
 object McpMapServer extends IOApp:
 
-  given Codec[MapWidth] =
-    Codec.from(Decoder[Int].map(MapWidth.apply), Encoder[Int].contramap(_.value))
-  given Codec[MapHeight] =
-    Codec.from(Decoder[Int].map(MapHeight.apply), Encoder[Int].contramap(_.value))
-  given Codec[MapSize] =
-    Codec.forProduct2("x", "y")(MapSize.apply)(ms => (ms.width, ms.height))
+  given Codec[MapWidthPixels] =
+    Codec.from(Decoder[Int].map(MapWidthPixels.apply), Encoder[Int].contramap(_.value))
+  given Codec[MapHeightPixels] =
+    Codec.from(Decoder[Int].map(MapHeightPixels.apply), Encoder[Int].contramap(_.value))
+  given Codec[MapSizePixels] =
+    Codec.forProduct2("x", "y")(MapSizePixels.apply)(ms => (ms.width, ms.height))
   given Codec[MapUploadConfig] =
     Codec.forProduct1("map-size")(MapUploadConfig.apply)(_.mapSize)
   given com.melvinlow.json.schema.JsonSchemaEncoder[MapUploadConfig] =

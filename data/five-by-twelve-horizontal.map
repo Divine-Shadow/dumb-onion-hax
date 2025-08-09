@@ -1,7 +1,7 @@
 -- Example 5x12 horizontal wrap map
 #dom2title Sample 5x12 Map Horizontal
 #imagefile sample_5x12.tga
-#mapsize 5 12
+#mapsize 1280 1920
 #domversion 550
 #wraparound
 #neighbour 5 1

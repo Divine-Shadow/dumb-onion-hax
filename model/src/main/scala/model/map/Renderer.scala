@@ -16,7 +16,7 @@ object Renderer:
         case Dom2Title(value)      => s"#dom2title $value"
         case ImageFile(value)      => s"#imagefile $value"
         case WinterImageFile(value) => s"#winterimagefile $value"
-        case MapSize(w, h)         => s"#mapsize ${w.value} ${h.value}"
+        case MapSizePixels(w, h)    => s"#mapsize ${w.value} ${h.value}"
         case DomVersion(v)         => s"#domversion $v"
         case Description(value)    => s"#description \"$value\""
         case WrapAround            => "#wraparound"

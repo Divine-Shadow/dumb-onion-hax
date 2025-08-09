@@ -7,7 +7,7 @@ import fs2.io.file.{Files as Fs2Files, Path}
 import com.crib.bills.dom6maps.model.map.{
   HWrapAround,
   MapFileParser,
-  MapSize,
+  MapSizePixels,
   Neighbour,
   NeighbourSpec
 }
@@ -50,10 +50,12 @@ dest="${destRoot.toString}"
       copiedEntries <- Fs2Files[IO].list(destDir).compile.toList
       mapPath = destDir / "map.map"
       directives <- MapFileParser.parseFile[IO](mapPath).compile.toVector
-      size <- IO.fromOption(directives.collectFirst { case MapSize(w, h) => (w, h) })(
+      sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
         new NoSuchElementException("#mapsize not found")
       )
-      (w, h) = size
+      provinceSize = sizePixels.toProvinceSize
+      w = provinceSize.width
+      h = provinceSize.height
       hasTopBottom = directives.exists {
         case Neighbour(a, b)       => isTopBottom(a, b, w, h)
         case NeighbourSpec(a, b, _) => isTopBottom(a, b, w, h)

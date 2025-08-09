@@ -2,6 +2,6 @@
 
 The MCP map server exposes a minimal Map Control Protocol (MCP) endpoint. It accepts map files uploaded over JSON‑RPC, applies a request specific configuration, and returns the processed map text.
 
-Currently the only supported configuration option is `map-size`. The field contains an `x` and `y` dimension that replace any existing `#mapsize` directive in the uploaded map.
+Currently the only supported configuration option is `map-size`. The field contains an `x` and `y` dimension in pixels that replace any existing `#mapsize` directive in the uploaded map.  Internally, operations that work with provinces derive their dimensions from these pixel values by dividing the width by 256 and the height by 160.
 
 The implementation lives in `apps/src/main/scala/com/crib/bills/dom6maps/apps/McpMapServer.scala` and demonstrates basic integration with the `mcp-server` library.
