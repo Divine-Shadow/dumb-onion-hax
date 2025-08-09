@@ -18,8 +18,8 @@ object MapEditorWrapApp extends IOApp:
 
   private val configFileName = "map-editor-wrap.conf"
   private val sampleConfig =
-    """source="/path/to/source"
-dest="/path/to/destination"
+    """source="/path/to/mapnuke/output"
+dest="/path/to/dominions/maps"
 """
 
   override def run(args: List[String]): IO[ExitCode] =
