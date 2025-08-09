@@ -34,6 +34,9 @@ object MapFileParser:
   private def imageFileP[$: P]: P[Option[MapDirective]] =
     P("#imagefile" ~ ws ~ rest).map(f => Some(ImageFile(f)))
 
+  private def winterImageFileP[$: P]: P[Option[MapDirective]] =
+    P("#winterimagefile" ~ ws ~ rest).map(f => Some(WinterImageFile(f)))
+
   private def mapSizeP[$: P]: P[Option[MapDirective]] =
     P("#mapsize" ~ ws ~ int ~ ws ~ int).map { case (w, h) =>
       Some(MapSize(MapWidth(w), MapHeight(h)))
@@ -41,6 +44,9 @@ object MapFileParser:
 
   private def domVersionP[$: P]: P[Option[MapDirective]] =
     P("#domversion" ~ ws ~ int).map(v => Some(DomVersion(v)))
+
+  private def descriptionP[$: P]: P[Option[MapDirective]] =
+    P("#description" ~ ws ~ quoted).map(d => Some(Description(d)))
 
   private def wrapAroundP[$: P]: P[Option[MapDirective]] =
     P("#wraparound").map(_ => Some(WrapAround))
@@ -108,6 +114,11 @@ object MapFileParser:
       Some(LandName(ProvinceId(p), n))
     }
 
+  private def gateP[$: P]: P[Option[MapDirective]] =
+    P("#gate" ~ ws ~ int ~ ws ~ int).map { case (a, b) =>
+      Some(Gate(ProvinceId(a), ProvinceId(b)))
+    }
+
   private def neighbourP[$: P]: P[Option[MapDirective]] =
     P("#neighbour" ~ ws ~ int ~ ws ~ int).map { case (a, b) =>
       Some(Neighbour(ProvinceId(a), ProvinceId(b)))
@@ -124,8 +135,10 @@ object MapFileParser:
   private def directive[$: P]: P[Option[MapDirective]] = P(
     dom2TitleP |
       imageFileP |
+      winterImageFileP |
       mapSizeP |
       domVersionP |
+      descriptionP |
       wrapAroundP |
       hwrapAroundP |
       vwrapAroundP |
@@ -140,6 +153,7 @@ object MapFileParser:
       provincePixelsP |
       terrainP |
       landnameP |
+      gateP |
       neighbourP |
       neighbourspecP
   )
