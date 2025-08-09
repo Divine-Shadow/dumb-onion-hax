@@ -25,8 +25,8 @@ object WrapSever:
   ): Boolean =
     val rowA = (a.value - 1) / width.value
     val rowB = (b.value - 1) / width.value
-    val top = 0
-    val bottom = height.value - 1
+    val top = height.value - 1
+    val bottom = 0
     (rowA == top && rowB == bottom) || (rowA == bottom && rowB == top)
 
   def isLeftRight(a: ProvinceId, b: ProvinceId, width: MapWidth): Boolean =
