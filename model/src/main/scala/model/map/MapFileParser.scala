@@ -93,6 +93,11 @@ object MapFileParser:
       Nation.values.find(_.id == n).map(SpecStart(_, ProvinceId(p)))
     }
 
+  private def provincePixelsP[$: P]: P[Option[MapDirective]] =
+    P("#pb" ~ ws ~ int ~ ws ~ int ~ ws ~ int ~ ws ~ int).map {
+      case (x, y, len, p) => Some(ProvincePixels(x, y, len, ProvinceId(p)))
+    }
+
   private def terrainP[$: P]: P[Option[MapDirective]] =
     P("#terrain" ~ ws ~ int ~ ws ~ int).map { case (p, m) =>
       Some(Terrain(ProvinceId(p), m))
@@ -132,6 +137,7 @@ object MapFileParser:
       mapdomcolP |
       allowedPlayerP |
       specStartP |
+      provincePixelsP |
       terrainP |
       landnameP |
       neighbourP |

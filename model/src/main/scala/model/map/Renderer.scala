@@ -30,6 +30,7 @@ object Renderer:
         case MapDomColor(r,g,b,a)  => s"#mapdomcol $r $g $b $a"
         case AllowedPlayer(n)      => s"#allowedplayer ${n.id}"
         case SpecStart(n,p)        => s"#specstart ${n.id} ${p.value}"
+        case ProvincePixels(x,y,l,p) => s"#pb $x $y $l ${p.value}"
         case Terrain(p,m)          => s"#terrain ${p.value} $m"
         case LandName(p,n)         => s"#landname ${p.value} \"$n\""
         case Neighbour(a,b)        => s"#neighbour ${a.value} ${b.value}"

@@ -31,5 +31,6 @@ object MapRendererSpec extends SimpleIOSuite with Checkers:
     val e2 = expect(ImageFile("bar.tga").render == "#imagefile bar.tga")
     val e3 = expect(MapSize(MapWidth(1), MapHeight(2)).render == "#mapsize 1 2")
     val e4 = expect(LandName(ProvinceId(1), "name").render == "#landname 1 \"name\"")
-    IO.pure(e1 and e2 and e3 and e4)
+    val e5 = expect(ProvincePixels(1, 2, 3, ProvinceId(4)).render == "#pb 1 2 3 4")
+    IO.pure(e1 and e2 and e3 and e4 and e5)
   }

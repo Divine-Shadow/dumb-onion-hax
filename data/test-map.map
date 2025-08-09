@@ -8,6 +8,7 @@
 #mapnohide
 #maptextcol 0.10 0.20 0.30 1.00
 #mapdomcol 1 2 3 4
+#pb 1 2 3 1
 #allowedplayer 31
 #specstart 31 1
 #terrain 1 264
