@@ -43,6 +43,7 @@ object MapFileParserSpec extends SimpleIOSuite:
             )
           ),
           MapDomColor(1, 2, 3, 4),
+          ProvincePixels(1, 2, 3, ProvinceId(1)),
           AllowedPlayer(Nation.Xibalba_Early),
           SpecStart(Nation.Xibalba_Early, ProvinceId(1)),
           Terrain(ProvinceId(1), 264),
