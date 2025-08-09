@@ -31,7 +31,7 @@ lazy val apps = (project in file("apps"))
     commonSettings,
     assembly / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
     Compile / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
-    assembly / assemblyJarName := "apps-assembly.jar"
+    assembly / assemblyJarName := "dumb-onion-hax.jar"
   )
 
 lazy val root = (project in file("."))
