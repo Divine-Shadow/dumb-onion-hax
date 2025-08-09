@@ -3,6 +3,7 @@ package apps
 
 import cats.effect.IO
 import fs2.io.file.{Files, Path}
+import com.crib.bills.dom6maps.model.{ProvinceId}
 import com.crib.bills.dom6maps.model.map.{
   HWrapAround,
   MapFileParser,
@@ -89,4 +90,21 @@ object WrapSeverAppSpec extends SimpleIOSuite:
         }
         expect(hasVWrap && !hasLeftRight && hasMiddle)
       }
+  }
+
+  test("isTopBottom treats province ids as 1-indexed") {
+    IO.pure(
+      expect(
+        !isTopBottom(
+          ProvinceId(6),
+          ProvinceId(1),
+          MapWidth(5),
+          MapHeight(12)
+        )
+      )
+    )
+  }
+
+  test("isLeftRight only matches provinces on the same row") {
+    IO.pure(expect(!isLeftRight(ProvinceId(5), ProvinceId(6), MapWidth(5))))
   }

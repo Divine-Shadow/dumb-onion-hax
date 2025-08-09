@@ -23,18 +23,20 @@ object WrapSever:
       width: MapWidth,
       height: MapHeight
   ): Boolean =
-    val rowA = (a.value - 1) / width.value
-    val rowB = (b.value - 1) / width.value
-    val top = height.value - 1
-    val bottom = 0
+    val rowA = ((a.value - 1) / width.value) + 1
+    val rowB = ((b.value - 1) / width.value) + 1
+    val top = height.value
+    val bottom = 1
     (rowA == top && rowB == bottom) || (rowA == bottom && rowB == top)
 
   def isLeftRight(a: ProvinceId, b: ProvinceId, width: MapWidth): Boolean =
-    val colA = (a.value - 1) % width.value
-    val colB = (b.value - 1) % width.value
-    val left = 0
-    val right = width.value - 1
-    (colA == left && colB == right) || (colA == right && colB == left)
+    val rowA = ((a.value - 1) / width.value) + 1
+    val rowB = ((b.value - 1) / width.value) + 1
+    val colA = ((a.value - 1) % width.value) + 1
+    val colB = ((b.value - 1) % width.value) + 1
+    val left = 1
+    val right = width.value
+    rowA == rowB && ((colA == left && colB == right) || (colA == right && colB == left))
 
   private val wrapDirectives =
     Set[MapDirective](WrapAround, HWrapAround, VWrapAround, NoWrapAround)
