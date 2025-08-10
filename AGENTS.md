@@ -20,6 +20,7 @@ When reviewing documentation, agents are expected to reference linked pages when
   - `engineering/` – development and architecture guides.
   - `domain/` – business domain references.
   - `philosophy/` – culture and rationale documents.
+  - [Directory Configuration Service](documentation/engineering/directory_configuration_service.md) – user directory selection and persistence.
 
 ## Supplemental Guidelines
 - Follow and apply architectural and structural patterns established by the project.

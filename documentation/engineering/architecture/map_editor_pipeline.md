@@ -81,5 +81,8 @@ This document captures the initial plan for processing map-editor directories an
 - Implementations should provide concrete filesystem and parsing behavior while respecting the project's error-handling guidelines.
 - A composite `MapProcessingService` orchestrates the overall workflow by delegating to these capabilities, preserving modularity and SOLID design.
 
+## Configuration
+- [Directory Configuration Service](../directory_configuration_service.md) captures user-selected directories and persists them to `map-editor-wrap.conf`.
+
 ## Testing
 - `sbt compile`
