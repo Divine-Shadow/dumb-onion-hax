@@ -22,3 +22,6 @@ enum TerrainFlag(val mask: Int):
   case BadThrone         extends TerrainFlag(67108864)
   case Warmer            extends TerrainFlag(536870912)
   case Colder            extends TerrainFlag(1073741824)
+
+object TerrainFlag:
+  val Throne: TerrainFlag = TerrainFlag.GoodStart
