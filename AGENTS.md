@@ -21,6 +21,7 @@ When reviewing documentation, agents are expected to reference linked pages when
   - `domain/` – business domain references.
   - `philosophy/` – culture and rationale documents.
   - [Directory Configuration Service](documentation/engineering/directory_configuration_service.md) – user directory selection and persistence.
+  - [Wrap Selection Service](documentation/engineering/wrap_selection_service.md) – map wrap conversion options.
 
 ## Supplemental Guidelines
 - Follow and apply architectural and structural patterns established by the project.

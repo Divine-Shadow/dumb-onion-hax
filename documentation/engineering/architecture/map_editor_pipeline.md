@@ -83,6 +83,7 @@ This document captures the initial plan for processing map-editor directories an
 
 ## Configuration
 - [Directory Configuration Service](../directory_configuration_service.md) captures user-selected directories and persists them to `map-editor-wrap.conf`.
+- [Wrap Selection Service](../wrap_selection_service.md) presents wrap conversion options to the user and delegates the transformation.
 
 ## Testing
 - `sbt compile`

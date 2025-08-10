@@ -3,6 +3,7 @@ package apps
 
 import cats.effect.IO
 import cats.syntax.all.*
+import cats.{MonadError, Traverse}
 import fs2.io.file.{Files as Fs2Files, Path}
 import com.crib.bills.dom6maps.model.map.{
   HWrapAround,
@@ -11,19 +12,25 @@ import com.crib.bills.dom6maps.model.map.{
   Neighbour,
   NeighbourSpec
 }
+import services.mapeditor.{WrapChoice, WrapChoiceService}
 import WrapSever.isTopBottom
 import weaver.SimpleIOSuite
 import java.nio.file.{Files as JFiles, Path as JPath}
 import java.nio.file.attribute.FileTime
 
 object MapEditorWrapAppSpec extends SimpleIOSuite:
+  override def maxParallelism = 1
+  private class StubWrapChoiceService(choice: WrapChoice) extends WrapChoiceService[IO]:
+    override def chooseWrap[ErrorChannel[_]]()(using
+        errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+    ) = IO.pure(errorChannel.pure(choice))
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
       _ <- IO(JFiles.deleteIfExists(configFile))
-      res <- MapEditorWrapApp.run(Nil).attempt
+      res <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoice.HWrap)).attempt
       exists <- IO(JFiles.exists(configFile))
-      content <- IO(JFiles.readString(configFile))
+      content <- IO(if exists then JFiles.readString(configFile) else "")
       _ <- IO(JFiles.deleteIfExists(configFile))
     yield expect.all(res.isLeft, exists, content.contains("source="), content.contains("dest="))
   }
@@ -44,7 +51,7 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       _ <- IO(JFiles.writeString(configFile, s"""source="${rootDir.toString}"
 dest="${destRoot.toString}"
 """))
-      _ <- MapEditorWrapApp.run(Nil).guarantee(IO(JFiles.deleteIfExists(configFile)))
+      _ <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoice.HWrap)).guarantee(IO(JFiles.deleteIfExists(configFile)))
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
       copiedEntries <- Fs2Files[IO].list(destDir).compile.toList
