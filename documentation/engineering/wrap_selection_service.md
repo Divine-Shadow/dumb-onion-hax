@@ -5,16 +5,18 @@ settings are converted.
 
 ## Components
 - **WrapChoiceService** – displays a Swing dialog with radio buttons for
-  `hwrap`, `vwrap`, or `no-wrap`. It returns the user's selection in the effect
-  channel. The service contains only UI code so rendering can be replaced later.
+  `hwrap`, `vwrap`, or `no-wrap`. The dialog also offers a checkbox to enable
+  independent wrap selection for the cave layer. It returns the main map
+  selection along with an optional cave selection. The service contains only UI
+  code so rendering can be replaced later.
 - **WrapConversionService** – applies the selected wrap to map directives by
   severing the appropriate neighbour connections. It delegates to
   `WrapSever` for the transformation logic.
 
 ## Integration
 `MapEditorWrapApp` instantiates `WrapChoiceServiceImpl` to obtain the desired
-wrap and delegates to `WrapConversionServiceImpl` to rewrite the directives
-before writing the map file.
+wraps and delegates to `WrapConversionServiceImpl` to rewrite the directives
+before writing the map files.
 
 ## Testing
 - `sbt "project apps" test`

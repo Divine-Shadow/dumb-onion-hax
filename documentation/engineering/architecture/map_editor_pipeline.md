@@ -14,20 +14,21 @@ This document captures the initial plan for processing map-editor directories an
              traceId: model.trace.Id
        ): Sequencer[ErrorChannel[fs2.io.file.Path]]
      ```
-2. **Copy the directory while extracting the `.map` file**
+2. **Copy the directory while extracting map files**
    - Create a `MapEditorCopier` capability that:
      - Streams files from the source directory to the destination.
-     - Skips the `.map` file and returns its contents as an effectful value.
+     - Skips the main `.map` file and its optional `_plane2.map` companion,
+       returning their contents as effectful values.
    - Contract sketch:
      ```scala
      trait MapEditorCopier[Sequencer[_]]:
-       def copyWithoutMap[ErrorChannel[_]](
+       def copyWithoutMaps[ErrorChannel[_]](
          source: fs2.io.file.Path,
          dest: fs2.io.file.Path
        )(using Files[Sequencer],
              errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel],
              traceId: model.trace.Id
-       ): Sequencer[ErrorChannel[Stream[Sequencer, Byte]]]
+       ): Sequencer[ErrorChannel[(Stream[Sequencer, Byte], Option[Stream[Sequencer, Byte]])]]
      ```
 3. **Apply map-directive transformation**
    - Introduce `MapDirectiveTransformer` that accepts a directive stream and an FS2 `Pipe` to modify directives.

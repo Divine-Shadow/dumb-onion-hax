@@ -32,8 +32,9 @@ class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
       folderEC <- finder.mostRecentFolder[ErrorChannel](root)
       nested <- folderEC.traverse { folder =>
                   for
-                    copyEC <- copier.copyWithoutMap[ErrorChannel](folder, dest)
-                    mapResult <- copyEC.traverse { case (mapBytes, outPath) =>
+                    copyEC <- copier.copyWithoutMaps[ErrorChannel](folder, dest)
+                    mapResult <- copyEC.traverse { streams =>
+                                  val (mapBytes, outPath) = streams.main
                                   val directives = mapBytes.through(MapFileParser.parse[Sequencer])
                                   for
                                     transformedEC <- transformer.transform[ErrorChannel](directives, pipe)

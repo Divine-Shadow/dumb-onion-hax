@@ -10,9 +10,10 @@ import com.crib.bills.dom6maps.model.map.{
   MapFileParser,
   MapSizePixels,
   Neighbour,
-  NeighbourSpec
+  NeighbourSpec,
+  VWrapAround
 }
-import services.mapeditor.{WrapChoice, WrapChoiceService}
+import services.mapeditor.{WrapChoice, WrapChoiceService, WrapChoices}
 import WrapSever.isTopBottom
 import weaver.SimpleIOSuite
 import java.nio.file.{Files as JFiles, Path as JPath}
@@ -20,15 +21,15 @@ import java.nio.file.attribute.FileTime
 
 object MapEditorWrapAppSpec extends SimpleIOSuite:
   override def maxParallelism = 1
-  private class StubWrapChoiceService(choice: WrapChoice) extends WrapChoiceService[IO]:
-    override def chooseWrap[ErrorChannel[_]]()(using
+  private class StubWrapChoiceService(selections: WrapChoices) extends WrapChoiceService[IO]:
+    override def chooseWraps[ErrorChannel[_]]()(using
         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-    ) = IO.pure(errorChannel.pure(choice))
+    ) = IO.pure(errorChannel.pure(selections))
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
       _ <- IO(JFiles.deleteIfExists(configFile))
-      res <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoice.HWrap)).attempt
+      res <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None))).attempt
       exists <- IO(JFiles.exists(configFile))
       content <- IO(if exists then JFiles.readString(configFile) else "")
       _ <- IO(JFiles.deleteIfExists(configFile))
@@ -51,7 +52,9 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       _ <- IO(JFiles.writeString(configFile, s"""source="${rootDir.toString}"
 dest="${destRoot.toString}"
 """))
-      _ <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoice.HWrap)).guarantee(IO(JFiles.deleteIfExists(configFile)))
+      _ <- MapEditorWrapApp
+        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)))
+        .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
       copiedEntries <- Fs2Files[IO].list(destDir).compile.toList
@@ -76,4 +79,30 @@ dest="${destRoot.toString}"
       directives.contains(HWrapAround),
       !hasTopBottom,
     )
+
+  }
+
+  test("severs cave map when selected") {
+    for
+      rootDir <- IO(JFiles.createTempDirectory("root-editor-cave"))
+      newer <- IO(JFiles.createDirectory(rootDir.resolve("newer")))
+      _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map.map")))
+      _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map_plane2.map")))
+      destRoot <- IO(JFiles.createTempDirectory("dest-editor-cave"))
+      configFile = JPath.of("map-editor-wrap.conf")
+      _ <- IO(
+        JFiles.writeString(
+          configFile,
+          s"""source="${rootDir.toString}"
+dest="${destRoot.toString}"
+"""
+        )
+      )
+      _ <- MapEditorWrapApp
+        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))))
+        .guarantee(IO(JFiles.deleteIfExists(configFile)))
+      destDir = Path.fromNioPath(destRoot.resolve("newer"))
+      cavePath = destDir / "map_plane2.map"
+      directives <- MapFileParser.parseFile[IO](cavePath).compile.toVector
+    yield expect(directives.contains(VWrapAround))
   }
