@@ -1,16 +1,17 @@
 # Map Modification Services
 
-This plan introduces capability-based services for injecting gate and throne data into Dominions 6 maps. It extends the [Map Editor Processing Pipeline](map_editor_pipeline.md) with transformations for two map layers and a dedicated throne layer.
+Map modification services inject gate and throne data into Dominions 6 maps. They extend the [Map Editor Processing Pipeline](map_editor_pipeline.md) with transformations for two map layers and a throne-aware layer.
 
 ## Requirements
 - Accept two input `.map` files representing surface and cave layers.
-- Remove existing `#gate` directives from both maps and add new ones provided by a future specification.
+- Remove existing `#gate` directives from both maps and append new ones.
 - Update the throne layer so that designated provinces become thrones.
 - Setting a throne modifies the province's `#terrain` bitmask by adding `33554432` which corresponds to `TerrainFlag.GoodStart`.
 - Magic numbers are avoided by manipulating `TerrainFlag` values through domain types and helper functions.
 
 ## Domain Types
 - `GateSpec`: pairs of `ProvinceId` values describing a gate connection.
+- `ThroneLevel`: value class wrapping an `Int` representing throne strength.
 - `ThronePlacement`: province identifier and throne level.
 - `TerrainMask`: value class wrapping an `Int` with methods:
   - `withFlag(flag: TerrainFlag): TerrainMask`
@@ -24,11 +25,10 @@ This plan introduces capability-based services for injecting gate and throne dat
    - Contract sketch:
      ```scala
      trait MapLayerLoader[Sequencer[_]] {
-       def load[ErrorChannel[_]](path: fs2.io.file.Path)
-         (using Files[Sequencer],
-                MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel],
-                model.trace.Id
-         ): Sequencer[ErrorChannel[Vector[MapDirective]]]
+       def load[ErrorChannel[_]](path: fs2.io.file.Path)(using
+         fs2.io.file.Files[Sequencer],
+         cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]
+       ): Sequencer[ErrorChannel[Vector[MapDirective]]]
      }
      ```
 2. **GateDirectiveService**
@@ -42,8 +42,8 @@ This plan introduces capability-based services for injecting gate and throne dat
      1. Loads surface and cave layers via `MapLayerLoader`.
      2. Applies `GateDirectiveService` to both layers.
      3. Applies `ThronePlacementService` to the throne layer.
-     4. Delegates rendering to the existing `MapWriter`.
-   - Only coordinates the above capabilities, maintaining single responsibility.
+     4. Delegates rendering to `MapWriter` for file output.
+   - Coordinates the above capabilities, maintaining single responsibility.
 
 ## Testing Strategy
 - Provide `Stub` implementations for each capability mirroring the [capability trait pattern](service_and_capability_patterns.md).
@@ -51,6 +51,4 @@ This plan introduces capability-based services for injecting gate and throne dat
 - The orchestrator can be tested with sample maps to ensure composition order is correct.
 
 ## Future Work
-- Define the `GateSpec` and `ThronePlacement` formats once specifications are available.
-- Implement production `Impl` classes using `fs2.Stream` and the effect system.
-- Extend `TerrainFlag` with the `Throne` alias and introduce `TerrainMask` utilities.
+- Integrate external specifications for gate and throne data.
