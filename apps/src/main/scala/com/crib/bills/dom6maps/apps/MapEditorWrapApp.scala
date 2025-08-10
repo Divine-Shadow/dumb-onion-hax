@@ -7,7 +7,14 @@ import cats.syntax.all.*
 import fs2.io.file.Path
 import model.map.{MapFileParser, MapSizePixels}
 import model.version.{UpdateStatus, Version}
-import services.mapeditor.{LatestEditorFinderImpl, MapEditorCopierImpl, MapWriterImpl}
+import services.mapeditor.{
+  LatestEditorFinderImpl,
+  MapEditorCopierImpl,
+  MapWriterImpl,
+  WrapChoiceService,
+  WrapChoiceServiceImpl,
+  WrapConversionServiceImpl
+}
 import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
@@ -26,10 +33,11 @@ dest="/path/to/dominions/maps"
 
   private val currentVersion = Version("1.1")
 
-  override def run(args: List[String]): IO[ExitCode] =
+  def runWith(chooser: WrapChoiceService[IO]): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
     val copier = new MapEditorCopierImpl[IO]
     val writer = new MapWriterImpl[IO]
+    val converter = new WrapConversionServiceImpl[IO]
     val checker = new GithubReleaseCheckerImpl[IO]
     val action =
       for
@@ -60,9 +68,16 @@ dest="/path/to/dominions/maps"
           new NoSuchElementException("#mapsize not found")
         )
         provinceSize = sizePixels.toProvinceSize
-        severed = WrapSever.severVertically(directives, provinceSize.width, provinceSize.height)
-        written <- writer.write[ErrorOr](severed, outPath)
+        wrapEC <- chooser.chooseWrap[ErrorOr]()
+        convertedEC <- wrapEC.traverse(choice =>
+          converter.convert[ErrorOr](directives, provinceSize.width, provinceSize.height, choice)
+        )
+        converted <- IO.fromEither(convertedEC)
+        finalDirectives <- IO.fromEither(converted)
+        written <- writer.write[ErrorOr](finalDirectives, outPath)
         _ <- IO.fromEither(written)
       yield ExitCode.Success
     action
 
+  override def run(args: List[String]): IO[ExitCode] =
+    runWith(new WrapChoiceServiceImpl[IO])
