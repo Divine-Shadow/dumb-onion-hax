@@ -23,3 +23,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 14. [Ground-Surface Duel Service](ground_surface_duel_service.md)
 15. [Map State](map_state.md)
 16. [Map State Model Migration Plan](map_state_model_migration.md)
+17. [Province Coordinate Derivation](province_coordinate_derivation.md)
