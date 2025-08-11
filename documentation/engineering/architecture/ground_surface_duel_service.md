@@ -14,11 +14,11 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 - `MapSize`: value class wrapping an odd `Int` side length with constructor validation.
 - `EdgeMidpoints`: pure function computing midpoint province identifiers for a given `MapSize`.
 - `CornerProvinces`: pure function returning the four corner province identifiers.
-- `GroundSurfaceDuelConfig`: optional throne level and additional gate settings for future extension.
+- `GroundSurfaceDuelConfig`: throne level (default `ThroneLevel(1)`) and hooks for future extension.
 
 ## Capability Sketches
 1. **MapSizeValidator**
-   - Computes map dimensions from a directive stream.
+   - Computes map dimensions from directive streams and returns the compiled directives.
    - Ensures both layers are equal, square, and odd-sized.
 2. **PlacementPlanner**
    - Uses `MapSize` to derive:
@@ -35,7 +35,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
          cave: Stream[Sequencer, MapDirective],
          config: GroundSurfaceDuelConfig
        )(using
-         errorChannel: MonadError[ErrorChannel, status.Error] & Traverse[ErrorChannel]
+         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
        ): Sequencer[ErrorChannel[(Vector[MapDirective], Vector[MapDirective])]]
      ```
    - Internally invokes:
