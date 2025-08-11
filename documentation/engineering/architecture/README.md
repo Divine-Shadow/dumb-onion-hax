@@ -21,4 +21,5 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 12. [Map Editor Processing Pipeline](map_editor_pipeline.md)
 13. [Map Modification Services](map_modification_services.md)
 14. [Ground-Surface Duel Service](ground_surface_duel_service.md)
-15. [Map State Model Migration Plan](map_state_model_migration.md)
+15. [Map State](map_state.md)
+16. [Map State Model Migration Plan](map_state_model_migration.md)
