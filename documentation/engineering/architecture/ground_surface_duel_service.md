@@ -1,5 +1,6 @@
 # Ground-Surface Duel Service
 
+
 The Ground-Surface Duel service composes map modification capabilities—[GateDirectiveService](map_modification_services.md#2-gatedirectiveservice), [ThronePlacementService](map_modification_services.md#3-throneplacementservice), and [WrapSever](../wrap_selection_service.md)—to generate a duel-style game mode. It consumes surface and cave map directive streams, normalizes them, and injects fixed gate and throne placements while severing wrap connections.
 
 ## Requirements
