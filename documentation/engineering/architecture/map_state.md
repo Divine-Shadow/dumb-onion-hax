@@ -13,3 +13,5 @@
 - `gates` – special province links.
 
 The companion object provides `fromDirectives` which folds a stream of `MapDirective` values to populate these fields.
+
+`MapDirectiveCodecs` supplies the inverse operation by encoding `MapState` and its components back into canonical `MapDirective` values.
