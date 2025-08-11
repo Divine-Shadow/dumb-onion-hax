@@ -3,29 +3,27 @@ package apps.services.mapeditor
 
 import cats.{MonadError, Traverse}
 import cats.syntax.all.*
-import fs2.{Pipe, Stream}
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{MapDirective, MapFileParser}
+import model.map.{MapFileParser, MapState}
 
 trait MapProcessingService[Sequencer[_]]:
   def process[ErrorChannel[_]](
       root: Path,
       dest: Path,
-      pipe: Pipe[Sequencer, MapDirective, MapDirective]
+      transform: MapState => Sequencer[MapState]
   )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Path]]
 
 class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
     finder: LatestEditorFinder[Sequencer],
     copier: MapEditorCopier[Sequencer],
-    transformer: MapDirectiveTransformer[Sequencer],
     writer: MapWriter[Sequencer]
 ) extends MapProcessingService[Sequencer]:
   override def process[ErrorChannel[_]](
       root: Path,
       dest: Path,
-      pipe: Pipe[Sequencer, MapDirective, MapDirective]
+      transform: MapState => Sequencer[MapState]
   )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Path]] =
     for
@@ -35,10 +33,10 @@ class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
                     copyEC <- copier.copyWithoutMaps[ErrorChannel](folder, dest)
                     mapResult <- copyEC.traverse { streams =>
                                   val (mapBytes, outPath) = streams.main
-                                  val directives = mapBytes.through(MapFileParser.parse[Sequencer])
                                   for
-                                    transformedEC <- transformer.transform[ErrorChannel](directives, pipe)
-                                    writtenEC <- transformedEC.traverse(ds => writer.write[ErrorChannel](ds, outPath))
+                                    state <- MapState.fromDirectives(mapBytes.through(MapFileParser.parse[Sequencer]))
+                                    transformed <- transform(state)
+                                    writtenEC <- writer.write[ErrorChannel](transformed, outPath)
                                   yield writtenEC.as(outPath)
                                 }
                   yield mapResult

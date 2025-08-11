@@ -2,28 +2,27 @@ package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
 import cats.Applicative
-import fs2.Pipe
+import cats.syntax.all.*
 import model.TerrainFlag
 import model.TerrainMask
-import model.map.{MapDirective, Terrain, ThronePlacement}
+import model.map.{MapState, Terrain, ThronePlacement}
 
 trait ThronePlacementService[Sequencer[_]]:
-  def pipe(thrones: Vector[ThronePlacement]): Pipe[Sequencer, MapDirective, MapDirective]
+  def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState]
 
-class ThronePlacementServiceImpl[Sequencer[_]] extends ThronePlacementService[Sequencer]:
-  override def pipe(thrones: Vector[ThronePlacement]): Pipe[Sequencer, MapDirective, MapDirective] =
-    in =>
-      val throneSet = thrones.map(_.province).toSet
-      in.map {
-        case t @ Terrain(province, mask) =>
-          val updated =
-            if throneSet.contains(province) then
-              TerrainMask(mask).withFlag(TerrainFlag.Throne)
-            else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
-          t.copy(mask = updated.value)
-        case d => d
-      }
+class ThronePlacementServiceImpl[Sequencer[_]: Applicative] extends ThronePlacementService[Sequencer]:
+  override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
+    val throneSet = thrones.map(_.province).toSet
+    val updatedTerrains = state.terrains.map {
+      case t @ Terrain(province, mask) =>
+        val updated =
+          if throneSet.contains(province) then
+            TerrainMask(mask).withFlag(TerrainFlag.Throne)
+          else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
+        t.copy(mask = updated.value)
+    }
+    state.copy(terrains = updatedTerrains).pure[Sequencer]
 
 class ThronePlacementServiceStub[Sequencer[_]: Applicative] extends ThronePlacementService[Sequencer]:
-  override def pipe(thrones: Vector[ThronePlacement]): Pipe[Sequencer, MapDirective, MapDirective] =
-    stream => stream
+  override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
+    state.pure[Sequencer]

@@ -45,13 +45,13 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 
   private class StubGroundSurfaceDuelPipe extends GroundSurfaceDuelPipe[IO]:
     override def apply[ErrorChannel[_]](
-        surface: fs2.Stream[IO, model.map.MapDirective],
-        cave: fs2.Stream[IO, model.map.MapDirective],
+        surface: model.map.MapState,
+        cave: model.map.MapState,
         config: model.map.GroundSurfaceDuelConfig,
         surfaceNation: model.map.SurfaceNation,
         undergroundNation: model.map.UndergroundNation
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      (Vector.empty[model.map.MapDirective], Vector.empty[model.map.MapDirective]).pure[ErrorChannel].pure[IO]
+      (model.map.MapState.empty, model.map.MapState.empty).pure[ErrorChannel].pure[IO]
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))

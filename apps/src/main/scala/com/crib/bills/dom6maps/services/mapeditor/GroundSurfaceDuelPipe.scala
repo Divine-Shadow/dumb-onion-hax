@@ -1,20 +1,19 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import cats.{MonadError, Traverse, Applicative}
+import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
-import fs2.Stream
 import model.map.*
 
 trait GroundSurfaceDuelPipe[Sequencer[_]]:
   def apply[ErrorChannel[_]](
-      surface: Stream[Sequencer, MapDirective],
-      cave: Stream[Sequencer, MapDirective],
+      surface: MapState,
+      cave: MapState,
       config: GroundSurfaceDuelConfig,
       surfaceNation: SurfaceNation,
       undergroundNation: UndergroundNation
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-    ): Sequencer[ErrorChannel[(Vector[MapDirective], Vector[MapDirective])]]
+    ): Sequencer[ErrorChannel[(MapState, MapState)]]
 
 class GroundSurfaceDuelPipeImpl[Sequencer[_]: cats.effect.Sync](
     sizeValidator: MapSizeValidator[Sequencer],
@@ -24,46 +23,37 @@ class GroundSurfaceDuelPipeImpl[Sequencer[_]: cats.effect.Sync](
     spawnService: SpawnPlacementService[Sequencer]
 ) extends GroundSurfaceDuelPipe[Sequencer]:
   override def apply[ErrorChannel[_]](
-      surface: Stream[Sequencer, MapDirective],
-      cave: Stream[Sequencer, MapDirective],
+      surface: MapState,
+      cave: MapState,
       config: GroundSurfaceDuelConfig,
       surfaceNation: SurfaceNation,
       undergroundNation: UndergroundNation
     )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-    ): Sequencer[ErrorChannel[(Vector[MapDirective], Vector[MapDirective])]] =
+    ): Sequencer[ErrorChannel[(MapState, MapState)]] =
     for
       validated <- sizeValidator.validate[ErrorChannel](surface, cave)
-      result <- validated.traverse { case (size, surfaceDs, caveDs) =>
+      result <- validated.traverse { case (size, surfaceState, caveState) =>
         val (gates, thrones) = planner.plan(size, config)
         val center = CenterProvince.of(size)
-        val width = MapWidth(size.value)
-        val height = MapHeight(size.value)
-        def transform(ds: Vector[MapDirective], nation: model.Nation) =
-          val spawn = PlayerSpawn(nation, center)
-          Stream
-            .emits(ds)
-            .covary[Sequencer]
-            .through(gateService.pipe(gates))
-            .through(throneService.pipe(thrones))
-            .through(spawnService.pipe(Vector(spawn)))
-            .through(WrapSeverService.verticalPipe(width, height))
-            .through(WrapSeverService.horizontalPipe(width, height))
-            .compile
-            .toVector
-        (
-          transform(surfaceDs, surfaceNation.value),
-          transform(caveDs, undergroundNation.value)
-        ).tupled
+        val spawnSurface = PlayerSpawn(surfaceNation.value, center)
+        val spawnCave = PlayerSpawn(undergroundNation.value, center)
+        def transform(state: MapState, spawn: PlayerSpawn) =
+          for
+            gated   <- gateService.update(state, gates)
+            throned <- throneService.update(gated, thrones)
+            spawned <- spawnService.update(throned, Vector(spawn))
+          yield WrapSeverService.severHorizontally(WrapSeverService.severVertically(spawned))
+        (transform(surfaceState, spawnSurface), transform(caveState, spawnCave)).tupled
       }
     yield result
 
 class GroundSurfaceDuelPipeStub[Sequencer[_]: Applicative] extends GroundSurfaceDuelPipe[Sequencer]:
   override def apply[ErrorChannel[_]](
-      surface: Stream[Sequencer, MapDirective],
-      cave: Stream[Sequencer, MapDirective],
+      surface: MapState,
+      cave: MapState,
       config: GroundSurfaceDuelConfig,
       surfaceNation: SurfaceNation,
       undergroundNation: UndergroundNation
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-    ): Sequencer[ErrorChannel[(Vector[MapDirective], Vector[MapDirective])]] =
-    (Vector.empty[MapDirective], Vector.empty[MapDirective]).pure[ErrorChannel].pure[Sequencer]
+    ): Sequencer[ErrorChannel[(MapState, MapState)]] =
+    (MapState.empty, MapState.empty).pure[ErrorChannel].pure[Sequencer]

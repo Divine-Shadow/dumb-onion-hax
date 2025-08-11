@@ -4,9 +4,8 @@ package apps.services.mapeditor
 import cats.effect.IO
 import cats.syntax.all.*
 import cats.instances.either.*
-import fs2.{Stream}
 import fs2.io.file.Path
-import model.map.{GroundSurfaceDuelConfig, MapFileParser, MapSizePixels}
+import model.map.{GroundSurfaceDuelConfig, MapFileParser, MapState}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
 
@@ -42,7 +41,7 @@ class MapWrapWorkflowImpl(
       res <- copier.copyWithoutMaps[ErrorOr](latest, targetDir)
       copied <- IO.fromEither(res)
       (bytes, outPath) = copied.main
-      directives <- bytes.through(MapFileParser.parse[IO]).compile.toVector
+      state <- MapState.fromDirectives(bytes.through(MapFileParser.parse[IO]))
       wrapEC <- chooser.chooseWraps[ErrorOr]()
       wrapChoices <- IO.fromEither(wrapEC)
       _ <- wrapChoices.main match
@@ -50,13 +49,13 @@ class MapWrapWorkflowImpl(
           copied.cave match
             case Some((caveBytes, caveOutPath)) =>
               for
-                caveDirectives <- caveBytes.through(MapFileParser.parse[IO]).compile.toVector
+                caveState <- MapState.fromDirectives(caveBytes.through(MapFileParser.parse[IO]))
                 nationsEC <- nationChooser.chooseNations[ErrorOr]()
                 nations <- IO.fromEither(nationsEC)
                 duelResEC <- dueler
                   .apply[ErrorOr](
-                    Stream.emits(directives).covary[IO],
-                    Stream.emits(caveDirectives).covary[IO],
+                    state,
+                    caveState,
                     GroundSurfaceDuelConfig.default,
                     nations.surface,
                     nations.underground
@@ -71,12 +70,7 @@ class MapWrapWorkflowImpl(
             case None => IO.raiseError(new NoSuchElementException("cave map not found"))
         case wrapChoice =>
           for
-            sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
-              new NoSuchElementException("#mapsize not found")
-            )
-            provinceSize = sizePixels.toProvinceSize
-            convertedEC <-
-              converter.convert[ErrorOr](directives, provinceSize.width, provinceSize.height, wrapChoice)
+            convertedEC <- converter.convert[ErrorOr](state, wrapChoice)
             converted <- IO.fromEither(convertedEC)
             written <- writer.write[ErrorOr](converted, outPath)
             _ <- IO.fromEither(written)
@@ -85,13 +79,8 @@ class MapWrapWorkflowImpl(
                 copied.cave match
                   case Some((caveBytes, caveOutPath)) =>
                     for
-                      caveDirectives <- caveBytes.through(MapFileParser.parse[IO]).compile.toVector
-                      caveSizePixels <- IO.fromOption(caveDirectives.collectFirst { case m: MapSizePixels => m })(
-                        new NoSuchElementException("#mapsize not found")
-                      )
-                      caveProvince = caveSizePixels.toProvinceSize
-                      caveConvertedEC <-
-                        converter.convert[ErrorOr](caveDirectives, caveProvince.width, caveProvince.height, caveChoice)
+                      caveState <- MapState.fromDirectives(caveBytes.through(MapFileParser.parse[IO]))
+                      caveConvertedEC <- converter.convert[ErrorOr](caveState, caveChoice)
                       caveConverted <- IO.fromEither(caveConvertedEC)
                       caveWritten <- writer.write[ErrorOr](caveConverted, caveOutPath)
                       _ <- IO.fromEither(caveWritten)

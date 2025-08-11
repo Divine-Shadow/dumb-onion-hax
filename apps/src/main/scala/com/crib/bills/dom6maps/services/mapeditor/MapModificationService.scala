@@ -1,12 +1,11 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import cats.{MonadError, Traverse, Applicative}
+import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
-import fs2.Stream
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{GateSpec, ThronePlacement}
+import model.map.{GateSpec, MapState, ThronePlacement}
 
 trait MapModificationService[Sequencer[_]]:
   def modify[ErrorChannel[_]](
@@ -39,25 +38,15 @@ class MapModificationServiceImpl[Sequencer[_]: Async](
       for
         surfaceEC <- loader.load[ErrorChannel](surface)(using files, errorChannel)
         caveEC    <- loader.load[ErrorChannel](cave)(using files, errorChannel)
-        transformedSurface <- surfaceEC.traverse { ds =>
-          Stream
-            .emits(ds)
-            .covary[Sequencer]
-            .through(gateService.pipe(gates))
-            .through(throneService.pipe(thrones))
-            .compile
-            .toVector
+        transformedSurface <- surfaceEC.traverse { state =>
+          for
+            gated   <- gateService.update(state, gates)
+            throned <- throneService.update(gated, thrones)
+          yield throned
         }
-        transformedCave <- caveEC.traverse { ds =>
-          Stream
-            .emits(ds)
-            .covary[Sequencer]
-            .through(gateService.pipe(gates))
-            .compile
-            .toVector
-        }
-        _ <- transformedSurface.flatTraverse(ds => writer.write[ErrorChannel](ds, surfaceOut)(using files, errorChannel))
-        _ <- transformedCave.flatTraverse(ds => writer.write[ErrorChannel](ds, caveOut)(using files, errorChannel))
+        transformedCave <- caveEC.traverse(state => gateService.update(state, gates))
+        _ <- transformedSurface.flatTraverse(st => writer.write[ErrorChannel](st, surfaceOut)(using files, errorChannel))
+        _ <- transformedCave.flatTraverse(st => writer.write[ErrorChannel](st, caveOut)(using files, errorChannel))
       yield ().pure[ErrorChannel]
 
 class MapModificationServiceStub[Sequencer[_]: Applicative] extends MapModificationService[Sequencer]:

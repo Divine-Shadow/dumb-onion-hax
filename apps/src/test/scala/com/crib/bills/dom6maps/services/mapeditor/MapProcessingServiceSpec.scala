@@ -4,13 +4,12 @@ package apps.services.mapeditor
 import cats.effect.IO
 import cats.instances.either.*
 import cats.syntax.all.*
-import fs2.Pipe
 import fs2.io.file.Path
 import weaver.SimpleIOSuite
 import java.nio.file.Files
 import java.nio.file.attribute.FileTime
 import java.nio.charset.StandardCharsets
-import model.map.{MapDirective, MapNoHide, MapFileParser}
+import model.map.{MapNoHide, MapFileParser}
 
 object MapProcessingServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
@@ -18,13 +17,8 @@ object MapProcessingServiceSpec extends SimpleIOSuite:
   test("process selects latest editor and writes transformed map") {
     val finder = new LatestEditorFinderImpl[IO]
     val copier = new MapEditorCopierImpl[IO]
-    val transformer = new MapDirectiveTransformerImpl[IO]
     val writer = new MapWriterImpl[IO]
-    val service = new MapProcessingServiceImpl[IO](finder, copier, transformer, writer)
-    val pipe: Pipe[IO, MapDirective, MapDirective] = _.filter {
-      case MapNoHide => false
-      case d         => true
-    }
+    val service = new MapProcessingServiceImpl[IO](finder, copier, writer)
     for
       rootDir <- IO(Files.createTempDirectory("root-editor"))
       older <- IO(Files.createDirectory(rootDir.resolve("older")))
@@ -35,7 +29,7 @@ object MapProcessingServiceSpec extends SimpleIOSuite:
       _ <- IO(Files.write(newer.resolve("image.tga"), Array[Byte](1,2,3)))
       _ <- IO(Files.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
       destDir <- IO(Files.createTempDirectory("dest-editor"))
-      resultEC <- service.process[EC](Path.fromNioPath(rootDir), Path.fromNioPath(destDir), pipe)
+      resultEC <- service.process[EC](Path.fromNioPath(rootDir), Path.fromNioPath(destDir), ms => IO.pure(ms))
       outPath <- IO.fromEither(resultEC)
       directives <- MapFileParser.parseFile[IO](outPath).compile.toVector
     yield expect.all(
