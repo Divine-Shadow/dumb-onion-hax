@@ -19,7 +19,7 @@ import model.map.{
   NoWrapAround,
   WrapAround
 }
-import apps.WrapSever.{isTopBottom, isLeftRight}
+import WrapSeverService.{isTopBottom, isLeftRight}
 
 object WrapConversionServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]

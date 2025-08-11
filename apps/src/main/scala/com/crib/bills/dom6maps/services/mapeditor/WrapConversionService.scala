@@ -4,7 +4,6 @@ package apps.services.mapeditor
 import cats.{MonadError, Traverse}
 import cats.Applicative
 import cats.syntax.all.*
-import apps.WrapSever
 import model.map.{MapDirective, MapHeight, MapWidth}
 
 trait WrapConversionService[Sequencer[_]]:
@@ -27,9 +26,9 @@ class WrapConversionServiceImpl[Sequencer[_]: Applicative] extends WrapConversio
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Vector[MapDirective]]] =
     val result = target match
-      case WrapChoice.HWrap => WrapSever.severVertically(directives, width, height)
-      case WrapChoice.VWrap => WrapSever.severHorizontally(directives, width, height)
+      case WrapChoice.HWrap => WrapSeverService.severVertically(directives, width, height)
+      case WrapChoice.VWrap => WrapSeverService.severHorizontally(directives, width, height)
       case WrapChoice.NoWrap =>
-        val vertical = WrapSever.severVertically(directives, width, height)
-        WrapSever.severHorizontally(vertical, width, height)
+        val vertical = WrapSeverService.severVertically(directives, width, height)
+        WrapSeverService.severHorizontally(vertical, width, height)
     result.pure[Sequencer].map(errorChannel.pure)

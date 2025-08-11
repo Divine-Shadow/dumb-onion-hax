@@ -1,10 +1,10 @@
 package com.crib.bills.dom6maps
-package apps
+package apps.services.mapeditor
 
 import cats.effect.Sync
 import fs2.{Pipe, Stream}
-import com.crib.bills.dom6maps.model.ProvinceId
-import com.crib.bills.dom6maps.model.map.{
+import model.ProvinceId
+import model.map.{
   MapDirective,
   MapHeight,
   MapWidth,
@@ -16,7 +16,7 @@ import com.crib.bills.dom6maps.model.map.{
   NoWrapAround
 }
 
-object WrapSever:
+object WrapSeverService:
   def isTopBottom(
       a: ProvinceId,
       b: ProvinceId,

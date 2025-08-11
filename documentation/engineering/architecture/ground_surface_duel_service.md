@@ -43,7 +43,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
      2. `PlacementPlanner` to compute gate and throne targets.
      3. `GateDirectiveService` on both layers.
      4. `ThronePlacementService` on both layers.
-     5. `WrapSever.severVertically` and `WrapSever.severHorizontally` to remove wrap.
+     5. `WrapSeverService.severVertically` and `WrapSeverService.severHorizontally` to remove wrap.
 
 ## Service Boundaries & Extension Points
 - `GroundSurfaceDuelPipe` remains a thin orchestrator; calculation and I/O concerns live in dedicated capabilities, preserving single responsibility and testability.
