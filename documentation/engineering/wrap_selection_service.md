@@ -5,18 +5,21 @@ settings are converted.
 
 ## Components
 - **WrapChoiceService** – displays a Swing dialog with radio buttons for
-  `hwrap`, `vwrap`, or `no-wrap`. The dialog also offers a checkbox to enable
-  independent wrap selection for the cave layer. It returns the main map
-  selection along with an optional cave selection. The service contains only UI
-  code so rendering can be replaced later.
+  `hwrap`, `vwrap`, `no-wrap`, or `ground-surface duel`. Selecting the duel
+  option disables wrap choices and cave-layer selection. Otherwise the dialog
+  offers a checkbox to enable independent wrap selection for the cave layer.
+  It returns the main map selection along with an optional cave selection. The
+  service contains only UI code so rendering can be replaced later.
 - **WrapConversionService** – applies the selected wrap to map directives by
   severing the appropriate neighbour connections. It delegates to
-  `WrapSeverService` for the transformation logic.
+  `WrapSeverService` for the transformation logic. The duel option bypasses this
+  service in favour of the [`GroundSurfaceDuelPipe`](ground_surface_duel_service.md).
 
 ## Integration
 `MapEditorWrapApp` instantiates `WrapChoiceServiceImpl` to obtain the desired
-wraps and delegates to `WrapConversionServiceImpl` to rewrite the directives
-before writing the map files.
+mode. If a wrap is chosen it delegates to `WrapConversionServiceImpl` to rewrite
+the directives before writing the map files. Selecting the duel mode runs the
+`GroundSurfaceDuelPipe` on both surface and cave maps instead.
 
 ## Testing
 - `sbt "project apps" test`

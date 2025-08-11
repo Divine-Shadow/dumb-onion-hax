@@ -12,7 +12,13 @@ import services.mapeditor.{
   PathsConfig,
   WrapChoiceService,
   WrapChoiceServiceImpl,
-  WrapConversionServiceImpl
+  WrapConversionServiceImpl,
+  GroundSurfaceDuelPipeImpl,
+  MapSizeValidatorImpl,
+  PlacementPlannerImpl,
+  GateDirectiveServiceImpl,
+  ThronePlacementServiceImpl,
+  GroundSurfaceDuelPipe
 }
 import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
@@ -27,14 +33,14 @@ dest="/path/to/dominions/maps"
 
   private val currentVersion = Version("1.1")
 
-  def runWith(chooser: WrapChoiceService[IO]): IO[ExitCode] =
+  def runWith(chooser: WrapChoiceService[IO], dueler: GroundSurfaceDuelPipe[IO]): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
     val copier = new MapEditorCopierImpl[IO]
     val writer = new MapWriterImpl[IO]
     val converter = new WrapConversionServiceImpl[IO]
     val checker = new GithubReleaseCheckerImpl[IO]
     val workflow =
-      new MapWrapWorkflowImpl(finder, copier, writer, converter, checker, chooser, currentVersion)
+      new MapWrapWorkflowImpl(finder, copier, writer, converter, checker, chooser, dueler, currentVersion)
     val action =
       for
         exists <- IO(JFiles.exists(NioPath.of(configFileName)))
@@ -49,4 +55,10 @@ dest="/path/to/dominions/maps"
     action
 
   override def run(args: List[String]): IO[ExitCode] =
-    runWith(new WrapChoiceServiceImpl[IO])
+    val dueler = new GroundSurfaceDuelPipeImpl[IO](
+      new MapSizeValidatorImpl[IO],
+      new PlacementPlannerImpl[IO],
+      new GateDirectiveServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
+    )
+    runWith(new WrapChoiceServiceImpl[IO], dueler)

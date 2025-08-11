@@ -31,4 +31,5 @@ class WrapConversionServiceImpl[Sequencer[_]: Applicative] extends WrapConversio
       case WrapChoice.NoWrap =>
         val vertical = WrapSeverService.severVertically(directives, width, height)
         WrapSeverService.severHorizontally(vertical, width, height)
+      case WrapChoice.GroundSurfaceDuel => directives
     result.pure[Sequencer].map(errorChannel.pure)

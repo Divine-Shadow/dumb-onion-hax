@@ -4,8 +4,9 @@ package apps.services.mapeditor
 import cats.effect.IO
 import cats.syntax.all.*
 import cats.instances.either.*
+import fs2.{Stream}
 import fs2.io.file.Path
-import model.map.{MapFileParser, MapSizePixels}
+import model.map.{GroundSurfaceDuelConfig, MapFileParser, MapSizePixels}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
 
@@ -19,6 +20,7 @@ class MapWrapWorkflowImpl(
     converter: WrapConversionService[IO],
     checker: GithubReleaseChecker[IO],
     chooser: WrapChoiceService[IO],
+    dueler: GroundSurfaceDuelPipe[IO],
     currentVersion: Version
 ) extends MapWrapWorkflow:
   private type ErrorOr[A] = Either[Throwable, A]
@@ -40,33 +42,56 @@ class MapWrapWorkflowImpl(
       copied <- IO.fromEither(res)
       (bytes, outPath) = copied.main
       directives <- bytes.through(MapFileParser.parse[IO]).compile.toVector
-      sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
-        new NoSuchElementException("#mapsize not found")
-      )
-      provinceSize = sizePixels.toProvinceSize
       wrapEC <- chooser.chooseWraps[ErrorOr]()
       wrapChoices <- IO.fromEither(wrapEC)
-      convertedEC <-
-        converter.convert[ErrorOr](directives, provinceSize.width, provinceSize.height, wrapChoices.main)
-      converted <- IO.fromEither(convertedEC)
-      written <- writer.write[ErrorOr](converted, outPath)
-      _ <- IO.fromEither(written)
-      _ <- wrapChoices.cave match
-        case Some(caveChoice) =>
+      _ <- wrapChoices.main match
+        case WrapChoice.GroundSurfaceDuel =>
           copied.cave match
             case Some((caveBytes, caveOutPath)) =>
               for
                 caveDirectives <- caveBytes.through(MapFileParser.parse[IO]).compile.toVector
-                caveSizePixels <- IO.fromOption(caveDirectives.collectFirst { case m: MapSizePixels => m })(
-                  new NoSuchElementException("#mapsize not found")
-                )
-                caveProvince = caveSizePixels.toProvinceSize
-                caveConvertedEC <-
-                  converter.convert[ErrorOr](caveDirectives, caveProvince.width, caveProvince.height, caveChoice)
-                caveConverted <- IO.fromEither(caveConvertedEC)
-                caveWritten <- writer.write[ErrorOr](caveConverted, caveOutPath)
+                duelResEC <- dueler
+                  .apply[ErrorOr](
+                    Stream.emits(directives).covary[IO],
+                    Stream.emits(caveDirectives).covary[IO],
+                    GroundSurfaceDuelConfig.default
+                  )
+                duelRes <- IO.fromEither(duelResEC)
+                (surfRes, caveRes) = duelRes
+                surfWritten <- writer.write[ErrorOr](surfRes, outPath)
+                _ <- IO.fromEither(surfWritten)
+                caveWritten <- writer.write[ErrorOr](caveRes, caveOutPath)
                 _ <- IO.fromEither(caveWritten)
               yield ()
             case None => IO.raiseError(new NoSuchElementException("cave map not found"))
-        case None => IO.unit
+        case wrapChoice =>
+          for
+            sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
+              new NoSuchElementException("#mapsize not found")
+            )
+            provinceSize = sizePixels.toProvinceSize
+            convertedEC <-
+              converter.convert[ErrorOr](directives, provinceSize.width, provinceSize.height, wrapChoice)
+            converted <- IO.fromEither(convertedEC)
+            written <- writer.write[ErrorOr](converted, outPath)
+            _ <- IO.fromEither(written)
+            _ <- wrapChoices.cave match
+              case Some(caveChoice) =>
+                copied.cave match
+                  case Some((caveBytes, caveOutPath)) =>
+                    for
+                      caveDirectives <- caveBytes.through(MapFileParser.parse[IO]).compile.toVector
+                      caveSizePixels <- IO.fromOption(caveDirectives.collectFirst { case m: MapSizePixels => m })(
+                        new NoSuchElementException("#mapsize not found")
+                      )
+                      caveProvince = caveSizePixels.toProvinceSize
+                      caveConvertedEC <-
+                        converter.convert[ErrorOr](caveDirectives, caveProvince.width, caveProvince.height, caveChoice)
+                      caveConverted <- IO.fromEither(caveConvertedEC)
+                      caveWritten <- writer.write[ErrorOr](caveConverted, caveOutPath)
+                      _ <- IO.fromEither(caveWritten)
+                    yield ()
+                  case None => IO.raiseError(new NoSuchElementException("cave map not found"))
+              case None => IO.unit
+          yield ()
     yield ()
