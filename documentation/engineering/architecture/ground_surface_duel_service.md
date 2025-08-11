@@ -1,15 +1,15 @@
 # Ground-Surface Duel Service
 
-The Ground-Surface Duel service composes map modification capabilities to generate a duel-style game mode. It consumes surface and cave map directive streams, normalizes them, injects fixed gate and throne placements, places players, and severs wrap connections.
+The Ground-Surface Duel service composes map modification capabilities to generate a duel-style game mode. It consumes surface and cave `MapState` values, normalizes them, injects fixed gate and throne placements, places players, and severs wrap connections.
 
 ## Requirements
-- Accept two `Stream[Sequencer, MapDirective]` values representing the surface and cave layers.
+- Accept two `MapState` values representing the surface and cave layers.
 - Accept `SurfaceNation` and `UndergroundNation` values identifying each player.
 - Map dimensions must be square, share the same size, and use an odd side length.
-- Remove all existing `Gate`, throne, `allowedplayer`, and `specstart` directives before applying new placements.
+- Remove all existing gates, thrones, `allowedplayer`, and `specstart` entries before applying new placements.
 - Place gates at the midpoint of each edge on both layers and link matching provinces across layers.
 - Place thrones at all four corners on both layers.
-- Place each player at the center province of their respective layer, adding `allowedplayer` and `specstart` directives.
+- Place each player at the center province of their respective layer, adding `allowedplayer` and `specstart` entries.
 - Apply vertical and horizontal severing so the resulting maps have no wrap.
 
 ## Domain Types
@@ -23,7 +23,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 
 ## Capability Sketches
 1. **MapSizeValidator**
-   - Computes map dimensions from directive streams and returns the compiled directives.
+   - Computes map dimensions from `MapState` values.
    - Ensures both layers are equal, square, and odd-sized.
 2. **PlacementPlanner**
    - Uses `MapSize` to derive:
@@ -31,19 +31,19 @@ The Ground-Surface Duel service composes map modification capabilities to genera
      - `Vector[ThronePlacement]` for corner provinces on each layer.
    - Pure and side-effect free.
 3. **GroundSurfaceDuelPipe**
-   - Orchestrates transformation of both directive streams.
+   - Orchestrates transformation of both states.
    - Contract sketch:
      ```scala
      trait GroundSurfaceDuelPipe[Sequencer[_]]:
        def apply[ErrorChannel[_]](
-         surface: Stream[Sequencer, MapDirective],
-         cave: Stream[Sequencer, MapDirective],
+         surface: MapState,
+         cave: MapState,
          config: GroundSurfaceDuelConfig,
          surfaceNation: SurfaceNation,
          undergroundNation: UndergroundNation
        )(using
          errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-       ): Sequencer[ErrorChannel[(Vector[MapDirective], Vector[MapDirective])]]
+       ): Sequencer[ErrorChannel[(MapState, MapState)]]
      ```
    - Internally invokes:
      1. `MapSizeValidator` for dimension checks.
@@ -60,7 +60,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 - Future features such as variable throne levels or asymmetric gate links fit naturally into `GroundSurfaceDuelConfig` and `PlacementPlanner` without affecting the pipe contract.
 
 ## Testing Strategy
-- Provide `Stub` instances for all capabilities to verify pure placement logic using in-memory directive streams.
+- Provide `Stub` instances for all capabilities to verify pure placement logic using in-memory `MapState` values.
 - Integration tests compose real services to confirm that gates, thrones, and severing appear in the expected provinces for a small sample map.
 - Run `sbt compile` as a sanity check for documentation changes.
 

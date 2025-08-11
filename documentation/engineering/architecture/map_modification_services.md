@@ -21,21 +21,20 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 
 ## Capabilities
 1. **MapLayerLoader**
-   - Parses a map file into a stream of `MapDirective` using `MapFileParser`.
+   - Parses a map file into `MapState` using `MapFileParser`.
    - Contract sketch:
      ```scala
      trait MapLayerLoader[Sequencer[_]] {
        def load[ErrorChannel[_]](path: fs2.io.file.Path)(using
          fs2.io.file.Files[Sequencer],
          cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]
-       ): Sequencer[ErrorChannel[Vector[MapDirective]]]
+       ): Sequencer[ErrorChannel[MapState]]
      }
      ```
 2. **GateDirectiveService**
-   - Removes any existing `Gate` directives and appends new ones from `Vector[GateSpec]`.
-   - Exposes an FS2 `Pipe` so it composes with other transformations.
+   - Replaces existing gates in a `MapState` with new ones from `Vector[GateSpec]`.
 3. **ThronePlacementService**
-   - Accepts `Vector[ThronePlacement]` and rewrites `Terrain` directives by toggling flags via `TerrainMask`.
+   - Accepts `Vector[ThronePlacement]` and rewrites `Terrain` entries in `MapState` by toggling flags via `TerrainMask`.
    - Ensures non-specified provinces have throne flags cleared.
 4. **MapModificationService**
    - Higher-order orchestrator that:
@@ -47,7 +46,7 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 
 ## Testing Strategy
 - Provide `Stub` implementations for each capability mirroring the [capability trait pattern](service_and_capability_patterns.md).
-- Unit tests operate on in-memory streams to verify removal and addition of directives without file I/O.
+- Unit tests operate on in-memory `MapState` values to verify removal and addition of directives without file I/O.
 - The orchestrator can be tested with sample maps to ensure composition order is correct.
 
 ## Future Work

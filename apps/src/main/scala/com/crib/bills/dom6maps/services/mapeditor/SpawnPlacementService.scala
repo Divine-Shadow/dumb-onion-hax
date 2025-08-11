@@ -2,25 +2,21 @@ package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
 import cats.Applicative
-import fs2.{Pipe, Stream}
-import model.map.{MapDirective, PlayerSpawn, AllowedPlayer, SpecStart}
+import cats.syntax.all.*
+import model.map.{AllowedPlayer, MapState, PlayerSpawn, SpecStart}
 
 trait SpawnPlacementService[Sequencer[_]]:
-  def pipe(spawns: Vector[PlayerSpawn]): Pipe[Sequencer, MapDirective, MapDirective]
+  def update(state: MapState, spawns: Vector[PlayerSpawn]): Sequencer[MapState]
 
-class SpawnPlacementServiceImpl[Sequencer[_]] extends SpawnPlacementService[Sequencer]:
-  override def pipe(spawns: Vector[PlayerSpawn]): Pipe[Sequencer, MapDirective, MapDirective] =
-    in =>
-      val cleaned = in.filter {
-        case _: AllowedPlayer => false
-        case _: SpecStart     => false
-        case _                => true
-      }
-      val additions = Stream
-        .emits(spawns.flatMap(s => Vector(AllowedPlayer(s.nation), SpecStart(s.nation, s.province))))
-        .covary[Sequencer]
-      cleaned ++ additions
+class SpawnPlacementServiceImpl[Sequencer[_]: Applicative] extends SpawnPlacementService[Sequencer]:
+  override def update(state: MapState, spawns: Vector[PlayerSpawn]): Sequencer[MapState] =
+    state
+      .copy(
+        allowedPlayers = spawns.map(s => AllowedPlayer(s.nation)),
+        startingPositions = spawns.map(s => SpecStart(s.nation, s.province))
+      )
+      .pure[Sequencer]
 
 class SpawnPlacementServiceStub[Sequencer[_]: Applicative] extends SpawnPlacementService[Sequencer]:
-  override def pipe(spawns: Vector[PlayerSpawn]): Pipe[Sequencer, MapDirective, MapDirective] =
-    stream => stream
+  override def update(state: MapState, spawns: Vector[PlayerSpawn]): Sequencer[MapState] =
+    state.pure[Sequencer]

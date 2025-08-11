@@ -7,46 +7,34 @@ import cats.syntax.all.*
 import fs2.io.file.Path
 import weaver.SimpleIOSuite
 import model.map.{
-  MapDirective,
   MapFileParser,
-  MapSizePixels,
+  MapState,
   MapWidth,
   MapHeight,
-  Neighbour,
-  NeighbourSpec,
-  HWrapAround,
-  VWrapAround,
-  NoWrapAround,
-  WrapAround
+  WrapState
 }
 import WrapSeverService.{isTopBottom, isLeftRight}
 
 object WrapConversionServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
 
-  private def load: IO[(Vector[MapDirective], MapWidth, MapHeight)] =
+  private def load: IO[(MapState, MapWidth, MapHeight)] =
     for
-      directives <- MapFileParser.parseFile[IO](Path("data/five-by-twelve.map")).compile.toVector
-      sizePixels <- IO.fromOption(directives.collectFirst { case m: MapSizePixels => m })(
-        new NoSuchElementException("#mapsize not found")
-      )
-      psize = sizePixels.toProvinceSize
-    yield (directives, psize.width, psize.height)
+      state <- MapState.fromDirectives(MapFileParser.parseFile[IO](Path("data/five-by-twelve.map")))
+      size <- IO.fromOption(state.size)(new NoSuchElementException("#mapsize not found"))
+      w = MapWidth(size.value)
+      h = MapHeight(size.value)
+    yield (state, w, h)
 
   test("convert to hwrap") {
     val service = new WrapConversionServiceImpl[IO]
     for
-      (directives, w, h) <- load
-      resEC <- service.convert[EC](directives, w, h, WrapChoice.HWrap)
+      (state, w, h) <- load
+      resEC <- service.convert[EC](state, WrapChoice.HWrap)
       res <- IO.fromEither(resEC)
-      hasTopBottom = res.exists {
-        case Neighbour(a, b)       => isTopBottom(a, b, w, h)
-        case NeighbourSpec(a, b, _) => isTopBottom(a, b, w, h)
-        case _                     => false
-      }
+      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, w, h))
     yield expect.all(
-      res.contains(HWrapAround),
-      !res.exists(d => d == WrapAround || d == VWrapAround || d == NoWrapAround),
+      res.wrap == WrapState.HorizontalWrap,
       !hasTopBottom
     )
   }
@@ -54,17 +42,12 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
   test("convert to vwrap") {
     val service = new WrapConversionServiceImpl[IO]
     for
-      (directives, w, h) <- load
-      resEC <- service.convert[EC](directives, w, h, WrapChoice.VWrap)
+      (state, w, h) <- load
+      resEC <- service.convert[EC](state, WrapChoice.VWrap)
       res <- IO.fromEither(resEC)
-      hasLeftRight = res.exists {
-        case Neighbour(a, b)       => isLeftRight(a, b, w)
-        case NeighbourSpec(a, b, _) => isLeftRight(a, b, w)
-        case _                     => false
-      }
+      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, w))
     yield expect.all(
-      res.contains(VWrapAround),
-      !res.exists(d => d == WrapAround || d == HWrapAround || d == NoWrapAround),
+      res.wrap == WrapState.VerticalWrap,
       !hasLeftRight
     )
   }
@@ -72,22 +55,13 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
   test("convert to no-wrap") {
     val service = new WrapConversionServiceImpl[IO]
     for
-      (directives, w, h) <- load
-      resEC <- service.convert[EC](directives, w, h, WrapChoice.NoWrap)
+      (state, w, h) <- load
+      resEC <- service.convert[EC](state, WrapChoice.NoWrap)
       res <- IO.fromEither(resEC)
-      hasTopBottom = res.exists {
-        case Neighbour(a, b)       => isTopBottom(a, b, w, h)
-        case NeighbourSpec(a, b, _) => isTopBottom(a, b, w, h)
-        case _                     => false
-      }
-      hasLeftRight = res.exists {
-        case Neighbour(a, b)       => isLeftRight(a, b, w)
-        case NeighbourSpec(a, b, _) => isLeftRight(a, b, w)
-        case _                     => false
-      }
+      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, w, h))
+      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, w))
     yield expect.all(
-      res.contains(NoWrapAround),
-      !res.exists(d => d == WrapAround || d == HWrapAround || d == VWrapAround),
+      res.wrap == WrapState.NoWrap,
       !hasTopBottom,
       !hasLeftRight
     )

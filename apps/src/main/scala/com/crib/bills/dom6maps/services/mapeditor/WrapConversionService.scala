@@ -1,35 +1,29 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import cats.{MonadError, Traverse}
-import cats.Applicative
+import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
-import model.map.{MapDirective, MapHeight, MapWidth}
+import model.map.MapState
 
 trait WrapConversionService[Sequencer[_]]:
   def convert[ErrorChannel[_]](
-      directives: Vector[MapDirective],
-      width: MapWidth,
-      height: MapHeight,
+      state: MapState,
       target: WrapChoice
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[Vector[MapDirective]]]
+  ): Sequencer[ErrorChannel[MapState]]
 
 class WrapConversionServiceImpl[Sequencer[_]: Applicative] extends WrapConversionService[Sequencer]:
   override def convert[ErrorChannel[_]](
-      directives: Vector[MapDirective],
-      width: MapWidth,
-      height: MapHeight,
+      state: MapState,
       target: WrapChoice
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[Vector[MapDirective]]] =
+  ): Sequencer[ErrorChannel[MapState]] =
     val result = target match
-      case WrapChoice.HWrap => WrapSeverService.severVertically(directives, width, height)
-      case WrapChoice.VWrap => WrapSeverService.severHorizontally(directives, width, height)
+      case WrapChoice.HWrap => WrapSeverService.severVertically(state)
+      case WrapChoice.VWrap => WrapSeverService.severHorizontally(state)
       case WrapChoice.NoWrap =>
-        val vertical = WrapSeverService.severVertically(directives, width, height)
-        WrapSeverService.severHorizontally(vertical, width, height)
-      case WrapChoice.GroundSurfaceDuel => directives
+        WrapSeverService.severHorizontally(WrapSeverService.severVertically(state))
+      case WrapChoice.GroundSurfaceDuel => state
     result.pure[Sequencer].map(errorChannel.pure)

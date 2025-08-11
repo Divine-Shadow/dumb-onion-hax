@@ -5,7 +5,7 @@ This document outlines how to evolve the map editing pipeline to use a compact `
 ## Impacted Services
 - `model.map.MapFileParser` – parse raw `.map` lines into `DirectiveEvent` instead of `MapDirective`.
 - `apps.services.mapeditor.MapLayerLoader` – build `MapState` from the event stream.
-- `apps.services.mapeditor.MapDirectiveTransformer` and `MapProcessingService` – operate on `MapState` and filtered event streams.
+- `apps.services.mapeditor.MapProcessingService` – operate on `MapState` and filtered event streams.
 - `apps.services.mapeditor.MapWriter` – emit directives from `MapState` and pass through remaining events.
 - Map modification pipes (`GateDirectiveService`, `ThronePlacementService`, `SpawnPlacementService`, `WrapConversionService`, `WrapSeverService`, `MapSizeValidator`) – adjust signatures to consume event streams or `MapState`.
 
@@ -35,7 +35,7 @@ This document outlines how to evolve the map editing pipeline to use a compact `
    - Update `MapWriter` to render canonical directives from `MapState`.
    - Merge with a "remaining directives" stream for comments, image rows, and unknown lines.
 5. **Service Refactor**
-   - Modify `MapLayerLoader`, `MapDirectiveTransformer`, `MapProcessingService`, and map modification pipes to consume `MapState` and event streams.
+   - Modify `MapLayerLoader`, `MapProcessingService`, and map modification pipes to consume `MapState` and event streams.
    - Adjust tests in `apps` to use the new model.
 6. **Removal & Hardening**
    - Deprecate `ProvincePixels` and related province-id coordinate logic.

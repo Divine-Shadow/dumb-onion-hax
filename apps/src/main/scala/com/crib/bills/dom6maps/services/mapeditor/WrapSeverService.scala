@@ -1,20 +1,8 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import cats.effect.Sync
-import fs2.{Pipe, Stream}
 import model.ProvinceId
-import model.map.{
-  MapDirective,
-  MapHeight,
-  MapWidth,
-  Neighbour,
-  NeighbourSpec,
-  WrapAround,
-  HWrapAround,
-  VWrapAround,
-  NoWrapAround
-}
+import model.map.{MapHeight, MapState, MapWidth, WrapState}
 
 object WrapSeverService:
   def isTopBottom(
@@ -38,67 +26,46 @@ object WrapSeverService:
     val right = width.value
     rowA == rowB && ((colA == left && colB == right) || (colA == right && colB == left))
 
-  private val wrapDirectives =
-    Set[MapDirective](WrapAround, HWrapAround, VWrapAround, NoWrapAround)
+  def severVertically(state: MapState): MapState =
+    state.size match
+      case Some(sz) =>
+        val width = MapWidth(sz.value)
+        val height = MapHeight(sz.value)
+        val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.VerticalWrap
+        val newAdj =
+          if shouldSever then
+            state.adjacency.filterNot((a, b) => isTopBottom(a, b, width, height))
+          else state.adjacency
+        val newBorders =
+          if shouldSever then
+            state.borders.filterNot(b => isTopBottom(b.a, b.b, width, height))
+          else state.borders
+        val newWrap = state.wrap match
+          case WrapState.FullWrap     => WrapState.HorizontalWrap
+          case WrapState.VerticalWrap => WrapState.NoWrap
+          case WrapState.HorizontalWrap => WrapState.HorizontalWrap
+          case _                      => WrapState.NoWrap
+        state.copy(adjacency = newAdj, borders = newBorders, wrap = newWrap)
+      case None => state
 
-  def severVertically(
-      directives: Vector[MapDirective],
-      width: MapWidth,
-      height: MapHeight
-  ): Vector[MapDirective] =
-    val wrap = directives.collectFirst { case d if wrapDirectives.contains(d) => d }
-    val shouldSever = wrap.exists(d => d == WrapAround || d == VWrapAround)
-    val withoutConnections = directives.filter {
-      case Neighbour(a, b) if shouldSever        => !isTopBottom(a, b, width, height)
-      case NeighbourSpec(a, b, _) if shouldSever => !isTopBottom(a, b, width, height)
-      case _                                     => true
-    }
-    val withoutWrapDirective = withoutConnections.filterNot(wrapDirectives.contains)
-    val newDirective = wrap match
-      case Some(WrapAround)  => HWrapAround
-      case Some(VWrapAround) => NoWrapAround
-      case Some(HWrapAround) => HWrapAround
-      case _                 => NoWrapAround
-    withoutWrapDirective :+ newDirective
-
-  def severHorizontally(
-      directives: Vector[MapDirective],
-      width: MapWidth,
-      height: MapHeight
-  ): Vector[MapDirective] =
-    val wrap = directives.collectFirst { case d if wrapDirectives.contains(d) => d }
-    val shouldSever = wrap.exists(d => d == WrapAround || d == HWrapAround)
-    val withoutConnections = directives.filter {
-      case Neighbour(a, b) if shouldSever        => !isLeftRight(a, b, width)
-      case NeighbourSpec(a, b, _) if shouldSever => !isLeftRight(a, b, width)
-      case _                                     => true
-    }
-    val withoutWrapDirective = withoutConnections.filterNot(wrapDirectives.contains)
-    val newDirective = wrap match
-      case Some(WrapAround)  => VWrapAround
-      case Some(HWrapAround) => NoWrapAround
-      case Some(VWrapAround) => VWrapAround
-      case _                 => NoWrapAround
-    withoutWrapDirective :+ newDirective
-
-  private def pipe[F[_]: Sync](
-      f: (Vector[MapDirective], MapWidth, MapHeight) => Vector[MapDirective],
-      width: MapWidth,
-      height: MapHeight
-  ): Pipe[F, MapDirective, MapDirective] =
-    in =>
-      Stream
-        .eval(in.compile.toVector)
-        .flatMap(ds => Stream.emits(f(ds, width, height)))
-
-  def verticalPipe[F[_]: Sync](
-      width: MapWidth,
-      height: MapHeight
-  ): Pipe[F, MapDirective, MapDirective] =
-    pipe(severVertically, width, height)
-
-  def horizontalPipe[F[_]: Sync](
-      width: MapWidth,
-      height: MapHeight
-  ): Pipe[F, MapDirective, MapDirective] =
-    pipe(severHorizontally, width, height)
+  def severHorizontally(state: MapState): MapState =
+    state.size match
+      case Some(sz) =>
+        val width = MapWidth(sz.value)
+        val height = MapHeight(sz.value)
+        val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.HorizontalWrap
+        val newAdj =
+          if shouldSever then
+            state.adjacency.filterNot((a, b) => isLeftRight(a, b, width))
+          else state.adjacency
+        val newBorders =
+          if shouldSever then
+            state.borders.filterNot(b => isLeftRight(b.a, b.b, width))
+          else state.borders
+        val newWrap = state.wrap match
+          case WrapState.FullWrap       => WrapState.VerticalWrap
+          case WrapState.HorizontalWrap => WrapState.NoWrap
+          case WrapState.VerticalWrap   => WrapState.VerticalWrap
+          case _                        => WrapState.NoWrap
+        state.copy(adjacency = newAdj, borders = newBorders, wrap = newWrap)
+      case None => state

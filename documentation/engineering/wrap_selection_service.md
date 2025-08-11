@@ -10,7 +10,7 @@ settings are converted.
   offers a checkbox to enable independent wrap selection for the cave layer.
   It returns the main map selection along with an optional cave selection. The
   service contains only UI code so rendering can be replaced later.
-- **WrapConversionService** – applies the selected wrap to map directives by
+- **WrapConversionService** – applies the selected wrap to `MapState` by
   severing the appropriate neighbour connections. It delegates to
   `WrapSeverService` for the transformation logic. The duel option bypasses this
   service in favour of the [`GroundSurfaceDuelPipe`](ground_surface_duel_service.md).
@@ -18,7 +18,7 @@ settings are converted.
 ## Integration
 `MapEditorWrapApp` instantiates `WrapChoiceServiceImpl` to obtain the desired
 mode. If a wrap is chosen it delegates to `WrapConversionServiceImpl` to rewrite
-the directives before writing the map files. Selecting the duel mode runs the
+the `MapState` before writing the map files. Selecting the duel mode runs the
 `GroundSurfaceDuelPipe` on both surface and cave maps instead.
 
 ## Testing
