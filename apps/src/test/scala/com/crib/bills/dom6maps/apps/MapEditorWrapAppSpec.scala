@@ -13,7 +13,17 @@ import com.crib.bills.dom6maps.model.map.{
   NeighbourSpec,
   VWrapAround
 }
-import services.mapeditor.{WrapChoice, WrapChoiceService, WrapChoices}
+import services.mapeditor.{
+  GroundSurfaceDuelPipe,
+  GroundSurfaceDuelPipeImpl,
+  MapSizeValidatorImpl,
+  PlacementPlannerImpl,
+  GateDirectiveServiceImpl,
+  ThronePlacementServiceImpl,
+  WrapChoice,
+  WrapChoiceService,
+  WrapChoices
+}
 import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
 import java.nio.file.{Files as JFiles, Path as JPath}
@@ -25,11 +35,21 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
     override def chooseWraps[ErrorChannel[_]]()(using
         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
     ) = IO.pure(errorChannel.pure(selections))
+
+  private class StubGroundSurfaceDuelPipe extends GroundSurfaceDuelPipe[IO]:
+    override def apply[ErrorChannel[_]](
+        surface: fs2.Stream[IO, model.map.MapDirective],
+        cave: fs2.Stream[IO, model.map.MapDirective],
+        config: model.map.GroundSurfaceDuelConfig
+    )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
+      (Vector.empty[model.map.MapDirective], Vector.empty[model.map.MapDirective]).pure[ErrorChannel].pure[IO]
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
       _ <- IO(JFiles.deleteIfExists(configFile))
-      res <- MapEditorWrapApp.runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None))).attempt
+      res <- MapEditorWrapApp
+        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)), new StubGroundSurfaceDuelPipe)
+        .attempt
       exists <- IO(JFiles.exists(configFile))
       content <- IO(if exists then JFiles.readString(configFile) else "")
       _ <- IO(JFiles.deleteIfExists(configFile))
@@ -53,7 +73,7 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 dest="${destRoot.toString}"
 """))
       _ <- MapEditorWrapApp
-        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)))
+        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)), new StubGroundSurfaceDuelPipe)
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
@@ -99,10 +119,53 @@ dest="${destRoot.toString}"
         )
       )
       _ <- MapEditorWrapApp
-        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))))
+        .runWith(
+          new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))),
+          new StubGroundSurfaceDuelPipe
+        )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
       cavePath = destDir / "map_plane2.map"
       directives <- MapFileParser.parseFile[IO](cavePath).compile.toVector
     yield expect(directives.contains(VWrapAround))
+  }
+
+  test("applies ground surface duel when selected") {
+    val mapContent =
+      """-- Map
+#dom2title test
+#imagefile test.tga
+#mapsize 1280 800
+#wraparound
+#terrain 1 0
+#terrain 5 0
+#terrain 21 0
+#terrain 25 0
+""".stripMargin
+    for
+      rootDir <- IO(JFiles.createTempDirectory("root-editor-duel"))
+      newer <- IO(JFiles.createDirectory(rootDir.resolve("newer")))
+      _ <- IO(JFiles.writeString(newer.resolve("map.map"), mapContent))
+      _ <- IO(JFiles.writeString(newer.resolve("map_plane2.map"), mapContent))
+      destRoot <- IO(JFiles.createTempDirectory("dest-editor-duel"))
+      configFile = JPath.of("map-editor-wrap.conf")
+      _ <- IO(JFiles.writeString(configFile, s"""source="${rootDir.toString}"\ndest="${destRoot.toString}"\n"""))
+      dueler = new GroundSurfaceDuelPipeImpl[IO](
+        new MapSizeValidatorImpl[IO],
+        new PlacementPlannerImpl[IO],
+        new GateDirectiveServiceImpl[IO],
+        new ThronePlacementServiceImpl[IO]
+      )
+      _ <- MapEditorWrapApp
+        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)), dueler)
+        .guarantee(IO(JFiles.deleteIfExists(configFile)))
+      destDir = Path.fromNioPath(destRoot.resolve("newer"))
+      surfPath = destDir / "map.map"
+      cavePath = destDir / "map_plane2.map"
+      surfDirectives <- MapFileParser.parseFile[IO](surfPath).compile.toVector
+      caveDirectives <- MapFileParser.parseFile[IO](cavePath).compile.toVector
+    yield expect.all(
+      surfDirectives.contains(model.map.NoWrapAround),
+      caveDirectives.contains(model.map.NoWrapAround)
+    )
   }
