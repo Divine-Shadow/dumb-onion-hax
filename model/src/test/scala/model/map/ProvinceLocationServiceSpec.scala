@@ -23,3 +23,22 @@ object ProvinceLocationServiceSpec extends SimpleIOSuite:
         loc.y.value >= 0 && loc.y.value < heightCells
       }
       expect(uniqueCoords && coords.size == expectedCount && withinBounds)
+
+  test("location index covers every grid cell uniquely"):
+    val path = Path("data/duel-map-example.map")
+    for
+      directives <- MapFileParser.parseFile[IO](path).compile.toVector
+      index      <- ProvinceLocationService.deriveLocationIndex(Stream.emits(directives).covary[IO])
+    yield
+      val sizeDirective = directives.collectFirst { case m: MapSizePixels => m }.get
+      val widthCells    = sizeDirective.toProvinceSize.width.value
+      val heightCells   = sizeDirective.toProvinceSize.height.value
+      val expectedCount = widthCells * heightCells
+      val allCoordinatesCovered =
+        (0 until widthCells).forall { x =>
+          (0 until heightCells).forall { y =>
+            index.contains(ProvinceLocation(XCell(x), YCell(y)))
+          }
+        }
+      val uniqueProvinces = index.values.toSet.size == expectedCount
+      expect(allCoordinatesCovered && index.size == expectedCount && uniqueProvinces)

@@ -34,6 +34,15 @@ object ProvinceLocationService:
   def derive[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[Map[ProvinceId, ProvinceLocation]] =
     directives.compile.fold(emptyState)(accumulate).map(finalize)
 
+  def deriveLocationIndex[F[_]: Concurrent](
+      directives: Stream[F, MapDirective]
+  ): F[Map[ProvinceLocation, ProvinceId]] =
+    derive(directives).map { idToLocation =>
+      idToLocation.map { case (provinceId, provinceLocation) =>
+        provinceLocation -> provinceId
+      }
+    }
+
   private def accumulate(state: State, directive: MapDirective): State =
     directive match
       case MapSizePixels(w, h) => state.copy(width = w.value, height = h.value)
