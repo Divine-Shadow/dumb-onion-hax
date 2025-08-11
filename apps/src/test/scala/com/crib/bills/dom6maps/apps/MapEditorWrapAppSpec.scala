@@ -14,7 +14,7 @@ import com.crib.bills.dom6maps.model.map.{
   VWrapAround
 }
 import services.mapeditor.{WrapChoice, WrapChoiceService, WrapChoices}
-import WrapSever.isTopBottom
+import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
 import java.nio.file.{Files as JFiles, Path as JPath}
 import java.nio.file.attribute.FileTime

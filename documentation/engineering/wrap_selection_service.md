@@ -11,7 +11,7 @@ settings are converted.
   code so rendering can be replaced later.
 - **WrapConversionService** – applies the selected wrap to map directives by
   severing the appropriate neighbour connections. It delegates to
-  `WrapSever` for the transformation logic.
+  `WrapSeverService` for the transformation logic.
 
 ## Integration
 `MapEditorWrapApp` instantiates `WrapChoiceServiceImpl` to obtain the desired
