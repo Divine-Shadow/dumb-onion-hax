@@ -20,9 +20,10 @@ class MapWrapWorkflowImpl(
     converter: WrapConversionService[IO],
     checker: GithubReleaseChecker[IO],
     chooser: WrapChoiceService[IO],
+    nationChooser: GroundSurfaceNationService[IO],
     dueler: GroundSurfaceDuelPipe[IO],
     currentVersion: Version
-) extends MapWrapWorkflow:
+  ) extends MapWrapWorkflow:
   private type ErrorOr[A] = Either[Throwable, A]
 
   override def run(cfg: PathsConfig): IO[Unit] =
@@ -50,11 +51,15 @@ class MapWrapWorkflowImpl(
             case Some((caveBytes, caveOutPath)) =>
               for
                 caveDirectives <- caveBytes.through(MapFileParser.parse[IO]).compile.toVector
+                nationsEC <- nationChooser.chooseNations[ErrorOr]()
+                nations <- IO.fromEither(nationsEC)
                 duelResEC <- dueler
                   .apply[ErrorOr](
                     Stream.emits(directives).covary[IO],
                     Stream.emits(caveDirectives).covary[IO],
-                    GroundSurfaceDuelConfig.default
+                    GroundSurfaceDuelConfig.default,
+                    nations.surface,
+                    nations.underground
                   )
                 duelRes <- IO.fromEither(duelResEC)
                 (surfRes, caveRes) = duelRes
