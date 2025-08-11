@@ -21,7 +21,8 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       size <- IO.fromOption(result.size)(new NoSuchElementException("#mapsize not found"))
       w = MapWidth(size.value)
       h = MapHeight(size.value)
-      hasTopBottom = result.adjacency.exists((a, b) => WrapSeverService.isTopBottom(a, b, w, h))
+      index = result.provinceLocations.map(_.swap)
+      hasTopBottom = result.adjacency.exists((a, b) => WrapSeverService.isTopBottom(a, b, index, h))
       hasMiddle = result.adjacency.exists { case (a, b) => a.value == 6 && b.value == 7 }
     yield expect(result.wrap == WrapState.HorizontalWrap && !hasTopBottom && hasMiddle)
   }
@@ -32,7 +33,8 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       result = WrapSeverService.severHorizontally(state)
       size <- IO.fromOption(result.size)(new NoSuchElementException("#mapsize not found"))
       w = MapWidth(size.value)
-      hasLeftRight = result.adjacency.exists((a, b) => WrapSeverService.isLeftRight(a, b, w))
+      index = result.provinceLocations.map(_.swap)
+      hasLeftRight = result.adjacency.exists((a, b) => WrapSeverService.isLeftRight(a, b, index, w))
       hasMiddle = result.adjacency.exists { case (a, b) => a.value == 6 && b.value == 7 }
     yield expect(result.wrap == WrapState.VerticalWrap && !hasLeftRight && hasMiddle)
   }
@@ -43,7 +45,10 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
         !WrapSeverService.isTopBottom(
           ProvinceId(6),
           ProvinceId(1),
-          MapWidth(5),
+          Map(
+            ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1)),
+            ProvinceId(1) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(0))
+          ),
           MapHeight(12)
         )
       )
@@ -51,5 +56,17 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
   }
 
   test("isLeftRight only matches provinces on the same row") {
-    IO.pure(expect(!WrapSeverService.isLeftRight(ProvinceId(5), ProvinceId(6), MapWidth(5))))
+    IO.pure(
+      expect(
+        !WrapSeverService.isLeftRight(
+          ProvinceId(5),
+          ProvinceId(6),
+          Map(
+            ProvinceId(5) -> model.map.ProvinceLocation(model.map.XCell(4), model.map.YCell(0)),
+            ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1))
+          ),
+          MapWidth(5)
+        )
+      )
+    )
   }

@@ -32,7 +32,8 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       (state, w, h) <- load
       resEC <- service.convert[EC](state, WrapChoice.HWrap)
       res <- IO.fromEither(resEC)
-      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, w, h))
+      index = res.provinceLocations.map(_.swap)
+      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
     yield expect.all(
       res.wrap == WrapState.HorizontalWrap,
       !hasTopBottom
@@ -45,7 +46,8 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       (state, w, h) <- load
       resEC <- service.convert[EC](state, WrapChoice.VWrap)
       res <- IO.fromEither(resEC)
-      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, w))
+      index = res.provinceLocations.map(_.swap)
+      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, index, w))
     yield expect.all(
       res.wrap == WrapState.VerticalWrap,
       !hasLeftRight
@@ -58,8 +60,9 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       (state, w, h) <- load
       resEC <- service.convert[EC](state, WrapChoice.NoWrap)
       res <- IO.fromEither(resEC)
-      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, w, h))
-      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, w))
+      index = res.provinceLocations.map(_.swap)
+      hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
+      hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, index, w))
     yield expect.all(
       res.wrap == WrapState.NoWrap,
       !hasTopBottom,

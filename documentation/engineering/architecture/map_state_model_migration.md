@@ -15,7 +15,7 @@ This document outlines how to evolve the map editing pipeline to use a compact `
    - Unknown lines preserved as `UnknownDirective`.
 2. **[MapState](map_state.md)** – authoritative facts derived from events:
    - Map dimensions.
-   - Vector of province locations.
+   - Location index mapping coordinates to province identifiers.
    - Adjacency graph.
    - Configuration flags to guide transformations.
    - Excludes heavy payloads such as image rows.

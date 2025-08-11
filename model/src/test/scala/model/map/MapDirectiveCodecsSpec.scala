@@ -22,7 +22,8 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       allowedPlayers = Vector(AllowedPlayer(Nation.Atlantis_Early)),
       startingPositions = Vector(SpecStart(Nation.Atlantis_Early, ProvinceId(42))),
       terrains = Vector(Terrain(ProvinceId(5), 7)),
-      gates = Vector(Gate(ProvinceId(1), ProvinceId(2)))
+      gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
+      provinceLocations = Map.empty
     )
 
     val expected = Vector(
