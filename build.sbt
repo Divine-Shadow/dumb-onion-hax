@@ -19,7 +19,7 @@ lazy val commonSettings = Seq(
 lazy val model = (project in file("model"))
   .settings(
     name := "model",
-    libraryDependencies ++= Dependencies.core,
+    libraryDependencies ++= Dependencies.core ++ Dependencies.tests.map(_ % Test),
     commonSettings
   )
 

@@ -13,7 +13,7 @@ This document outlines how to evolve the map editing pipeline to use a compact `
 1. **Directive Events** – sealed hierarchy representing parsed directives:
    - Known events: `MapSize`, `ProvinceAt`, `Adjacency`, `ImageRow`, `Comment`.
    - Unknown lines preserved as `UnknownDirective`.
-2. **MapState** – authoritative facts derived from events:
+2. **[MapState](map_state.md)** – authoritative facts derived from events:
    - Map dimensions.
    - Vector of province locations.
    - Adjacency graph.
