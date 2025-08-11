@@ -38,7 +38,7 @@ object MapStateSpec extends SimpleIOSuite:
         startingPositions = Vector(SpecStart(Nation.Atlantis_Early, ProvinceId(42))),
         terrains = Vector(Terrain(ProvinceId(5), 7)),
         gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
-        provinceLocations = Map.empty
+        provinceLocations = ProvinceLocations.empty
       )
       expect(state == expected)
     }
