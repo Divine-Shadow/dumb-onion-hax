@@ -11,7 +11,9 @@
 - `allowedPlayers` and `startingPositions` – player nation and starting province pairs.
 - `terrains` – terrain masks for provinces.
 - `gates` – special province links.
+- `provinceLocations` – index mapping grid coordinates to `ProvinceId`.
 
-The companion object provides `fromDirectives` which folds a stream of `MapDirective` values to populate these fields.
+The companion object provides `fromDirectives` which folds a stream of `MapDirective` values to populate these fields and
+derives the location index via `ProvinceLocationService`.
 
 `MapDirectiveCodecs` supplies the inverse operation by encoding `MapState` and its components back into canonical `MapDirective` values.

@@ -4,14 +4,14 @@ package apps
 import cats.effect.IO
 import cats.syntax.all.*
 import cats.{MonadError, Traverse}
+import fs2.{Stream}
 import fs2.io.file.{Files as Fs2Files, Path}
 import com.crib.bills.dom6maps.model.map.{
   HWrapAround,
   MapFileParser,
   MapSizePixels,
-  Neighbour,
-  NeighbourSpec,
-  VWrapAround
+  VWrapAround,
+  MapState
 }
 import services.mapeditor.{
   GroundSurfaceDuelPipe,
@@ -101,13 +101,10 @@ dest="${destRoot.toString}"
         new NoSuchElementException("#mapsize not found")
       )
       provinceSize = sizePixels.toProvinceSize
-      w = provinceSize.width
       h = provinceSize.height
-      hasTopBottom = directives.exists {
-        case Neighbour(a, b)       => isTopBottom(a, b, w, h)
-        case NeighbourSpec(a, b, _) => isTopBottom(a, b, w, h)
-        case _                     => false
-      }
+      state <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
+      index = state.provinceLocations.map(_.swap)
+      hasTopBottom = state.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
     yield expect.all(
       destEntries.exists(_.fileName.toString == "newer"),
       copiedEntries.exists(_.fileName.toString == "image.tga"),

@@ -2,6 +2,7 @@ package com.crib.bills.dom6maps
 package model.map
 
 import cats.effect.kernel.Concurrent
+import cats.syntax.all.*
 import fs2.Stream
 import model.{BorderFlag, ProvinceId}
 
@@ -22,7 +23,8 @@ final case class MapState(
     allowedPlayers: Vector[AllowedPlayer],
     startingPositions: Vector[SpecStart],
     terrains: Vector[Terrain],
-    gates: Vector[Gate]
+    gates: Vector[Gate],
+    provinceLocations: Map[ProvinceLocation, ProvinceId]
 )
 
 object MapState:
@@ -36,11 +38,19 @@ object MapState:
     Vector.empty,
     Vector.empty,
     Vector.empty,
-    Vector.empty
+    Vector.empty,
+    Map.empty
   )
 
   def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
-    directives.compile.fold(empty)(accumulate)
+    directives.compile.toVector.flatMap { ds =>
+      val stream = Stream.emits(ds).covary[F]
+      ProvinceLocationService
+        .deriveLocationIndex(stream)
+        .map { index =>
+          ds.foldLeft(empty)(accumulate).copy(provinceLocations = index)
+        }
+    }
 
   private def accumulate(state: MapState, directive: MapDirective): MapState =
     directive match
