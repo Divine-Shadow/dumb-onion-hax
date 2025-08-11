@@ -20,6 +20,7 @@ import services.mapeditor.{
   PlacementPlannerImpl,
   GateDirectiveServiceImpl,
   ThronePlacementServiceImpl,
+  GroundSurfaceNationService,
   WrapChoice,
   WrapChoiceService,
   WrapChoices
@@ -36,11 +37,19 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
     ) = IO.pure(errorChannel.pure(selections))
 
+  private class StubGroundSurfaceNationService(surface: model.Nation, underground: model.Nation)
+      extends GroundSurfaceNationService[IO]:
+    override def chooseNations[ErrorChannel[_]]()(using
+        errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+    ) = IO.pure(errorChannel.pure(model.map.DuelNations(model.map.SurfaceNation(surface), model.map.UndergroundNation(underground))))
+
   private class StubGroundSurfaceDuelPipe extends GroundSurfaceDuelPipe[IO]:
     override def apply[ErrorChannel[_]](
         surface: fs2.Stream[IO, model.map.MapDirective],
         cave: fs2.Stream[IO, model.map.MapDirective],
-        config: model.map.GroundSurfaceDuelConfig
+        config: model.map.GroundSurfaceDuelConfig,
+        surfaceNation: model.map.SurfaceNation,
+        undergroundNation: model.map.UndergroundNation
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
       (Vector.empty[model.map.MapDirective], Vector.empty[model.map.MapDirective]).pure[ErrorChannel].pure[IO]
   test("creates sample config when missing") {
@@ -48,7 +57,11 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
       _ <- IO(JFiles.deleteIfExists(configFile))
       res <- MapEditorWrapApp
-        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)), new StubGroundSurfaceDuelPipe)
+        .runWith(
+          new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
+          new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
+          new StubGroundSurfaceDuelPipe
+        )
         .attempt
       exists <- IO(JFiles.exists(configFile))
       content <- IO(if exists then JFiles.readString(configFile) else "")
@@ -73,7 +86,11 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 dest="${destRoot.toString}"
 """))
       _ <- MapEditorWrapApp
-        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)), new StubGroundSurfaceDuelPipe)
+        .runWith(
+          new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
+          new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
+          new StubGroundSurfaceDuelPipe
+        )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
@@ -121,6 +138,7 @@ dest="${destRoot.toString}"
       _ <- MapEditorWrapApp
         .runWith(
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))),
+          new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
@@ -154,18 +172,28 @@ dest="${destRoot.toString}"
         new MapSizeValidatorImpl[IO],
         new PlacementPlannerImpl[IO],
         new GateDirectiveServiceImpl[IO],
-        new ThronePlacementServiceImpl[IO]
+        new ThronePlacementServiceImpl[IO],
+        new services.mapeditor.SpawnPlacementServiceImpl[IO]
       )
       _ <- MapEditorWrapApp
-        .runWith(new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)), dueler)
+        .runWith(
+          new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)),
+          new StubGroundSurfaceNationService(model.Nation.Atlantis_Early, model.Nation.Mictlan_Early),
+          dueler
+        )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
       surfPath = destDir / "map.map"
       cavePath = destDir / "map_plane2.map"
       surfDirectives <- MapFileParser.parseFile[IO](surfPath).compile.toVector
       caveDirectives <- MapFileParser.parseFile[IO](cavePath).compile.toVector
+      center = model.ProvinceId(13)
     yield expect.all(
       surfDirectives.contains(model.map.NoWrapAround),
-      caveDirectives.contains(model.map.NoWrapAround)
+      caveDirectives.contains(model.map.NoWrapAround),
+      surfDirectives.contains(model.map.AllowedPlayer(model.Nation.Atlantis_Early)),
+      surfDirectives.contains(model.map.SpecStart(model.Nation.Atlantis_Early, center)),
+      caveDirectives.contains(model.map.AllowedPlayer(model.Nation.Mictlan_Early)),
+      caveDirectives.contains(model.map.SpecStart(model.Nation.Mictlan_Early, center))
     )
   }
