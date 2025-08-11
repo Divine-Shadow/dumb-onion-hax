@@ -103,7 +103,7 @@ dest="${destRoot.toString}"
       provinceSize = sizePixels.toProvinceSize
       h = provinceSize.height
       state <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
-      index = state.provinceLocations.map(_.swap)
+      index = state.provinceLocations
       hasTopBottom = state.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
     yield expect.all(
       destEntries.exists(_.fileName.toString == "newer"),

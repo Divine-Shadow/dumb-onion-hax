@@ -2,16 +2,16 @@ package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
 import model.ProvinceId
-import model.map.{MapHeight, MapState, MapWidth, ProvinceLocation, WrapState}
+import model.map.{MapHeight, MapState, MapWidth, ProvinceLocation, ProvinceLocations, WrapState}
 
 object WrapSeverService:
   def isTopBottom(
       a: ProvinceId,
       b: ProvinceId,
-      index: Map[ProvinceId, ProvinceLocation],
+      index: ProvinceLocations,
       height: MapHeight
   ): Boolean =
-    (index.get(a), index.get(b)) match
+    (index.locationOf(a), index.locationOf(b)) match
       case (Some(locA), Some(locB)) =>
         val top = height.value - 1
         val bottom = 0
@@ -21,10 +21,10 @@ object WrapSeverService:
   def isLeftRight(
       a: ProvinceId,
       b: ProvinceId,
-      index: Map[ProvinceId, ProvinceLocation],
+      index: ProvinceLocations,
       width: MapWidth
   ): Boolean =
-    (index.get(a), index.get(b)) match
+    (index.locationOf(a), index.locationOf(b)) match
       case (Some(locA), Some(locB)) =>
         val left = 0
         val right = width.value - 1
@@ -37,15 +37,14 @@ object WrapSeverService:
     state.size match
       case Some(sz) =>
         val height = MapHeight(sz.value)
-        val index = state.provinceLocations.map(_.swap)
         val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.VerticalWrap
         val newAdj =
           if shouldSever then
-            state.adjacency.filterNot((a, b) => isTopBottom(a, b, index, height))
+            state.adjacency.filterNot((a, b) => isTopBottom(a, b, state.provinceLocations, height))
           else state.adjacency
         val newBorders =
           if shouldSever then
-            state.borders.filterNot(b => isTopBottom(b.a, b.b, index, height))
+            state.borders.filterNot(b => isTopBottom(b.a, b.b, state.provinceLocations, height))
           else state.borders
         val newWrap = state.wrap match
           case WrapState.FullWrap     => WrapState.HorizontalWrap
@@ -59,15 +58,14 @@ object WrapSeverService:
     state.size match
       case Some(sz) =>
         val width = MapWidth(sz.value)
-        val index = state.provinceLocations.map(_.swap)
         val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.HorizontalWrap
         val newAdj =
           if shouldSever then
-            state.adjacency.filterNot((a, b) => isLeftRight(a, b, index, width))
+            state.adjacency.filterNot((a, b) => isLeftRight(a, b, state.provinceLocations, width))
           else state.adjacency
         val newBorders =
           if shouldSever then
-            state.borders.filterNot(b => isLeftRight(b.a, b.b, index, width))
+            state.borders.filterNot(b => isLeftRight(b.a, b.b, state.provinceLocations, width))
           else state.borders
         val newWrap = state.wrap match
           case WrapState.FullWrap       => WrapState.VerticalWrap

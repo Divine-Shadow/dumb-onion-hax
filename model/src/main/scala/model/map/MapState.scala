@@ -24,7 +24,7 @@ final case class MapState(
     startingPositions: Vector[SpecStart],
     terrains: Vector[Terrain],
     gates: Vector[Gate],
-    provinceLocations: Map[ProvinceLocation, ProvinceId]
+    provinceLocations: ProvinceLocations
 )
 
 object MapState:
@@ -39,16 +39,17 @@ object MapState:
     Vector.empty,
     Vector.empty,
     Vector.empty,
-    Map.empty
+    ProvinceLocations.empty
   )
 
   def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
     directives.compile.toVector.flatMap { ds =>
       val stream = Stream.emits(ds).covary[F]
       ProvinceLocationService
-        .deriveLocationIndex(stream)
+        .derive(stream)
         .map { index =>
-          ds.foldLeft(empty)(accumulate).copy(provinceLocations = index)
+          val locations = ProvinceLocations.fromProvinceIdMap(index)
+          ds.foldLeft(empty)(accumulate).copy(provinceLocations = locations)
         }
     }
 
