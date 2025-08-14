@@ -3,6 +3,7 @@ package apps.services.mapeditor
 
 import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
+import cats.effect.Sync
 import model.map.*
 
 trait GroundSurfaceDuelPipe[Sequencer[_]]:
@@ -15,13 +16,15 @@ trait GroundSurfaceDuelPipe[Sequencer[_]]:
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
     ): Sequencer[ErrorChannel[(MapState, MapState)]]
 
-class GroundSurfaceDuelPipeImpl[Sequencer[_]: cats.effect.Sync](
+class GroundSurfaceDuelPipeImpl[Sequencer[_]: Sync](
     sizeValidator: MapSizeValidator[Sequencer],
     planner: PlacementPlanner[Sequencer],
     gateService: GateDirectiveService[Sequencer],
     throneService: ThronePlacementService[Sequencer],
     spawnService: SpawnPlacementService[Sequencer]
 ) extends GroundSurfaceDuelPipe[Sequencer]:
+  protected val sequencer = summon[Sync[Sequencer]]
+
   override def apply[ErrorChannel[_]](
       surface: MapState,
       cave: MapState,
@@ -31,6 +34,7 @@ class GroundSurfaceDuelPipeImpl[Sequencer[_]: cats.effect.Sync](
     )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
     ): Sequencer[ErrorChannel[(MapState, MapState)]] =
     for
+      _ <- sequencer.delay(println("Running GroundSurfaceDuelPipe"))
       validated <- sizeValidator.validate[ErrorChannel](surface, cave)
       result <- validated.traverse { case (size, surfaceState, caveState) =>
         val (gates, thrones) = planner.plan(size, config)

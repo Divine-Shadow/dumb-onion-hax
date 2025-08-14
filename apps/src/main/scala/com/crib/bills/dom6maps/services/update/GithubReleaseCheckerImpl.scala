@@ -9,6 +9,7 @@ import java.net.URI
 import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 
 class GithubReleaseCheckerImpl[Sequencer[_]: Async] extends Service[Sequencer]:
+  protected val sequencer = summon[Async[Sequencer]]
 
   override def checkForUpdate[ErrorChannel[_]](
       current: Version
@@ -16,6 +17,7 @@ class GithubReleaseCheckerImpl[Sequencer[_]: Async] extends Service[Sequencer]:
   ): Sequencer[ErrorChannel[UpdateStatus]] =
     val uri = URI("https://api.github.com/repos/Divine-Shadow/dumb-onion-hax/releases/latest")
     for
+      _ <- sequencer.delay(println(s"Checking for updates from $uri"))
       client <- Async[Sequencer].delay(HttpClient.newHttpClient())
       request <- Async[Sequencer].delay(HttpRequest.newBuilder(uri).GET().build())
       responseEither <-

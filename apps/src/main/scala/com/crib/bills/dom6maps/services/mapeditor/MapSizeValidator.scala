@@ -3,6 +3,7 @@ package apps.services.mapeditor
 
 import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
+import cats.effect.Sync
 import model.map.*
 
 trait MapSizeValidator[Sequencer[_]]:
@@ -12,7 +13,9 @@ trait MapSizeValidator[Sequencer[_]]:
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
     ): Sequencer[ErrorChannel[(MapSize, MapState, MapState)]]
 
-class MapSizeValidatorImpl[Sequencer[_]: Applicative] extends MapSizeValidator[Sequencer]:
+class MapSizeValidatorImpl[Sequencer[_]: Sync] extends MapSizeValidator[Sequencer]:
+  protected val sequencer = summon[Sync[Sequencer]]
+
   override def validate[ErrorChannel[_]](
       surface: MapState,
       cave: MapState
@@ -27,7 +30,7 @@ class MapSizeValidatorImpl[Sequencer[_]: Applicative] extends MapSizeValidator[S
     val ec = result match
       case Left(e)      => errorChannel.raiseError[(MapSize, MapState, MapState)](e)
       case Right(value) => errorChannel.pure(value)
-    ec.pure[Sequencer]
+    sequencer.delay(println("Validating map sizes")).as(ec)
 
 class MapSizeValidatorStub[Sequencer[_]: Applicative](
     size: MapSize,
