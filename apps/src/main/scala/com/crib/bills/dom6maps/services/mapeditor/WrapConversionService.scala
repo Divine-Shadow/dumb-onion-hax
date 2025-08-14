@@ -1,8 +1,9 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import cats.{Applicative, MonadError, Traverse}
+import cats.{MonadError, Traverse}
 import cats.syntax.all.*
+import cats.effect.Sync
 import model.map.MapState
 
 trait WrapConversionService[Sequencer[_]]:
@@ -13,7 +14,9 @@ trait WrapConversionService[Sequencer[_]]:
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapState]]
 
-class WrapConversionServiceImpl[Sequencer[_]: Applicative] extends WrapConversionService[Sequencer]:
+class WrapConversionServiceImpl[Sequencer[_]: Sync] extends WrapConversionService[Sequencer]:
+  protected val sequencer = summon[Sync[Sequencer]]
+
   override def convert[ErrorChannel[_]](
       state: MapState,
       target: WrapChoice
@@ -26,4 +29,4 @@ class WrapConversionServiceImpl[Sequencer[_]: Applicative] extends WrapConversio
       case WrapChoice.NoWrap =>
         WrapSeverService.severHorizontally(WrapSeverService.severVertically(state))
       case WrapChoice.GroundSurfaceDuel => state
-    result.pure[Sequencer].map(errorChannel.pure)
+    sequencer.delay(println(s"Converting map to $target")).as(errorChannel.pure(result))

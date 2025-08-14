@@ -21,6 +21,8 @@ trait MapEditorCopier[Sequencer[_]]:
   ): Sequencer[ErrorChannel[CopiedMapStreams[Sequencer]]]
 
 class MapEditorCopierImpl[Sequencer[_]: Async: Files] extends MapEditorCopier[Sequencer]:
+  protected val sequencer = summon[Async[Sequencer]]
+
   override def copyWithoutMaps[ErrorChannel[_]](
       source: Path,
       dest: Path
@@ -28,6 +30,7 @@ class MapEditorCopierImpl[Sequencer[_]: Async: Files] extends MapEditorCopier[Se
         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[CopiedMapStreams[Sequencer]]] =
     for
+      _ <- sequencer.delay(println(s"Copying editor from $source to $dest"))
       entries <- Files[Sequencer].walk(source).compile.toList
       info <- entries.traverse(p => Files[Sequencer].isDirectory(p).map(b => (p, b)))
       maybeMain =

@@ -14,22 +14,25 @@ trait LatestEditorFinder[Sequencer[_]]:
   ): Sequencer[ErrorChannel[Path]]
 
 class LatestEditorFinderImpl[Sequencer[_]: Async: Files] extends LatestEditorFinder[Sequencer]:
+  protected val sequencer = summon[Async[Sequencer]]
+
   override def mostRecentFolder[ErrorChannel[_]](
       root: Path
   )(using files: Files[Sequencer],
         errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Path]] =
-    Files[Sequencer]
-      .list(root)
-      .evalFilter(p => Files[Sequencer].isDirectory(p))
-      .evalMap(p => Files[Sequencer].getLastModifiedTime(p).map(time => (p, time)))
-      .compile
-      .toList
-      .flatMap { list =>
-        list.sortBy(_._2.toMillis).lastOption match
-          case Some((p, _)) => p.pure[ErrorChannel].pure[Sequencer]
-          case None =>
-            errorChannel
-              .raiseError[Path](new NoSuchElementException("no directories found"))
-              .pure[Sequencer]
-      }
+    for
+      _ <- sequencer.delay(println(s"Searching for most recent folder in $root"))
+      list <- Files[Sequencer]
+        .list(root)
+        .evalFilter(p => Files[Sequencer].isDirectory(p))
+        .evalMap(p => Files[Sequencer].getLastModifiedTime(p).map(time => (p, time)))
+        .compile
+        .toList
+      result <- list.sortBy(_._2.toMillis).lastOption match
+        case Some((p, _)) => p.pure[ErrorChannel].pure[Sequencer]
+        case None =>
+          errorChannel
+            .raiseError[Path](new NoSuchElementException("no directories found"))
+            .pure[Sequencer]
+    yield result

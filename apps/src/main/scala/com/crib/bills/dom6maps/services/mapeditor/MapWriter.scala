@@ -21,6 +21,8 @@ trait MapWriter[Sequencer[_]]:
   ): Sequencer[ErrorChannel[Unit]]
 
 class MapWriterImpl[Sequencer[_]: Async: Files] extends MapWriter[Sequencer]:
+  protected val sequencer = summon[Async[Sequencer]]
+
   override def write[ErrorChannel[_]](
       state: MapState,
       output: Path
@@ -29,11 +31,12 @@ class MapWriterImpl[Sequencer[_]: Async: Files] extends MapWriter[Sequencer]:
   ): Sequencer[ErrorChannel[Unit]] =
     val directives = Encoder[MapState].encode(state)
     val bytes = directives.map(_.render).mkString("\n").getBytes(StandardCharsets.UTF_8)
-    Files[Sequencer]
-      .createDirectories(output.parent.getOrElse(output))
-      >> Files[Sequencer]
+    for
+      _ <- sequencer.delay(println(s"Writing map to $output"))
+      _ <- Files[Sequencer].createDirectories(output.parent.getOrElse(output))
+      _ <- Files[Sequencer]
         .writeAll(output)
         .apply(Stream.emits(bytes).covary[Sequencer])
         .compile
         .drain
-        .as(().pure[ErrorChannel])
+    yield ().pure[ErrorChannel]
