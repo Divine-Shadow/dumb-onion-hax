@@ -1,51 +1,90 @@
 # Map State Model Migration Plan
 
-This document outlines how to evolve the map editing pipeline to use a compact `MapState` and directive events. The goal is to remove reliance on province-id based location data and instead pull coordinates and adjacency from a service.
+Migration to an event‑stream based `MapState` ensures that only documented `MapDirective` lines drive state while all other lines round‑trip verbatim. See [Migration Progress](map_state_model_migration_progress.md) for current status.
 
-## Impacted Services
-- `model.map.MapFileParser` – parse raw `.map` lines into `DirectiveEvent` instead of `MapDirective`.
-- `apps.services.mapeditor.MapLayerLoader` – build `MapState` from the event stream.
-- `apps.services.mapeditor.MapProcessingService` – operate on `MapState` and filtered event streams.
-- `apps.services.mapeditor.MapWriter` – emit directives from `MapState` and pass through remaining events.
-- Map modification pipes (`GateDirectiveService`, `ThronePlacementService`, `SpawnPlacementService`, `WrapConversionService`, `WrapSeverService`, `MapSizeValidator`) – adjust signatures to consume event streams or `MapState`.
+## Directive Inventory & Authority Map
+| Directive | Authority | Emission rule | Status (evidence) |
+| --- | --- | --- | --- |
+| `#mapsize` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala`, `model/src/main/scala/model/map/MapState.scala` |
+| `#dom2title`, `#description` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#wraparound`, `#hwraparound`, `#vwraparound`, `#nowraparound` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#allowedplayer`, `#specstart` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#terrain`, `#gate`, `#neighbour`, `#neighbourspec` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#province` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#pb` | Pass-through + Derived-input | verbatim; source for derived province locations | `model/src/main/scala/model/map` (variant missing) |
+| `#imagefile`, `#winterimagefile`, `#domversion`, `#nodeepcaves`, `#nodeepchoice`, `#mapnohide`, `#maptextcol`, `#mapdomcol`, `#landname` | Pass-through | verbatim | `model/src/main/scala/model/map/MapDirective.scala` |
+| comment lines (`--`) | Pass-through | verbatim | representation missing |
+| Derived province locations (from `#pb` runs via `ProvinceLocationService`) | Derived-input | state-rendered | `model/src/main/scala/model/map/ProvinceLocationService.scala` |
 
-## Model Overview
-1. **Directive Events** – sealed hierarchy representing parsed directives:
-   - Known events: `MapSize`, `ProvinceAt`, `Adjacency`, `ImageRow`, `Comment`.
-   - Unknown lines preserved as `UnknownDirective`.
-2. **[MapState](map_state.md)** – authoritative facts derived from events:
-   - Map dimensions.
-   - Location index mapping coordinates to province identifiers.
-   - Adjacency graph.
-   - Configuration flags to guide transformations.
-   - Excludes heavy payloads such as image rows.
-3. **ProvinceLocationService** – capability that returns province coordinates and adjacency metadata. Replaces hard coded `ProvinceId` lookups.
+## Two-Pass Behavior
+Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pass-through directives. Pass 2 re-emits pass-through directives verbatim and renders state-owned directives from `MapState` in canonical order; state-rendered output wins on conflicts. Verification relies on pass-through round-trips, ordered state sections, and feature-flagged end-to-end runs.
 
-## Staged Migration
-1. **Scaffolding**
-   - Introduce `DirectiveEvent`, `MapState`, and `ProvinceLocationService` in `model.map`.
-   - Provide JSON encoders/decoders following the existing renderer pattern.
-2. **Parser Upgrade**
-   - Extend `MapFileParser` to emit `DirectiveEvent`.
-   - Supply adapters converting legacy `MapDirective` streams to the new events.
-3. **State Builder**
-   - Implement a fold over the event stream that accumulates `MapState` and filters out directives represented in state.
-   - Replace province-id based coordinates with data from `ProvinceLocationService`.
-4. **Writer & Passthrough**
-   - Update `MapWriter` to render canonical directives from `MapState`.
-   - Merge with a "remaining directives" stream for comments, image rows, and unknown lines.
-5. **Service Refactor**
-   - Modify `MapLayerLoader`, `MapProcessingService`, and map modification pipes to consume `MapState` and event streams.
-   - Adjust tests in `apps` to use the new model.
-6. **Removal & Hardening**
-   - Deprecate `ProvincePixels` and related province-id coordinate logic.
-   - Run full compilation and service-level tests before removing legacy pathways.
+## Executable Step Cards
+1. **Scaffolding (Complete)**
+   *Purpose:* Establish minimal state model and province location derivation.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapState.scala`, `model/src/main/scala/model/map/ProvinceLocationService.scala`.
+   *Actions:* none.
+   *Deliverables:* existing files.
+   *Verification:* `model/src/test/scala/model/map/MapStateSpec.scala`, `model/src/test/scala/model/map/ProvinceLocationServiceSpec.scala`.
+   *Status:* Complete.
 
-## Rollout Notes
-- Each stage should ship behind a feature flag to avoid disrupting current workflows.
-- Update examples such as `MapEditorWrapApp` once the pipeline stabilizes.
-- Document new service contracts and encode references in API docs.
+2. **Complete `MapDirective` coverage (Pending)**
+   *Purpose:* Represent all documented directives and comments.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` lacks variants for `#pb` and comments.
+   *Actions:* add `MapDirective` variants for `#pb` and comment lines; update docs.
+   *Deliverables:* `MapDirective.scala`, inventory.
+   *Verification:* parser unit tests.
+   *Status:* Pending.
 
-## References
-- [Map Editor Processing Pipeline](map_editor_pipeline.md)
-- [Map Modification Services](map_modification_services.md)
+3. **Parser emits all `MapDirective` variants and fails on unmapped lines (Pending)**
+   *Purpose:* Ensure Pass 1 sees every directive and surfaces defects.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapFileParser.scala` drops unknown lines.
+   *Actions:* emit all `MapDirective` variants, capture comments, raise on unmapped lines.
+   *Deliverables:* `MapFileParser.scala`, parser tests.
+   *Verification:* round-trip tests with malformed input.
+   *Status:* Pending.
+
+4. **Pass 1 state builder retains pass-through directives (Pending)**
+   *Purpose:* Stream derivation of `MapState` with pass-through preservation.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapState.scala` buffers full stream and loses pass-through directives.
+   *Actions:* fold over `MapDirective` stream producing `MapState` and residual pass-through stream.
+   *Deliverables:* updated `MapState.scala`.
+   *Verification:* unit tests comparing to existing `fromDirectives`.
+   *Status:* Pending.
+
+5. **Pass 2 writer merges outputs and pass-through lines (Pending)**
+   *Purpose:* Re-emit pass-through directives verbatim and render state-owned directives in order.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirectiveCodecs.scala` and `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapWriter.scala` only render `MapState`.
+   *Actions:* render state-owned directives in canonical order, merge with preserved pass-through stream, append verbatim lines with ordering checks.
+   *Deliverables:* `MapDirectiveCodecs.scala`, `MapWriter.scala`.
+   *Verification:* golden file round-trip with ordering assertions.
+   *Status:* Pending.
+
+6. **Feature-flag integration in loaders and processors (Pending)**
+   *Purpose:* Adopt two-pass pipeline without disrupting existing flows.
+   *Preconditions (evidence):* `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapLayerLoader.scala` and `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapProcessingService.scala` load `MapState` directly without feature flag.
+   *Actions:* introduce feature flag; switch to two-pass pipeline when enabled.
+   *Deliverables:* service implementations, configuration.
+   *Verification:* feature flag tests.
+   *Status:* Pending.
+
+7. **Refactor map modification services (Pending)**
+   *Purpose:* Operate on `MapState` plus directive stream.
+   *Preconditions (evidence):* services such as `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/GateDirectiveService.scala` accept only `MapState`.
+   *Actions:* update service signatures and adapters.
+   *Deliverables:* service files and tests.
+   *Verification:* service-level tests.
+   *Status:* Pending.
+
+8. **Retire province-id location logic (Pending)**
+   *Purpose:* Remove reliance on `ProvincePixels` after new pipeline is proven.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` defines `ProvincePixels`.
+   *Actions:* drop `ProvincePixels` handling and old lookup paths.
+   *Deliverables:* directive models and docs.
+   *Verification:* compilation and end-to-end tests under flags.
+   *Status:* Pending.
+
+## Two-pass Proof Checklist
+- Diff original map with Pass 2 output to confirm ordering and verbatim pass-through.
+- Ensure `MapState` from Pass 1 matches `MapState.fromDirectives` for the same input.
+- Run end-to-end flow with the feature flag off and on to confirm dual-path behaviour.
