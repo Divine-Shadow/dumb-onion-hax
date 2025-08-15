@@ -1,6 +1,7 @@
 # Map State Model Migration Plan
 
 This document outlines how to evolve the map editing pipeline to use a compact `MapState` and directive events. The goal is to remove reliance on province-id based location data and instead pull coordinates and adjacency from a service.
+See [Migration Progress](map_state_model_migration_progress.md) for current status.
 
 ## Impacted Services
 - `model.map.MapFileParser` – parse raw `.map` lines into `DirectiveEvent` instead of `MapDirective`.
@@ -11,8 +12,12 @@ This document outlines how to evolve the map editing pipeline to use a compact `
 
 ## Model Overview
 1. **Directive Events** – sealed hierarchy representing parsed directives:
-   - Known events: `MapSize`, `ProvinceAt`, `Adjacency`, `ImageRow`, `Comment`.
-   - Unknown lines preserved as `UnknownDirective`.
+   - `MapSize` *(State-owned)*
+   - `ProvinceAt` *(State-owned)*
+   - `Adjacency` *(State-owned)*
+   - `ImageRow` *(Pass-through)*
+   - `Comment` *(Pass-through)*
+   - Any unmapped line is a parsing defect and must be surfaced.
 2. **[MapState](map_state.md)** – authoritative facts derived from events:
    - Map dimensions.
    - Location index mapping coordinates to province identifiers.
@@ -28,12 +33,11 @@ This document outlines how to evolve the map editing pipeline to use a compact `
 2. **Parser Upgrade**
    - Extend `MapFileParser` to emit `DirectiveEvent`.
    - Supply adapters converting legacy `MapDirective` streams to the new events.
-3. **State Builder**
-   - Implement a fold over the event stream that accumulates `MapState` and filters out directives represented in state.
+3. **Pass 1 – State Builder**
+   - Implement a fold over the full event stream that accumulates `MapState` while retaining pass-through directives.
    - Replace province-id based coordinates with data from `ProvinceLocationService`.
-4. **Writer & Passthrough**
-   - Update `MapWriter` to render canonical directives from `MapState`.
-   - Merge with a "remaining directives" stream for comments, image rows, and unknown lines.
+4. **Pass 2 – Writer**
+   - Update `MapWriter` to render canonical directives from `MapState` and re-emit preserved pass-through directives unchanged.
 5. **Service Refactor**
    - Modify `MapLayerLoader`, `MapProcessingService`, and map modification pipes to consume `MapState` and event streams.
    - Adjust tests in `apps` to use the new model.
