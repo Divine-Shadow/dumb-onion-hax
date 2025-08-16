@@ -9,19 +9,27 @@ import model.{ProvinceId, BorderFlag, Nation}
 object MapStateSpec extends SimpleIOSuite:
   private val directives = Vector(
     MapSizePixels(MapWidthPixels(1280), MapHeightPixels(800)),
+    ImageFile("map.tga"),
     Dom2Title("T"),
     Description("D"),
+    Pb(0, 0, 1, ProvinceId(7)),
+    Comment("note"),
     HWrapAround,
     AllowedPlayer(Nation.Atlantis_Early),
     SpecStart(Nation.Atlantis_Early, ProvinceId(42)),
     Terrain(ProvinceId(5), 7),
+    LandName(ProvinceId(5), "LN"),
     Gate(ProvinceId(1), ProvinceId(2)),
     Neighbour(ProvinceId(3), ProvinceId(4)),
     NeighbourSpec(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)
   )
 
-  test("builds map state from directives") {
-    MapState.fromDirectives(Stream.emits(directives).covary[IO]).map { state =>
+  test("builds map state and retains pass-through directives") {
+    val stream = Stream.emits(directives).covary[IO]
+    for
+      (state, residual) <- MapState.fromDirectivesWithPassThrough(stream)
+      oldState <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
+    yield
       val expected = MapState(
         size = MapSize.from(5).toOption,
         adjacency = Vector(
@@ -38,8 +46,15 @@ object MapStateSpec extends SimpleIOSuite:
         startingPositions = Vector(SpecStart(Nation.Atlantis_Early, ProvinceId(42))),
         terrains = Vector(Terrain(ProvinceId(5), 7)),
         gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
-        provinceLocations = ProvinceLocations.empty
+        provinceLocations = ProvinceLocations.fromProvinceIdMap(
+          Map(ProvinceId(7) -> ProvinceLocation(XCell(0), YCell(0)))
+        )
       )
-      expect(state == expected)
-    }
+      val expectedResidual = Vector(
+        ImageFile("map.tga"),
+        Pb(0, 0, 1, ProvinceId(7)),
+        Comment("note"),
+        LandName(ProvinceId(5), "LN")
+      )
+      expect(state == expected && residual == expectedResidual && state == oldState)
   }

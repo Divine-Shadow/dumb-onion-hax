@@ -48,13 +48,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* round-trip tests with malformed input.
    *Status:* Complete.
 
-4. **Pass 1 state builder retains pass-through directives (Pending)**
+4. **Pass 1 state builder retains pass-through directives (Complete)**
    *Purpose:* Stream derivation of `MapState` with pass-through preservation.
    *Preconditions (evidence):* `model/src/main/scala/model/map/MapState.scala` buffers full stream and loses pass-through directives.
    *Actions:* fold over `MapDirective` stream producing `MapState` and residual pass-through stream.
    *Deliverables:* updated `MapState.scala`.
    *Verification:* unit tests comparing to existing `fromDirectives`.
-   *Status:* Pending.
+   *Status:* Complete.
 
 5. **Pass 2 writer merges outputs and pass-through lines (Pending)**
    *Purpose:* Re-emit pass-through directives verbatim and render state-owned directives in order.

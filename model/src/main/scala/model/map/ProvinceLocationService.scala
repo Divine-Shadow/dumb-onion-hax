@@ -50,10 +50,8 @@ object ProvinceLocationService:
       case HWrapAround         => state.copy(wrapH = true)
       case VWrapAround         => state.copy(wrapV = true)
       case NoWrapAround        => state.copy(wrapH = false, wrapV = false)
-      case ProvincePixels(x, y, len, p) =>
-        val current = state.accs.getOrElse(p, emptyAcc)
-        val updated = updateAcc(current, x, y, len, state)
-        state.copy(accs = state.accs.updated(p, updated))
+      case ProvincePixels(x, y, len, p) => accumulatePixels(state, x, y, len, p)
+      case Pb(x, y, len, p)            => accumulatePixels(state, x, y, len, p)
       case _ => state
 
   private def updateAcc(acc: Acc, x: Int, y: Int, len: Int, state: State): Acc =
@@ -73,6 +71,11 @@ object ProvinceLocationService:
         (acc.sumCosY + weight * math.cos(angleY), acc.sumSinY + weight * math.sin(angleY))
       else (acc.sumCosY, acc.sumSinY)
     Acc(count, sumX, sumY, cosX, sinX, cosY, sinY)
+
+  private def accumulatePixels(state: State, x: Int, y: Int, len: Int, p: ProvinceId): State =
+    val current = state.accs.getOrElse(p, emptyAcc)
+    val updated = updateAcc(current, x, y, len, state)
+    state.copy(accs = state.accs.updated(p, updated))
 
   private def finalize(state: State): Map[ProvinceId, ProvinceLocation] =
     state.accs.map { case (p, acc) =>
