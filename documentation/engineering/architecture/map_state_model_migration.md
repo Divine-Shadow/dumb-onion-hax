@@ -11,9 +11,9 @@ Migration to a directive stream `MapState` ensures that only documented `MapDire
 | `#allowedplayer`, `#specstart` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
 | `#terrain`, `#gate`, `#neighbour`, `#neighbourspec` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
 | `#province` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
-| `#pb` | Pass-through + Derived-input | verbatim; source for derived province locations | `MapDirective.Pb` absent in `model/src/main/scala/model/map/MapDirective.scala` |
+| `#pb` | Pass-through + Derived-input | verbatim; source for derived province locations | `MapDirective.Pb` in `model/src/main/scala/model/map/MapDirective.scala` |
 | `#imagefile`, `#winterimagefile`, `#domversion`, `#nodeepcaves`, `#nodeepchoice`, `#mapnohide`, `#maptextcol`, `#mapdomcol`, `#landname` | Pass-through | verbatim | `model/src/main/scala/model/map/MapDirective.scala` |
-| comment lines (`--`) | Pass-through | verbatim | `MapDirective.Comment` absent in `model/src/main/scala/model/map/MapDirective.scala` |
+| comment lines (`--`) | Pass-through | verbatim | `MapDirective.Comment` in `model/src/main/scala/model/map/MapDirective.scala` |
 | Derived province locations (from `#pb` runs via `ProvinceLocationService`) | Derived-input | state-rendered | `model/src/main/scala/model/map/ProvinceLocationService.scala` |
 
 ## Two-Pass Behavior
@@ -32,13 +32,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* `model/src/test/scala/model/map/MapStateSpec.scala`, `model/src/test/scala/model/map/ProvinceLocationServiceSpec.scala`.
    *Status:* Complete.
 
-2. **Complete `MapDirective` coverage (Pending)**
+2. **Complete `MapDirective` coverage (Complete)**
    *Purpose:* Represent all documented directives and comments.
-   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` lacks variants for `#pb` and comments.
-   *Actions:* add `MapDirective` variants for `#pb` and comment lines; update docs.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` defines `Pb` and `Comment`.
+   *Actions:* none.
    *Deliverables:* `MapDirective.scala`, inventory.
    *Verification:* parser unit tests.
-   *Status:* Pending.
+   *Status:* Complete.
 
 3. **Parser emits all `MapDirective` variants and fails on unmapped lines (Pending)**
    *Purpose:* Ensure Pass 1 sees every directive and surfaces defects.
