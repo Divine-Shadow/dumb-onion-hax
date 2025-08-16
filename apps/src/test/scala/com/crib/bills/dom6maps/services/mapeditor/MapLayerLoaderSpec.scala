@@ -34,6 +34,5 @@ object MapLayerLoaderSpec extends SimpleIOSuite:
       tmp <- IO(Files.createTempFile("malformed", ".map"))
       _ <- IO(Files.write(tmp, "#terrain 1".getBytes(StandardCharsets.UTF_8)))
       result <- loader.load[EC](Path.fromNioPath(tmp))
-      state <- IO.fromEither(result)
-    yield expect(state == MapState.empty)
+    yield expect(result.isLeft)
   }

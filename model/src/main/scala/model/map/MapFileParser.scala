@@ -6,20 +6,21 @@ import fs2.{Pipe, Stream}
 import fs2.io.file.{Files, Path}
 import fs2.text
 import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId}
-import fastparse._
-import fastparse.NoWhitespace._
+import fastparse.*
+import fastparse.NoWhitespace.*
 
 object MapFileParser:
   def parseFile[Sequencer[_]: Sync](path: Path)(using Files[Sequencer]): Stream[Sequencer, MapDirective] =
     Files[Sequencer].readAll(path).through(parse)
 
+  final case class UnmappedLine(line: String) extends Exception(s"Unmapped line: $line")
+
   def parse[Sequencer[_]: Sync]: Pipe[Sequencer, Byte, MapDirective] =
     _.through(text.utf8.decode)
       .through(text.lines)
       .map(_.trim)
-      .filter(line => line.nonEmpty && !line.startsWith("--"))
-      .map(parseLine)
-      .collect { case Some(directive) => directive }
+      .filter(_.nonEmpty)
+      .evalMap(parseLine[Sequencer])
 
   private def ws[$: P]: P[Unit] = P(CharIn(" \t").rep(1))
   private def int[$: P]: P[Int] =
@@ -99,9 +100,9 @@ object MapFileParser:
       Nation.values.find(_.id == n).map(SpecStart(_, ProvinceId(p)))
     }
 
-  private def provincePixelsP[$: P]: P[Option[MapDirective]] =
+  private def pbP[$: P]: P[Option[MapDirective]] =
     P("#pb" ~ ws ~ int ~ ws ~ int ~ ws ~ int ~ ws ~ int).map {
-      case (x, y, len, p) => Some(ProvincePixels(x, y, len, ProvinceId(p)))
+      case (x, y, len, p) => Some(Pb(x, y, len, ProvinceId(p)))
     }
 
   private def terrainP[$: P]: P[Option[MapDirective]] =
@@ -132,6 +133,9 @@ object MapFileParser:
           .map(NeighbourSpec(ProvinceId(a), ProvinceId(b), _))
     }
 
+  private def commentP[$: P]: P[Option[MapDirective]] =
+    P("--" ~ rest.?).map(t => Some(Comment(t.getOrElse(""))))
+
   private def directive[$: P]: P[Option[MapDirective]] = P(
     dom2TitleP |
       imageFileP |
@@ -150,16 +154,17 @@ object MapFileParser:
       mapdomcolP |
       allowedPlayerP |
       specStartP |
-      provincePixelsP |
+      pbP |
       terrainP |
       landnameP |
       gateP |
       neighbourP |
-      neighbourspecP
+      neighbourspecP |
+      commentP
   )
 
-  private def parseLine(line: String): Option[MapDirective] =
+  private def parseLine[F[_]: Sync](line: String): F[MapDirective] =
     fastparse.parse(line, p => directive(using p)) match
-      case Parsed.Success(value, _) => value
-      case _                        => None
+      case Parsed.Success(Some(value), _) => Sync[F].pure(value)
+      case _                              => Sync[F].raiseError(UnmappedLine(line))
 
