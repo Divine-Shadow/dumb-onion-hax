@@ -42,16 +42,26 @@ object MapState:
     ProvinceLocations.empty
   )
 
-  def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
+  def fromDirectivesWithPassThrough[F[_]: Concurrent](
+      directives: Stream[F, MapDirective]
+  ): F[(MapState, Vector[MapDirective])] =
     directives.compile.toVector.flatMap { ds =>
-      val stream = Stream.emits(ds).covary[F]
+      val (state, residual) =
+        ds.foldLeft((empty, Vector.empty[MapDirective])) { case ((s, r), d) =>
+          val updatedState = accumulate(s, d)
+          val updatedResidual = if isPassThrough(d) then r :+ d else r
+          (updatedState, updatedResidual)
+        }
       ProvinceLocationService
-        .derive(stream)
+        .derive(Stream.emits(ds).covary[F])
         .map { index =>
           val locations = ProvinceLocations.fromProvinceIdMap(index)
-          ds.foldLeft(empty)(accumulate).copy(provinceLocations = locations)
+          (state.copy(provinceLocations = locations), residual)
         }
     }
+
+  def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
+    fromDirectivesWithPassThrough(directives).map(_._1)
 
   private def accumulate(state: MapState, directive: MapDirective): MapState =
     directive match
@@ -89,3 +99,13 @@ object MapState:
         )
       case _ =>
         state
+
+  private def isPassThrough(directive: MapDirective): Boolean =
+    directive match
+      case MapSizePixels(_, _) => false
+      case Dom2Title(_)        => false
+      case Description(_)      => false
+      case WrapAround | HWrapAround | VWrapAround | NoWrapAround => false
+      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: Gate => false
+      case Neighbour(_, _) | NeighbourSpec(_, _, _)              => false
+      case _                                                     => true
