@@ -97,3 +97,4 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
 - Centroid and grid derivation from `#pb` runs must stream the directive stream once and retain only `MapState` in memory.
 - Pass 1 and `ProvinceLocationService` will be exercised under constrained heap (`-Xmx64m`) in tests to assert constant-space behaviour.
 - Large-map golden tests confirm output equivalence without requiring full-file buffering.
+
