@@ -40,13 +40,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* parser unit tests.
    *Status:* Complete.
 
-3. **Parser emits all `MapDirective` variants and fails on unmapped lines (Pending)**
+3. **Parser emits all `MapDirective` variants and fails on unmapped lines (Complete)**
    *Purpose:* Ensure Pass 1 sees every directive and surfaces defects.
-   *Preconditions (evidence):* `model/src/main/scala/model/map/MapFileParser.scala` drops unknown lines.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapFileParser.scala` emits comments, covers `#pb`, and raises on unknown directives.
    *Actions:* emit all `MapDirective` variants, capture comments, raise on unmapped lines.
    *Deliverables:* `MapFileParser.scala`, parser tests.
    *Verification:* round-trip tests with malformed input.
-   *Status:* Pending.
+   *Status:* Complete.
 
 4. **Pass 1 state builder retains pass-through directives (Pending)**
    *Purpose:* Stream derivation of `MapState` with pass-through preservation.

@@ -76,6 +76,14 @@ object Arbitraries:
       p <- summon[Arbitrary[ProvinceId]].arbitrary
     yield SpecStart(n, p))
 
+  given Arbitrary[Pb] =
+    Arbitrary(for
+      x <- Gen.choose(0, 5000)
+      y <- Gen.choose(0, 5000)
+      l <- Gen.choose(1, 5000)
+      p <- summon[Arbitrary[ProvinceId]].arbitrary
+    yield Pb(x, y, l, p))
+
   given Arbitrary[ProvincePixels] =
     Arbitrary(for
       x <- Gen.choose(0, 5000)
@@ -115,6 +123,14 @@ object Arbitraries:
       f <- summon[Arbitrary[BorderFlag]].arbitrary
     yield NeighbourSpec(a, b, f))
 
+  given Arbitrary[Comment] =
+    Arbitrary(
+      Gen
+        .nonEmptyListOf(Gen.frequency((5, Gen.alphaChar), (1, Gen.const(' '))))
+        .map(_.mkString.trim)
+        .map(Comment.apply)
+    )
+
   given Arbitrary[MapDirective] =
     val gen = Gen.oneOf[
       MapDirective](
@@ -135,11 +151,12 @@ object Arbitraries:
       summon[Arbitrary[MapDomColor]].arbitrary,
       summon[Arbitrary[AllowedPlayer]].arbitrary,
       summon[Arbitrary[SpecStart]].arbitrary,
-      summon[Arbitrary[ProvincePixels]].arbitrary,
+      summon[Arbitrary[Pb]].arbitrary,
       summon[Arbitrary[Terrain]].arbitrary,
       summon[Arbitrary[LandName]].arbitrary,
       summon[Arbitrary[Gate]].arbitrary,
       summon[Arbitrary[Neighbour]].arbitrary,
-      summon[Arbitrary[NeighbourSpec]].arbitrary
+      summon[Arbitrary[NeighbourSpec]].arbitrary,
+      summon[Arbitrary[Comment]].arbitrary
     )
     Arbitrary(gen)

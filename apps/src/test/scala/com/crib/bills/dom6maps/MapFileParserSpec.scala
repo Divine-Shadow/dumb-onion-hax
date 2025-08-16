@@ -27,6 +27,7 @@ object MapFileParserSpec extends SimpleIOSuite:
     parsedIO.map { parsed =>
       expect(
         parsed == Vector(
+          Comment("Minimal test map"),
           Dom2Title("Sample Map"),
           ImageFile("sample.tga"),
           MapSizePixels(MapWidthPixels(100), MapHeightPixels(100)),
@@ -43,7 +44,7 @@ object MapFileParserSpec extends SimpleIOSuite:
             )
           ),
           MapDomColor(1, 2, 3, 4),
-          ProvincePixels(1, 2, 3, ProvinceId(1)),
+          Pb(1, 2, 3, ProvinceId(1)),
           AllowedPlayer(Nation.Xibalba_Early),
           SpecStart(Nation.Xibalba_Early, ProvinceId(1)),
           Terrain(ProvinceId(1), 264),
@@ -59,4 +60,14 @@ object MapFileParserSpec extends SimpleIOSuite:
     largeMaskParsedIO.map { parsed =>
       expect(parsed == Vector(Terrain(ProvinceId(1), -2147483584)))
     }
+  }
+
+  test("fails on unknown directives") {
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#unknown\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+      .attempt
+      .map(result => expect(result.isLeft))
   }

@@ -34,6 +34,7 @@ object MapRendererSpec extends SimpleIOSuite with Checkers:
     val e5 = expect(Description("d").render == "#description \"d\"")
     val e6 = expect(LandName(ProvinceId(1), "name").render == "#landname 1 \"name\"")
     val e7 = expect(Gate(ProvinceId(1), ProvinceId(2)).render == "#gate 1 2")
-    val e8 = expect(ProvincePixels(1, 2, 3, ProvinceId(4)).render == "#pb 1 2 3 4")
-    IO.pure(e1 and e2 and e3 and e4 and e5 and e6 and e7 and e8)
+    val e8 = expect(Pb(1, 2, 3, ProvinceId(4)).render == "#pb 1 2 3 4")
+    val e9 = expect(Comment("note").render == "--note")
+    IO.pure(e1 and e2 and e3 and e4 and e5 and e6 and e7 and e8 and e9)
   }
