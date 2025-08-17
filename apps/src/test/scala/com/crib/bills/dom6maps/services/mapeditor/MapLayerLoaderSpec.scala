@@ -3,7 +3,6 @@ package apps.services.mapeditor
 
 import cats.effect.IO
 import cats.instances.either.*
-import cats.syntax.all.*
 import fs2.io.file.Path
 import weaver.SimpleIOSuite
 import java.nio.file.Files
@@ -17,8 +16,12 @@ object MapLayerLoaderSpec extends SimpleIOSuite:
     val loader = new MapLayerLoaderImpl[IO]
     for
       result <- loader.load[EC](Path("data/test-map.map"))
-      state <- IO.fromEither(result)
-    yield expect(state.title.exists(_.value == "Sample Map"))
+      parsed <- IO.fromEither(result)
+      (state, passThrough) = parsed
+    yield expect.all(
+      state.title.exists(_.value == "Sample Map"),
+      passThrough.nonEmpty
+    )
   }
 
   test("load returns error for missing path") {

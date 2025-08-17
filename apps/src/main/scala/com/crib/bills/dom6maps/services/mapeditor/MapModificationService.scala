@@ -5,7 +5,7 @@ import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{GateSpec, MapState, ThronePlacement}
+import model.map.{GateSpec, MapDirective, MapState, ThronePlacement}
 
 trait MapModificationService[Sequencer[_]]:
   def modify[ErrorChannel[_]](
@@ -38,15 +38,21 @@ class MapModificationServiceImpl[Sequencer[_]: Async](
       for
         surfaceEC <- loader.load[ErrorChannel](surface)(using files, errorChannel)
         caveEC    <- loader.load[ErrorChannel](cave)(using files, errorChannel)
-        transformedSurface <- surfaceEC.traverse { state =>
+        transformedSurface <- surfaceEC.traverse { case (state, passThrough) =>
           for
             gated   <- gateService.update(state, gates)
             throned <- throneService.update(gated, thrones)
-          yield throned
+          yield (throned, passThrough)
         }
-        transformedCave <- caveEC.traverse(state => gateService.update(state, gates))
-        _ <- transformedSurface.flatTraverse(st => writer.write[ErrorChannel](st, surfaceOut)(using files, errorChannel))
-        _ <- transformedCave.flatTraverse(st => writer.write[ErrorChannel](st, caveOut)(using files, errorChannel))
+        transformedCave <- caveEC.traverse { case (state, passThrough) =>
+          gateService.update(state, gates).map((_, passThrough))
+        }
+        _ <- transformedSurface.flatTraverse { case (st, residual) =>
+          writer.write[ErrorChannel](st, residual, surfaceOut)(using files, errorChannel)
+        }
+        _ <- transformedCave.flatTraverse { case (st, residual) =>
+          writer.write[ErrorChannel](st, residual, caveOut)(using files, errorChannel)
+        }
       yield ().pure[ErrorChannel]
 
 class MapModificationServiceStub[Sequencer[_]: Applicative] extends MapModificationService[Sequencer]:
