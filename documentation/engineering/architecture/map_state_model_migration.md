@@ -17,7 +17,7 @@ Migration to a directive stream `MapState` ensures that only documented `MapDire
 | Derived province locations (from `#pb` runs via `ProvinceLocationService`) | Derived-input | state-rendered | `model/src/main/scala/model/map/ProvinceLocationService.scala` |
 
 ## Two-Pass Behavior
-Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pass-through directives. Pass 2 re-emits pass-through directives verbatim and renders state-owned directives from `MapState` in canonical order; state-rendered output wins on conflicts. Verification relies on pass-through round-trips, ordered state sections, and feature-flagged end-to-end runs.
+Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pass-through directives. Pass 2 re-emits pass-through directives verbatim and renders state-owned directives from `MapState` in canonical order; state-rendered output wins on conflicts. Verification relies on pass-through round-trips, ordered state sections, and end-to-end runs.
 
 ### Ordering & Merge Rules
 - **State-rendered families:** map metadata (`#mapsize`, `#dom2title`, `#description`), wrap settings (`#wraparound`, `#hwraparound`, `#vwraparound`, `#nowraparound`), player constraints (`#allowedplayer`, `#specstart`), and province blocks (`#province`, `#terrain`, `#gate`, `#neighbour`, `#neighbourspec`, `#landname`).
@@ -77,13 +77,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` defines `ProvincePixels`.
    *Actions:* drop `ProvincePixels` handling and old lookup paths.
    *Deliverables:* directive models and docs.
-   *Verification:* compilation and end-to-end tests under flags.
+   *Verification:* compilation and end-to-end tests.
    *Status:* Pending.
 
 ## Two-pass Proof Checklist
 - Diff original map with Pass 2 output to confirm ordering and verbatim pass-through.
 - Ensure `MapState` from Pass 1 matches `MapState.fromDirectives` for the same input.
-- Run end-to-end flow with the feature flag off and on to confirm dual-path behaviour.
+- Run end-to-end flow to confirm dual-path behaviour.
 
 ## Perf/Memory Acceptance
 - Centroid and grid derivation from `#pb` runs must stream the directive stream once and retain only `MapState` in memory.

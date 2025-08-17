@@ -13,5 +13,4 @@ This living document tracks implementation against the [Map State Model Migratio
 - **Legacy province-id logic** – `ProvincePixels` directive still defined (`model/src/main/scala/model/map/MapDirective.scala`).
 
 ## Blockers
-- Missing feature flag to toggle the two-pass pipeline.
 - Tests and adapters still consume direct `MapDirective` streams.
