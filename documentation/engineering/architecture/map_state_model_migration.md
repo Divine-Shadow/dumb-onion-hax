@@ -56,13 +56,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* unit tests comparing to existing `fromDirectives`.
    *Status:* Complete.
 
-5. **Pass 2 writer merges outputs and pass-through lines (Pending)**
+5. **Pass 2 writer merges outputs and pass-through lines (Complete)**
    *Purpose:* Re-emit pass-through directives verbatim and render state-owned directives in order.
    *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirectiveCodecs.scala` and `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapWriter.scala` only render `MapState`.
    *Actions:* render state-owned directives in canonical order, merge with preserved pass-through stream, append verbatim lines with ordering checks.
    *Deliverables:* `MapDirectiveCodecs.scala`, `MapWriter.scala`.
    *Verification:* golden file round-trip with ordering assertions.
-   *Status:* Pending.
+   *Status:* Complete.
 
 6. **Refactor map modification services (Pending)**
    *Purpose:* Operate on `MapState` plus directive stream.
