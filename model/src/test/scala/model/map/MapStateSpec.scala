@@ -25,12 +25,13 @@ object MapStateSpec extends SimpleIOSuite:
   )
 
   test("builds map state and retains pass-through directives") {
-    val stream = Stream.emits(directives).covary[IO]
-    for
-      (state, residual) <- MapState.fromDirectivesWithPassThrough(stream)
-      oldState <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
-    yield
-      val expected = MapState(
+      val stream = Stream.emits(directives).covary[IO]
+      for
+        layer    <- MapState.fromDirectivesWithPassThrough(stream)
+        residual <- layer.passThrough.compile.toVector
+        oldState <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
+      yield
+        val expected = MapState(
         size = MapSize.from(5).toOption,
         adjacency = Vector(
           (ProvinceId(3), ProvinceId(4)),
@@ -50,11 +51,11 @@ object MapStateSpec extends SimpleIOSuite:
           Map(ProvinceId(7) -> ProvinceLocation(XCell(0), YCell(0)))
         )
       )
-      val expectedResidual = Vector(
+        val expectedResidual = Vector(
         ImageFile("map.tga"),
         Pb(0, 0, 1, ProvinceId(7)),
         Comment("note"),
         LandName(ProvinceId(5), "LN")
       )
-      expect(state == expected && residual == expectedResidual && state == oldState)
-  }
+        expect(layer.state == expected && residual == expectedResidual && layer.state == oldState)
+    }

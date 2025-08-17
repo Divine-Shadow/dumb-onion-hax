@@ -21,14 +21,14 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 
 ## Capabilities
 1. **MapLayerLoader**
-   - Parses a map file into a `MapState` and preserves pass-through directives.
+   - Parses a map file into a `MapLayer` holding `MapState` and the remaining directive stream.
    - Contract sketch:
      ```scala
      trait MapLayerLoader[Sequencer[_]] {
        def load[ErrorChannel[_]](path: fs2.io.file.Path)(using
          fs2.io.file.Files[Sequencer],
          cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]
-       ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]]
+       ): Sequencer[ErrorChannel[model.map.MapLayer[Sequencer]]]
      }
      ```
 2. **GateDirectiveService**
