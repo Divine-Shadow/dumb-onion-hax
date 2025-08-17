@@ -9,8 +9,8 @@ import weaver.SimpleIOSuite
 object ProvinceLocationWrapSpec extends SimpleIOSuite:
   private val size = MapSizePixels(MapWidthPixels(1024), MapHeightPixels(160))
   private val id   = ProvinceId(1)
-  private val left = ProvincePixels(0, 0, 256, id)
-  private val right = ProvincePixels(768, 0, 256, id)
+  private val left  = Pb(0, 0, 256, id)
+  private val right = Pb(768, 0, 256, id)
   private def derive(dirs: List[MapDirective]) =
     ProvinceLocationService.derive(Stream.emits(dirs).covary[IO])
 

@@ -50,8 +50,7 @@ object ProvinceLocationService:
       case HWrapAround         => state.copy(wrapH = true)
       case VWrapAround         => state.copy(wrapV = true)
       case NoWrapAround        => state.copy(wrapH = false, wrapV = false)
-      case ProvincePixels(x, y, len, p) => accumulatePixels(state, x, y, len, p)
-      case Pb(x, y, len, p)            => accumulatePixels(state, x, y, len, p)
+      case Pb(x, y, len, p) => accumulatePixels(state, x, y, len, p)
       case _ => state
 
   private def updateAcc(acc: Acc, x: Int, y: Int, len: Int, state: State): Acc =

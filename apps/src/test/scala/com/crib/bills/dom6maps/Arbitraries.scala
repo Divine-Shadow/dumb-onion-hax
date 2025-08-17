@@ -84,14 +84,6 @@ object Arbitraries:
       p <- summon[Arbitrary[ProvinceId]].arbitrary
     yield Pb(x, y, l, p))
 
-  given Arbitrary[ProvincePixels] =
-    Arbitrary(for
-      x <- Gen.choose(0, 5000)
-      y <- Gen.choose(0, 5000)
-      l <- Gen.choose(1, 5000)
-      p <- summon[Arbitrary[ProvinceId]].arbitrary
-    yield ProvincePixels(x, y, l, p))
-
   given Arbitrary[Terrain] =
     Arbitrary(for
       p <- summon[Arbitrary[ProvinceId]].arbitrary
