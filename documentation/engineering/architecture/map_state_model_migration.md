@@ -64,13 +64,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* golden file round-trip with ordering assertions.
    *Status:* Complete.
 
-6. **Refactor map modification services (Pending)**
+6. **Refactor map modification services (Complete)**
    *Purpose:* Operate on `MapState` plus directive stream.
    *Preconditions (evidence):* services such as `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/GateDirectiveService.scala` accept only `MapState`.
    *Actions:* update service signatures and adapters.
    *Deliverables:* service files and tests.
    *Verification:* service-level tests.
-   *Status:* Pending.
+   *Status:* Complete.
 
 7. **Retire province-id location logic (Pending)**
    *Purpose:* Remove reliance on `ProvincePixels` after new pipeline is proven.

@@ -5,7 +5,7 @@ import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{MapFileParser, MapState}
+import model.map.{MapDirective, MapFileParser, MapState}
 
 trait MapLayerLoader[Sequencer[_]]:
   def load[ErrorChannel[_]](
@@ -13,7 +13,7 @@ trait MapLayerLoader[Sequencer[_]]:
   )(using
       files: Files[Sequencer],
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[MapState]]
+  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]]
 
 class MapLayerLoaderImpl[Sequencer[_]: Async] extends MapLayerLoader[Sequencer]:
   override def load[ErrorChannel[_]](
@@ -21,20 +21,20 @@ class MapLayerLoaderImpl[Sequencer[_]: Async] extends MapLayerLoader[Sequencer]:
   )(using
       files: Files[Sequencer],
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[MapState]] =
+  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]] =
     MapState
-      .fromDirectives(MapFileParser.parseFile[Sequencer](path))
+      .fromDirectivesWithPassThrough(MapFileParser.parseFile[Sequencer](path))
       .attempt
       .map {
-        case Left(e)  => errorChannel.raiseError[MapState](e)
-        case Right(ms) => errorChannel.pure(ms)
+        case Left(e)       => errorChannel.raiseError[(MapState, Vector[MapDirective])](e)
+        case Right(parsed) => errorChannel.pure(parsed)
       }
 
-class MapLayerLoaderStub[Sequencer[_]: Applicative](state: MapState) extends MapLayerLoader[Sequencer]:
+class MapLayerLoaderStub[Sequencer[_]: Applicative](state: MapState, passThrough: Vector[MapDirective]) extends MapLayerLoader[Sequencer]:
   override def load[ErrorChannel[_]](
       path: Path
   )(using
       files: Files[Sequencer],
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[MapState]] =
-    state.pure[Sequencer].map(_.pure[ErrorChannel])
+  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]] =
+    (state, passThrough).pure[Sequencer].map(_.pure[ErrorChannel])

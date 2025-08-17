@@ -5,13 +5,13 @@ import cats.{MonadError, Traverse}
 import cats.syntax.all.*
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{MapFileParser, MapState}
+import model.map.{MapDirective, MapFileParser, MapState}
 
 trait MapProcessingService[Sequencer[_]]:
   def process[ErrorChannel[_]](
       root: Path,
       dest: Path,
-      transform: MapState => Sequencer[MapState]
+      transform: (MapState, Vector[MapDirective]) => Sequencer[(MapState, Vector[MapDirective])]
   )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Path]]
 
@@ -23,7 +23,7 @@ class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
   override def process[ErrorChannel[_]](
       root: Path,
       dest: Path,
-      transform: MapState => Sequencer[MapState]
+      transform: (MapState, Vector[MapDirective]) => Sequencer[(MapState, Vector[MapDirective])]
   )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Path]] =
     for
@@ -34,9 +34,15 @@ class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
                     mapResult <- copyEC.traverse { streams =>
                                   val (mapBytes, outPath) = streams.main
                                   for
-                                    state <- MapState.fromDirectives(mapBytes.through(MapFileParser.parse[Sequencer]))
-                                    transformed <- transform(state)
-                                    writtenEC <- writer.write[ErrorChannel](transformed, outPath)
+                                    parsed <- MapState.fromDirectivesWithPassThrough(
+                                                mapBytes.through(MapFileParser.parse[Sequencer])
+                                              )
+                                    transformed <- transform(parsed._1, parsed._2)
+                                    writtenEC <- writer.write[ErrorChannel](
+                                                    transformed._1,
+                                                    transformed._2,
+                                                    outPath
+                                                  )
                                   yield writtenEC.as(outPath)
                                 }
                   yield mapResult

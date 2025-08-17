@@ -3,7 +3,6 @@ package apps.services.mapeditor
 
 import cats.effect.IO
 import cats.instances.either.*
-import cats.syntax.all.*
 import fs2.io.file.Path
 import weaver.SimpleIOSuite
 import java.nio.file.Files
@@ -29,12 +28,16 @@ object MapProcessingServiceSpec extends SimpleIOSuite:
       _ <- IO(Files.write(newer.resolve("image.tga"), Array[Byte](1,2,3)))
       _ <- IO(Files.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
       destDir <- IO(Files.createTempDirectory("dest-editor"))
-      resultEC <- service.process[EC](Path.fromNioPath(rootDir), Path.fromNioPath(destDir), ms => IO.pure(ms))
+      resultEC <- service.process[EC](
+                    Path.fromNioPath(rootDir),
+                    Path.fromNioPath(destDir),
+                    (ms, pass) => IO.pure((ms, pass))
+                  )
       outPath <- IO.fromEither(resultEC)
       directives <- MapFileParser.parseFile[IO](outPath).compile.toVector
     yield expect.all(
       outPath.fileName.toString == "map.map",
       directives.nonEmpty,
-      !directives.contains(MapNoHide)
+      directives.contains(MapNoHide)
     )
   }

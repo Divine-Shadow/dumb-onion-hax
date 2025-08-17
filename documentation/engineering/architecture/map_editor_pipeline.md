@@ -31,14 +31,14 @@ This document captures the initial plan for processing map-editor directories an
        ): Sequencer[ErrorChannel[(Stream[Sequencer, Byte], Option[Stream[Sequencer, Byte]])]]
      ```
 3. **Apply map-state transformation**
-   - Parse directives into `MapState` and apply a pure transformation function.
+   - Parse directives into `MapState` along with the preserved pass-through stream and apply a transformation function.
 4. **Render and persist the updated `.map` file**
-   - Build a `MapWriter` capability that renders directives from `MapState` back to text and writes the file to the output directory.
+   - Build a `MapWriter` capability that merges state-owned output with the preserved directives and writes the file to the output directory.
 5. **Compose a higher-level service**
    - Assemble the above capabilities into an orchestrating `MapProcessingService` that:
      1. Finds the latest editor folder.
      2. Copies contents, extracting the map.
-     3. Applies the state transformation.
+     3. Applies the state transformation while retaining pass-through directives.
      4. Writes the modified `.map` file alongside the copied assets.
 
 ## Milestones
