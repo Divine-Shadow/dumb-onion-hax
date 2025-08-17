@@ -15,13 +15,13 @@ object MapLayerLoaderSpec extends SimpleIOSuite:
   test("load returns MapState for valid map") {
     val loader = new MapLayerLoaderImpl[IO]
     for
-      result <- loader.load[EC](Path("data/test-map.map"))
-      parsed <- IO.fromEither(result)
-      (state, passThrough) = parsed
-    yield expect.all(
-      state.title.exists(_.value == "Sample Map"),
-      passThrough.nonEmpty
-    )
+        result <- loader.load[EC](Path("data/test-map.map"))
+        layer  <- IO.fromEither(result)
+        pass   <- layer.passThrough.compile.toVector
+      yield expect.all(
+        layer.state.title.exists(_.value == "Sample Map"),
+        pass.nonEmpty
+      )
   }
 
   test("load returns error for missing path") {

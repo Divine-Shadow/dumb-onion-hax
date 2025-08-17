@@ -5,30 +5,30 @@ import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
 import fs2.io.file.{Files, Path}
 import cats.effect.Async
-import model.map.{MapDirective, MapFileParser, MapState}
+import model.map.{MapDirective, MapFileParser, MapState, MapLayer}
 
 trait MapLayerLoader[Sequencer[_]]:
-  def load[ErrorChannel[_]](
-      path: Path
-  )(using
-      files: Files[Sequencer],
-      errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]]
+    def load[ErrorChannel[_]](
+        path: Path
+    )(using
+        files: Files[Sequencer],
+        errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+    ): Sequencer[ErrorChannel[MapLayer[Sequencer]]]
 
 class MapLayerLoaderImpl[Sequencer[_]: Async] extends MapLayerLoader[Sequencer]:
-  override def load[ErrorChannel[_]](
-      path: Path
-  )(using
-      files: Files[Sequencer],
-      errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]] =
-    MapState
-      .fromDirectivesWithPassThrough(MapFileParser.parseFile[Sequencer](path))
-      .attempt
-      .map {
-        case Left(e)       => errorChannel.raiseError[(MapState, Vector[MapDirective])](e)
-        case Right(parsed) => errorChannel.pure(parsed)
-      }
+    override def load[ErrorChannel[_]](
+        path: Path
+    )(using
+        files: Files[Sequencer],
+        errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+    ): Sequencer[ErrorChannel[MapLayer[Sequencer]]] =
+      MapState
+        .fromDirectivesWithPassThrough(MapFileParser.parseFile[Sequencer](path))
+        .attempt
+        .map {
+          case Left(e)       => errorChannel.raiseError[MapLayer[Sequencer]](e)
+          case Right(parsed) => errorChannel.pure(parsed)
+        }
 
 class MapLayerLoaderStub[Sequencer[_]: Applicative](state: MapState, passThrough: Vector[MapDirective]) extends MapLayerLoader[Sequencer]:
   override def load[ErrorChannel[_]](
@@ -36,5 +36,5 @@ class MapLayerLoaderStub[Sequencer[_]: Applicative](state: MapState, passThrough
   )(using
       files: Files[Sequencer],
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-  ): Sequencer[ErrorChannel[(MapState, Vector[MapDirective])]] =
-    (state, passThrough).pure[Sequencer].map(_.pure[ErrorChannel])
+  ): Sequencer[ErrorChannel[MapLayer[Sequencer]]] =
+    MapLayer(state, fs2.Stream.emits(passThrough).covary[Sequencer]).pure[Sequencer].map(_.pure[ErrorChannel])

@@ -66,15 +66,15 @@ object MapWriterRoundTripSpec extends SimpleIOSuite:
   }
 
   test("MapWriter preserves pass-through directives") {
-    val writer = new MapWriterImpl[IO]
-    for
-      parsed <- MapState.fromDirectivesWithPassThrough[
-        IO
-      ](MapFileParser.parseFile[IO](Path("data/test-map.map")))
-      (state, passThrough) = parsed
-      tmp <- IO(Files.createTempFile("mapwriter", ".map")).map(Path.fromNioPath)
-      _ <- writer.write[EC](state, passThrough, tmp).flatMap(IO.fromEither)
-      roundTripped <- MapFileParser.parseFile[IO](tmp).compile.toVector
-      expected = MapDirectiveCodecs.merge(state, passThrough)
-    yield expect(roundTripped == expected)
+      val writer = new MapWriterImpl[IO]
+      for
+        layer <- MapState.fromDirectivesWithPassThrough[
+          IO
+        ](MapFileParser.parseFile[IO](Path("data/test-map.map")))
+        tmp <- IO(Files.createTempFile("mapwriter", ".map")).map(Path.fromNioPath)
+        _ <- writer.write[EC](layer, tmp).flatMap(IO.fromEither)
+        roundTripped <- MapFileParser.parseFile[IO](tmp).compile.toVector
+        pass <- layer.passThrough.compile.toVector
+        expected = MapDirectiveCodecs.merge(layer.state, pass)
+      yield expect(roundTripped == expected)
   }

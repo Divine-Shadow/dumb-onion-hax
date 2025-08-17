@@ -28,11 +28,11 @@ object MapProcessingServiceSpec extends SimpleIOSuite:
       _ <- IO(Files.write(newer.resolve("image.tga"), Array[Byte](1,2,3)))
       _ <- IO(Files.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
       destDir <- IO(Files.createTempDirectory("dest-editor"))
-      resultEC <- service.process[EC](
-                    Path.fromNioPath(rootDir),
-                    Path.fromNioPath(destDir),
-                    (ms, pass) => IO.pure((ms, pass))
-                  )
+        resultEC <- service.process[EC](
+                      Path.fromNioPath(rootDir),
+                      Path.fromNioPath(destDir),
+                      layer => IO.pure(layer)
+                    )
       outPath <- IO.fromEither(resultEC)
       directives <- MapFileParser.parseFile[IO](outPath).compile.toVector
     yield expect.all(

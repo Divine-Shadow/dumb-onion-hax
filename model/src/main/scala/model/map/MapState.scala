@@ -45,9 +45,9 @@ object MapState:
 
   def fromDirectivesWithPassThrough[F[_]: Concurrent](
       directives: Stream[F, MapDirective]
-  ): F[(MapState, Vector[MapDirective])] =
+  ): F[MapLayer[F]] =
     for
-      stateRef <- Ref.of[F, MapState](empty)
+      stateRef    <- Ref.of[F, MapState](empty)
       residualRef <- Ref.of[F, Vector[MapDirective]](Vector.empty)
       locations <-
         ProvinceLocationService.derive(
@@ -56,13 +56,13 @@ object MapState:
               (if isPassThrough(d) then residualRef.update(_ :+ d) else Concurrent[F].unit)
           }
         )
-      state <- stateRef.get
-      residual <- residualRef.get
+      state     <- stateRef.get
+      residual  <- residualRef.get
       finalState = state.copy(provinceLocations = ProvinceLocations.fromProvinceIdMap(locations))
-    yield (finalState, residual)
+    yield MapLayer(finalState, Stream.emits(residual).covary[F])
 
   def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
-    fromDirectivesWithPassThrough(directives).map(_._1)
+    fromDirectivesWithPassThrough(directives).map(_.state)
 
   private def accumulate(state: MapState, directive: MapDirective): MapState =
     directive match
