@@ -72,13 +72,13 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* service-level tests.
    *Status:* Complete.
 
-7. **Retire province-id location logic (Pending)**
+7. **Retire province-id location logic (Complete)**
    *Purpose:* Remove reliance on `ProvincePixels` after new pipeline is proven.
-   *Preconditions (evidence):* `model/src/main/scala/model/map/MapDirective.scala` defines `ProvincePixels`.
+   *Preconditions (evidence):* `ProvincePixels` directive removed from `model/src/main/scala/model/map/MapDirective.scala`.
    *Actions:* drop `ProvincePixels` handling and old lookup paths.
    *Deliverables:* directive models and docs.
    *Verification:* compilation and end-to-end tests.
-   *Status:* Pending.
+   *Status:* Complete.
 
 ## Two-pass Proof Checklist
 - Diff original map with Pass 2 output to confirm ordering and verbatim pass-through.

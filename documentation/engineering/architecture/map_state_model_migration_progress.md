@@ -10,7 +10,7 @@ This living document tracks implementation against the [Map State Model Migratio
 - **Pass 1 builder** – retains pass-through directives (`MapState.fromDirectivesWithPassThrough` in `model/src/main/scala/model/map/MapState.scala`) but still buffers the full stream.
 - **Pass 2 writer** – merges state-owned output with verbatim pass-through directives (`MapDirectiveCodecs.merge` in `model/src/main/scala/model/map/MapDirectiveCodecs.scala`, `MapWriter.write` in `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapWriter.scala`, `MapWriterRoundTripSpec` in `apps/src/test/scala/com/crib/bills/dom6maps/services/mapeditor/MapWriterRoundTripSpec.scala`).
 - **Services lacking MapDirective-stream integration** – `GateDirectiveService.scala`, `ThronePlacementService.scala`, `SpawnPlacementService.scala`, `WrapConversionService.scala`, `WrapSeverService.scala`, `MapSizeValidator.scala`.
-- **Legacy province-id logic** – `ProvincePixels` directive still defined (`model/src/main/scala/model/map/MapDirective.scala`).
+- **Legacy province-id logic** – retired; `ProvincePixels` directive removed (`model/src/main/scala/model/map/MapDirective.scala`).
 
 ## Blockers
 - Tests and adapters still consume direct `MapDirective` streams.
