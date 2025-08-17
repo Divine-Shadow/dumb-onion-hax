@@ -2,6 +2,7 @@ package com.crib.bills.dom6maps
 package model.map
 
 import cats.effect.kernel.Concurrent
+import cats.effect.Ref
 import cats.syntax.all.*
 import fs2.Stream
 import model.{BorderFlag, ProvinceId}
@@ -45,20 +46,20 @@ object MapState:
   def fromDirectivesWithPassThrough[F[_]: Concurrent](
       directives: Stream[F, MapDirective]
   ): F[(MapState, Vector[MapDirective])] =
-    directives.compile.toVector.flatMap { ds =>
-      val (state, residual) =
-        ds.foldLeft((empty, Vector.empty[MapDirective])) { case ((s, r), d) =>
-          val updatedState = accumulate(s, d)
-          val updatedResidual = if isPassThrough(d) then r :+ d else r
-          (updatedState, updatedResidual)
-        }
-      ProvinceLocationService
-        .derive(Stream.emits(ds).covary[F])
-        .map { index =>
-          val locations = ProvinceLocations.fromProvinceIdMap(index)
-          (state.copy(provinceLocations = locations), residual)
-        }
-    }
+    for
+      stateRef <- Ref.of[F, MapState](empty)
+      residualRef <- Ref.of[F, Vector[MapDirective]](Vector.empty)
+      locations <-
+        ProvinceLocationService.derive(
+          directives.evalTap { d =>
+            stateRef.update(accumulate(_, d)) *>
+              (if isPassThrough(d) then residualRef.update(_ :+ d) else Concurrent[F].unit)
+          }
+        )
+      state <- stateRef.get
+      residual <- residualRef.get
+      finalState = state.copy(provinceLocations = ProvinceLocations.fromProvinceIdMap(locations))
+    yield (finalState, residual)
 
   def fromDirectives[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[MapState] =
     fromDirectivesWithPassThrough(directives).map(_._1)
