@@ -10,7 +10,8 @@ import model.map.{
   MapState,
   MapDirective,
   Neighbour,
-  NeighbourSpec
+  NeighbourSpec,
+  MapDirectiveCodecs
 }
 import model.map.MapDirectiveCodecs.Encoder
 import fs2.Stream
@@ -62,4 +63,18 @@ object MapWriterRoundTripSpec extends SimpleIOSuite:
       roundTripped.adjacency == expectedState.adjacency,
       roundTripped.borders == expectedState.borders
     )
+  }
+
+  test("MapWriter preserves pass-through directives") {
+    val writer = new MapWriterImpl[IO]
+    for
+      parsed <- MapState.fromDirectivesWithPassThrough[
+        IO
+      ](MapFileParser.parseFile[IO](Path("data/test-map.map")))
+      (state, passThrough) = parsed
+      tmp <- IO(Files.createTempFile("mapwriter", ".map")).map(Path.fromNioPath)
+      _ <- writer.write[EC](state, passThrough, tmp).flatMap(IO.fromEither)
+      roundTripped <- MapFileParser.parseFile[IO](tmp).compile.toVector
+      expected = MapDirectiveCodecs.merge(state, passThrough)
+    yield expect(roundTripped == expected)
   }

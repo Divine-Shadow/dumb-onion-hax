@@ -82,3 +82,18 @@ object MapDirectiveCodecs:
         .flatMap(Encoder[(ProvinceId, ProvinceId)].encode)
       val borders = value.borders.flatMap(Encoder[Border].encode)
       size ++ wrap ++ title ++ description ++ players ++ starts ++ terrains ++ gates ++ adjacency ++ borders
+
+  private def isPassThrough(directive: MapDirective): Boolean =
+    directive match
+      case MapSizePixels(_, _)                                         => false
+      case Dom2Title(_)                                                => false
+      case Description(_)                                              => false
+      case WrapAround | HWrapAround | VWrapAround | NoWrapAround       => false
+      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: Gate      => false
+      case Neighbour(_, _) | NeighbourSpec(_, _, _)                    => false
+      case _                                                           => true
+
+  def merge(state: MapState, passThrough: Vector[MapDirective]): Vector[MapDirective] =
+    val (pt, nonPt) = passThrough.partition(isPassThrough)
+    require(nonPt.isEmpty, "passThrough contains state-owned directives")
+    Encoder[MapState].encode(state) ++ pt
