@@ -23,7 +23,8 @@ import services.mapeditor.{
   GroundSurfaceNationService,
   WrapChoice,
   WrapChoiceService,
-  WrapChoices
+  WrapChoices,
+  MapLayerLoaderImpl
 }
 import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
@@ -58,6 +59,7 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       _ <- IO(JFiles.deleteIfExists(configFile))
       res <- MapEditorWrapApp
         .runWith(
+          new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe
@@ -87,6 +89,7 @@ dest="${destRoot.toString}"
 """))
       _ <- MapEditorWrapApp
         .runWith(
+          new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe
@@ -134,6 +137,7 @@ dest="${destRoot.toString}"
       )
       _ <- MapEditorWrapApp
         .runWith(
+          new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe
@@ -174,6 +178,7 @@ dest="${destRoot.toString}"
       )
       _ <- MapEditorWrapApp
         .runWith(
+          new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)),
           new StubGroundSurfaceNationService(model.Nation.Atlantis_Early, model.Nation.Mictlan_Early),
           dueler

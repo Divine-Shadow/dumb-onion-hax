@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 import cats.instances.either.*
 import fs2.io.file.Path
-import model.map.{GroundSurfaceDuelConfig, MapFileParser, MapState}
+import model.map.{GroundSurfaceDuelConfig, MapState}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
 
@@ -16,6 +16,7 @@ class MapWrapWorkflowImpl(
     finder: LatestEditorFinder[IO],
     copier: MapEditorCopier[IO],
     writer: MapWriter[IO],
+    loader: MapLayerLoader[IO],
     converter: WrapConversionService[IO],
     checker: GithubReleaseChecker[IO],
     chooser: WrapChoiceService[IO],
@@ -41,7 +42,8 @@ class MapWrapWorkflowImpl(
       res <- copier.copyWithoutMaps[ErrorOr](latest, targetDir)
       copied <- IO.fromEither(res)
       (bytes, outPath) = copied.main
-      state <- MapState.fromDirectives(bytes.through(MapFileParser.parse[IO]))
+      layerEC <- loader.load[ErrorOr](bytes)
+      layer <- IO.fromEither(layerEC)
       wrapEC <- chooser.chooseWraps[ErrorOr]()
       wrapChoices <- IO.fromEither(wrapEC)
       _ <- wrapChoices.main match
@@ -49,40 +51,42 @@ class MapWrapWorkflowImpl(
           copied.cave match
             case Some((caveBytes, caveOutPath)) =>
               for
-                caveState <- MapState.fromDirectives(caveBytes.through(MapFileParser.parse[IO]))
+                caveLayerEC <- loader.load[ErrorOr](caveBytes)
+                caveLayer <- IO.fromEither(caveLayerEC)
                 nationsEC <- nationChooser.chooseNations[ErrorOr]()
                 nations <- IO.fromEither(nationsEC)
                 duelResEC <- dueler
                   .apply[ErrorOr](
-                    state,
-                    caveState,
+                    layer.state,
+                    caveLayer.state,
                     GroundSurfaceDuelConfig.default,
                     nations.surface,
                     nations.underground
                   )
                 duelRes <- IO.fromEither(duelResEC)
                 (surfRes, caveRes) = duelRes
-                surfWritten <- writer.write[ErrorOr](surfRes, outPath)
+                surfWritten <- writer.write[ErrorOr](layer.copy(state = surfRes), outPath)
                 _ <- IO.fromEither(surfWritten)
-                caveWritten <- writer.write[ErrorOr](caveRes, caveOutPath)
+                caveWritten <- writer.write[ErrorOr](caveLayer.copy(state = caveRes), caveOutPath)
                 _ <- IO.fromEither(caveWritten)
               yield ()
             case None => IO.raiseError(new NoSuchElementException("cave map not found"))
         case wrapChoice =>
           for
-            convertedEC <- converter.convert[ErrorOr](state, wrapChoice)
+            convertedEC <- converter.convert[ErrorOr](layer.state, wrapChoice)
             converted <- IO.fromEither(convertedEC)
-            written <- writer.write[ErrorOr](converted, outPath)
+            written <- writer.write[ErrorOr](layer.copy(state = converted), outPath)
             _ <- IO.fromEither(written)
             _ <- wrapChoices.cave match
               case Some(caveChoice) =>
                 copied.cave match
                   case Some((caveBytes, caveOutPath)) =>
                     for
-                      caveState <- MapState.fromDirectives(caveBytes.through(MapFileParser.parse[IO]))
-                      caveConvertedEC <- converter.convert[ErrorOr](caveState, caveChoice)
+                      caveLayerEC <- loader.load[ErrorOr](caveBytes)
+                      caveLayer <- IO.fromEither(caveLayerEC)
+                      caveConvertedEC <- converter.convert[ErrorOr](caveLayer.state, caveChoice)
                       caveConverted <- IO.fromEither(caveConvertedEC)
-                      caveWritten <- writer.write[ErrorOr](caveConverted, caveOutPath)
+                      caveWritten <- writer.write[ErrorOr](caveLayer.copy(state = caveConverted), caveOutPath)
                       _ <- IO.fromEither(caveWritten)
                     yield ()
                   case None => IO.raiseError(new NoSuchElementException("cave map not found"))
