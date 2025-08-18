@@ -14,7 +14,7 @@ object ProvinceLocationWrapSpec extends SimpleIOSuite:
   private def derive(dirs: List[MapDirective]) =
     ProvinceLocationService.derive(Stream.emits(dirs).covary[IO])
 
-  test("wrap-around alters derived location"):
+  test("no-wrap directive still applies wrap-around protection"):
     val base = List(size, left, right)
     for
       wrap   <- derive(WrapAround :: base)
@@ -22,6 +22,5 @@ object ProvinceLocationWrapSpec extends SimpleIOSuite:
     yield
       val wrapLoc   = wrap(id)
       val noWrapLoc = nowrap(id)
-      expect(wrapLoc != noWrapLoc) &&
-      expect.same(ProvinceLocation(XCell(3), YCell(0)), wrapLoc) &&
-      expect.same(ProvinceLocation(XCell(1), YCell(0)), noWrapLoc)
+      expect.same(wrapLoc, noWrapLoc) &&
+      expect.same(ProvinceLocation(XCell(3), YCell(0)), wrapLoc)

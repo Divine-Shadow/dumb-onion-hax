@@ -20,7 +20,7 @@ streaming fashion.
 
 ## Streaming Aggregation
 
-1. Parse the map header to obtain pixel dimensions and wrap mode.
+1. Parse the map header to obtain pixel dimensions.
 2. Stream through the `#pb` lines in file order. For each `#pb x y len province` run:
    - `count[p] += len`
    - `sumX[p] += len * x + (len - 1) * len / 2`
@@ -32,9 +32,9 @@ streaming fashion.
 ## Wrap Handling
 
 Horizontal or vertical wraps can leave stray pixels from severed provinces on both edges of the
-image. To avoid misplacing such provinces:
+image. To avoid misplacing such provinces, treat coordinates as circular values on both axes
+regardless of the map's declared wrap mode:
 
-- When a wrap is enabled, treat coordinates as circular values.
 - For each province maintain `sumCos` and `sumSin` for both axes using the run's centre point.
   After the scan compute angular means with `atan2(sumSin, sumCos)` and convert back to pixel
   coordinates. This yields centroids that are unaffected by fragments appearing on opposite edges.
@@ -43,16 +43,20 @@ image. To avoid misplacing such provinces:
 
 ## Coordinate Projection
 
-After processing all runs, compute the centroid for each province:
+After processing all runs, compute the centroid for each province using the angular means and
+convert the angles back to pixel coordinates:
 
 ```
-centroidX = sumX[p] / count[p]
-centroidY = sumY[p] / count[p]
+angleX = atan2(sumSinX[p], sumCosX[p])
+angleY = atan2(sumSinY[p], sumCosY[p])
+centroidX = width * normalize(angleX) / (2π)
+centroidY = height * normalize(angleY) / (2π)
 ```
 
-If circular means were used, substitute the unwrapped coordinates. Convert the centroid from
-pixels to the province mesh by dividing by the pixel dimensions of a single province (256×160 in
-the default engine):
+where `normalize` adjusts the angle into the range `[0, 2π)`.
+
+Convert the centroid from pixels to the province mesh by dividing by the pixel dimensions of a
+single province (256×160 in the default engine):
 
 ```
 xCell = round(centroidX / 256)
