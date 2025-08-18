@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="sbt 1" modules="apps,dumb-onion-hax,dumb-onion-hax_9571,dumo-onion-haxdumb,model" />
+    <option name="separateProdTestSources" value="true" />
+    <profile name="sbt 1" modules="apps,dumb-onion-hax,dumb-onion-hax.apps,dumb-onion-hax.apps.main,dumb-onion-hax.apps.test,dumb-onion-hax.main,dumb-onion-hax.model,dumb-onion-hax.model.main,dumb-onion-hax.model.test,dumb-onion-hax.test,dumb-onion-hax_9571,dumo-onion-haxdumb,model" />
   </component>
 </project>

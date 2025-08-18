@@ -2,10 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/apps.iml" filepath="$PROJECT_DIR$/.idea/modules/apps.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax-build.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/model.iml" filepath="$PROJECT_DIR$/.idea/modules/model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.test.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/apps/dumb-onion-hax.apps.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.dumb-onion-hax-build.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.dumb-onion-hax-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.test.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/model/dumb-onion-hax.model.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.test.iml" filepath="$PROJECT_DIR$/.idea/modules/dumb-onion-hax/dumb-onion-hax.test.iml" />
     </modules>
   </component>
 </project>
