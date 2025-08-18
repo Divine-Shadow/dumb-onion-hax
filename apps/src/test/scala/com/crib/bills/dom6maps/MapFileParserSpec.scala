@@ -32,6 +32,7 @@ object MapFileParserSpec extends SimpleIOSuite:
           ImageFile("sample.tga"),
           MapSizePixels(MapWidthPixels(100), MapHeightPixels(100)),
           DomVersion(550),
+          PlaneName("The Underworld"),
           HWrapAround,
           NoDeepCaves,
           MapNoHide,

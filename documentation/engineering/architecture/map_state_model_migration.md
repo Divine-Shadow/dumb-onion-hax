@@ -12,9 +12,11 @@ Migration to a directive stream `MapState` ensures that only documented `MapDire
 | `#terrain`, `#gate`, `#neighbour`, `#neighbourspec` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
 | `#province` | State-owned | state-rendered | `model/src/main/scala/model/map/MapDirective.scala` |
 | `#pb` | Pass-through + Derived-input | verbatim; source for derived province locations | `MapDirective.Pb` in `model/src/main/scala/model/map/MapDirective.scala` |
-| `#imagefile`, `#winterimagefile`, `#domversion`, `#nodeepcaves`, `#nodeepchoice`, `#mapnohide`, `#maptextcol`, `#mapdomcol`, `#landname` | Pass-through | verbatim | `model/src/main/scala/model/map/MapDirective.scala` |
+| `#imagefile`, `#winterimagefile`, `#domversion`, `#nodeepcaves`, `#nodeepchoice`, `#mapnohide`, `#maptextcol`, `#mapdomcol`, `#landname`, `#planename` | Pass-through | verbatim | `model/src/main/scala/model/map/MapDirective.scala` |
 | comment lines (`--`) | Pass-through | verbatim | `MapDirective.Comment` in `model/src/main/scala/model/map/MapDirective.scala` |
 | Derived province locations (from `#pb` runs via `ProvinceLocationService`) | Derived-input | state-rendered | `model/src/main/scala/model/map/ProvinceLocationService.scala` |
+
+Documentation review surfaced additional directives like `#scenario` that remain unparsed.
 
 ## Two-Pass Behavior
 Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pass-through directives. Pass 2 re-emits pass-through directives verbatim and renders state-owned directives from `MapState` in canonical order; state-rendered output wins on conflicts. Verification relies on pass-through round-trips, ordered state sections, and end-to-end runs.
