@@ -23,6 +23,9 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
 - **State-rendered families:** map metadata (`#mapsize`, `#dom2title`, `#description`), wrap settings (`#wraparound`, `#hwraparound`, `#vwraparound`, `#nowraparound`), player constraints (`#allowedplayer`, `#specstart`), and province blocks (`#province`, `#terrain`, `#gate`, `#neighbour`, `#neighbourspec`, `#landname`).
 - **Merge policy:** Pass 2 emits state-rendered families in the above order; preserved pass-through lines are interleaved at their original relative positions. When state-rendered directives conflict with existing lines, the state-rendered output wins.
 
+## MapLayer Abstraction
+`MapLayer` pairs the incremental `MapState` with the residual directive stream so services can mutate state while preserving unrelated lines. A `MapLayerLoader` parses an input file into this structure, enabling transformations in the [Map Editor Processing Pipeline](map_editor_pipeline.md) and [Map Modification Services](map_modification_services.md) to operate without sacrificing pass-through fidelity.
+
 ## Executable Step Cards
 1. **Scaffolding (Complete)**
    *Purpose:* Establish minimal state model and province location derivation.
@@ -48,11 +51,11 @@ Pass 1 consumes the full `MapDirective` stream to build `MapState`, retaining pa
    *Verification:* round-trip tests with malformed input.
    *Status:* Complete.
 
-4. **Pass 1 state builder retains pass-through directives (In Progress)**
-   *Purpose:* Stream derivation of `MapState` with pass-through preservation.
-   *Preconditions (evidence):* `model/src/main/scala/model/map/MapState.scala` folds directives incrementally but lacks memory‑bound verification.
-   *Actions:* fold over `MapDirective` stream producing `MapState` and residual pass-through stream without buffering the full input.
-   *Deliverables:* updated `MapState.scala`, memory tests.
+4. **Pass 1 `MapLayer` builder retains pass-through directives (In Progress)**
+   *Purpose:* Stream derivation of a `MapLayer` that combines `MapState` with the preserved directive stream.
+   *Preconditions (evidence):* `model/src/main/scala/model/map/MapState.scala` folds directives incrementally but lacks memory‑bound verification; `apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapLayerLoader.scala` sketches loader logic.
+   *Actions:* fold over the `MapDirective` stream producing a `MapLayer` without buffering the full input; finalize `MapLayerLoader` implementation.
+   *Deliverables:* updated `MapState.scala`, `MapLayer.scala`, `MapLayerLoader.scala`, memory tests.
    *Verification:* unit tests comparing to existing `fromDirectives`, `model/src/test/scala/model/map/MapStateMemorySpec.scala`.
    *Status:* In Progress.
 
