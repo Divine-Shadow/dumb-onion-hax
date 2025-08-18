@@ -46,6 +46,9 @@ object MapFileParser:
   private def domVersionP[$: P]: P[Option[MapDirective]] =
     P("#domversion" ~ ws ~ int).map(v => Some(DomVersion(v)))
 
+  private def planeNameP[$: P]: P[Option[MapDirective]] =
+    P("#planename" ~ ws ~ rest).map(n => Some(PlaneName(n)))
+
   private def descriptionP[$: P]: P[Option[MapDirective]] =
     P("#description" ~ ws ~ quoted).map(d => Some(Description(d)))
 
@@ -142,6 +145,7 @@ object MapFileParser:
       winterImageFileP |
       mapSizeP |
       domVersionP |
+      planeNameP |
       descriptionP |
       wrapAroundP |
       hwrapAroundP |

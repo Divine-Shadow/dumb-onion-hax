@@ -38,6 +38,9 @@ object Arbitraries:
   given Arbitrary[DomVersion] =
     Arbitrary(Gen.choose(500, 600).map(DomVersion.apply))
 
+  given Arbitrary[PlaneName] =
+    Arbitrary(Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString).map(PlaneName.apply))
+
   given Arbitrary[Description] =
     Arbitrary(
       Gen.nonEmptyListOf(Gen.frequency((5, Gen.alphaChar), (1, Gen.const(' '))))
@@ -131,6 +134,7 @@ object Arbitraries:
       summon[Arbitrary[WinterImageFile]].arbitrary,
       summon[Arbitrary[MapSizePixels]].arbitrary,
       summon[Arbitrary[DomVersion]].arbitrary,
+      summon[Arbitrary[PlaneName]].arbitrary,
       summon[Arbitrary[Description]].arbitrary,
       Gen.const(WrapAround),
       Gen.const(HWrapAround),

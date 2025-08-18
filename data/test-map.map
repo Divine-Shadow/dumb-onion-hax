@@ -3,6 +3,7 @@
 #imagefile sample.tga
 #mapsize 100 100
 #domversion 550
+#planename The Underworld
 #hwraparound
 #nodeepcaves
 #mapnohide

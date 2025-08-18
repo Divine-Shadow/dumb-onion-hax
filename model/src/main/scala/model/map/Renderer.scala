@@ -18,6 +18,7 @@ object Renderer:
         case WinterImageFile(value) => s"#winterimagefile $value"
         case MapSizePixels(w, h)    => s"#mapsize ${w.value} ${h.value}"
         case DomVersion(v)         => s"#domversion $v"
+        case PlaneName(value)      => s"#planename $value"
         case Description(value)    => s"#description \"$value\""
         case WrapAround            => "#wraparound"
         case HWrapAround           => "#hwraparound"

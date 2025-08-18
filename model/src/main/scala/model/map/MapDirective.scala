@@ -22,6 +22,7 @@ final case class Dom2Title(value: String) extends MapDirective
 final case class ImageFile(value: String) extends MapDirective
 final case class WinterImageFile(value: String) extends MapDirective
 final case class DomVersion(value: Int) extends MapDirective
+final case class PlaneName(value: String) extends MapDirective
 final case class Description(value: String) extends MapDirective
 case object WrapAround extends MapDirective
 case object HWrapAround extends MapDirective
