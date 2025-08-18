@@ -21,7 +21,7 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 
 ## Capabilities
 1. **MapLayerLoader**
-   - Parses a map file into a `MapLayer` holding `MapState` and the remaining directive stream.
+   - Parses a map file into a [`MapLayer`](map_state_model_migration.md#maplayer-abstraction) holding `MapState` and the remaining directive stream.
    - Contract sketch:
      ```scala
      trait MapLayerLoader[Sequencer[_]] {
