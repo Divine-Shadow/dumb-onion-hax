@@ -62,11 +62,6 @@ object ProvinceLocationServiceSpec extends SimpleIOSuite:
       coords     <- ProvinceLocationService.derive(Stream.emits(directives).covary[IO])
       gridLines  <- Files[IO].readAll(gridPath).through(text.utf8.decode).through(text.lines).compile.toVector
     yield
-      val expected      = parseGrid(gridLines)
-      val mismatches    = expected.collect { case (id, loc) if coords.get(id) != Some(loc) => id -> coords(id) }
-      val expectedMismatches = Map(
-        ProvinceId(5)  -> ProvinceLocation(XCell(1), YCell(1)),
-        ProvinceId(20) -> ProvinceLocation(XCell(3), YCell(3)),
-        ProvinceId(25) -> ProvinceLocation(XCell(3), YCell(3))
-      )
-      expect.same(expectedMismatches, mismatches)
+      val expected   = parseGrid(gridLines)
+      val mismatches = expected.collect { case (id, loc) if coords.get(id) != Some(loc) => id -> coords(id) }
+      expect.same(Map.empty[ProvinceId, ProvinceLocation], mismatches)

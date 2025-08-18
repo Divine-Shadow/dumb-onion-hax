@@ -25,11 +25,9 @@ object ProvinceLocationService:
   private final case class State(
       width: Int,
       height: Int,
-      wrapH: Boolean,
-      wrapV: Boolean,
       accs: Map[ProvinceId, Acc]
   )
-  private val emptyState = State(0, 0, false, false, Map.empty)
+  private val emptyState = State(0, 0, Map.empty)
 
   def derive[F[_]: Concurrent](directives: Stream[F, MapDirective]): F[Map[ProvinceId, ProvinceLocation]] =
     directives.compile.fold(emptyState)(accumulate).map(finalize)
@@ -46,12 +44,8 @@ object ProvinceLocationService:
   private def accumulate(state: State, directive: MapDirective): State =
     directive match
       case MapSizePixels(w, h) => state.copy(width = w.value, height = h.value)
-      case WrapAround          => state.copy(wrapH = true, wrapV = true)
-      case HWrapAround         => state.copy(wrapH = true)
-      case VWrapAround         => state.copy(wrapV = true)
-      case NoWrapAround        => state.copy(wrapH = false, wrapV = false)
-      case Pb(x, y, len, p) => accumulatePixels(state, x, y, len, p)
-      case _ => state
+      case Pb(x, y, len, p)    => accumulatePixels(state, x, y, len, p)
+      case _                   => state
 
   private def updateAcc(acc: Acc, x: Int, y: Int, len: Int, state: State): Acc =
     val count   = acc.count + len
@@ -60,15 +54,11 @@ object ProvinceLocationService:
     val centerX = x + (len - 1) / 2.0
     val angleX  = 2.0 * math.Pi * centerX / state.width.toDouble
     val weight  = len.toDouble
-    val (cosX, sinX) =
-      if state.wrapH then
-        (acc.sumCosX + weight * math.cos(angleX), acc.sumSinX + weight * math.sin(angleX))
-      else (acc.sumCosX, acc.sumSinX)
-    val angleY = 2.0 * math.Pi * y.toDouble / state.height.toDouble
-    val (cosY, sinY) =
-      if state.wrapV then
-        (acc.sumCosY + weight * math.cos(angleY), acc.sumSinY + weight * math.sin(angleY))
-      else (acc.sumCosY, acc.sumSinY)
+    val cosX    = acc.sumCosX + weight * math.cos(angleX)
+    val sinX    = acc.sumSinX + weight * math.sin(angleX)
+    val angleY  = 2.0 * math.Pi * y.toDouble / state.height.toDouble
+    val cosY    = acc.sumCosY + weight * math.cos(angleY)
+    val sinY    = acc.sumSinY + weight * math.sin(angleY)
     Acc(count, sumX, sumY, cosX, sinX, cosY, sinY)
 
   private def accumulatePixels(state: State, x: Int, y: Int, len: Int, p: ProvinceId): State =
@@ -78,19 +68,13 @@ object ProvinceLocationService:
 
   private def finalize(state: State): Map[ProvinceId, ProvinceLocation] =
     state.accs.map { case (p, acc) =>
-      val centroidX =
-        if state.wrapH then
-          val angle = math.atan2(acc.sumSinX, acc.sumCosX)
-          val norm  = if angle < 0 then angle + 2 * math.Pi else angle
-          state.width.toDouble * norm / (2 * math.Pi)
-        else acc.sumX.toDouble / acc.count.toDouble
-      val centroidY =
-        if state.wrapV then
-          val angle = math.atan2(acc.sumSinY, acc.sumCosY)
-          val norm  = if angle < 0 then angle + 2 * math.Pi else angle
-          state.height.toDouble * norm / (2 * math.Pi)
-        else acc.sumY.toDouble / acc.count.toDouble
-      val xCell = math.floor(centroidX / 256.0).toInt
-      val yCell = math.floor(centroidY / 160.0).toInt
+      val angleX   = math.atan2(acc.sumSinX, acc.sumCosX)
+      val normX    = if angleX < 0 then angleX + 2 * math.Pi else angleX
+      val centroidX = state.width.toDouble * normX / (2 * math.Pi)
+      val angleY   = math.atan2(acc.sumSinY, acc.sumCosY)
+      val normY    = if angleY < 0 then angleY + 2 * math.Pi else angleY
+      val centroidY = state.height.toDouble * normY / (2 * math.Pi)
+      val xCell     = math.floor(centroidX / 256.0).toInt
+      val yCell     = math.floor(centroidY / 160.0).toInt
       p -> ProvinceLocation(XCell(xCell), YCell(yCell))
     }
