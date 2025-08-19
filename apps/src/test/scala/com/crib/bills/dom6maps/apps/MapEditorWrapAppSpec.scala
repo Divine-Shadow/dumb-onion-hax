@@ -80,6 +80,7 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       _ <- IO(JFiles.write(older.resolve("old.tga"), Array[Byte](1, 2, 3)))
       _ <- IO(JFiles.setLastModifiedTime(older, FileTime.fromMillis(1000)))
       _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map.map")))
+      _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map_plane2.map")))
       _ <- IO(JFiles.write(newer.resolve("image.tga"), Array[Byte](1, 2, 3)))
       _ <- IO(JFiles.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
       destRoot <- IO(JFiles.createTempDirectory("dest-editor"))
@@ -112,6 +113,7 @@ dest="${destRoot.toString}"
       destEntries.exists(_.fileName.toString == "newer"),
       copiedEntries.exists(_.fileName.toString == "image.tga"),
       copiedEntries.exists(_.fileName.toString == "map.map"),
+      copiedEntries.exists(_.fileName.toString == "map_plane2.map"),
       !copiedEntries.exists(_.fileName.toString == "map.hwrap.map"),
       directives.contains(HWrapAround),
       !hasTopBottom,
