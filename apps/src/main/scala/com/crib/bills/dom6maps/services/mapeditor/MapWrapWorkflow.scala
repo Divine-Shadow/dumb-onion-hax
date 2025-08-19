@@ -90,6 +90,15 @@ class MapWrapWorkflowImpl(
                       _ <- IO.fromEither(caveWritten)
                     yield ()
                   case None => IO.raiseError(new NoSuchElementException("cave map not found"))
-              case None => IO.unit
+              case None =>
+                copied.cave match
+                  case Some((caveBytes, caveOutPath)) =>
+                    for
+                      caveLayerEC <- loader.load[ErrorOr](caveBytes)
+                      caveLayer <- IO.fromEither(caveLayerEC)
+                      caveWritten <- writer.write[ErrorOr](caveLayer, caveOutPath)
+                      _ <- IO.fromEither(caveWritten)
+                    yield ()
+                  case None => IO.unit
           yield ()
     yield ()
