@@ -7,13 +7,18 @@ import cats.syntax.all.*
 import fs2.io.file.Path
 import weaver.SimpleIOSuite
 import model.map.{
+  HWrapAround,
   MapFileParser,
   MapState,
   MapWidth,
   MapHeight,
+  NoWrapAround,
+  VWrapAround,
   WrapState
 }
 import WrapSeverService.{isTopBottom, isLeftRight}
+import model.map.MapDirectiveCodecs.given
+import model.map.MapDirectiveCodecs.Encoder
 
 object WrapConversionServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
@@ -34,9 +39,11 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       res <- IO.fromEither(resEC)
       index = res.provinceLocations
       hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
+      directives = Encoder[MapState].encode(res)
     yield expect.all(
       res.wrap == WrapState.HorizontalWrap,
-      !hasTopBottom
+      !hasTopBottom,
+      directives.contains(HWrapAround)
     )
   }
 
@@ -48,9 +55,11 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       res <- IO.fromEither(resEC)
       index = res.provinceLocations
       hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, index, w))
+      directives = Encoder[MapState].encode(res)
     yield expect.all(
       res.wrap == WrapState.VerticalWrap,
-      !hasLeftRight
+      !hasLeftRight,
+      directives.contains(VWrapAround)
     )
   }
 
@@ -63,9 +72,35 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
       index = res.provinceLocations
       hasTopBottom = res.adjacency.exists((a, b) => isTopBottom(a, b, index, h))
       hasLeftRight = res.adjacency.exists((a, b) => isLeftRight(a, b, index, w))
+      directives = Encoder[MapState].encode(res)
     yield expect.all(
       res.wrap == WrapState.NoWrap,
       !hasTopBottom,
-      !hasLeftRight
+      !hasLeftRight,
+      directives.contains(NoWrapAround)
+    )
+  }
+
+  test("convert no-wrap map to hwrap renders directive") {
+    val service = new WrapConversionServiceImpl[IO]
+    for
+      resEC <- service.convert[EC](MapState.empty, WrapChoice.HWrap)
+      res <- IO.fromEither(resEC)
+      directives = Encoder[MapState].encode(res)
+    yield expect.all(
+      res.wrap == WrapState.HorizontalWrap,
+      directives.contains(HWrapAround)
+    )
+  }
+
+  test("convert no-wrap map to vwrap renders directive") {
+    val service = new WrapConversionServiceImpl[IO]
+    for
+      resEC <- service.convert[EC](MapState.empty, WrapChoice.VWrap)
+      res <- IO.fromEither(resEC)
+      directives = Encoder[MapState].encode(res)
+    yield expect.all(
+      res.wrap == WrapState.VerticalWrap,
+      directives.contains(VWrapAround)
     )
   }
