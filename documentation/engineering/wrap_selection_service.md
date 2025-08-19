@@ -3,6 +3,10 @@
 This document describes the services that allow a user to choose how map wrap
 settings are converted.
 
+Prior to this fix, the cave layer was only processed when a specific cave wrap
+was selected. [`MapWrapWorkflow`](../../apps/src/main/scala/com/crib/bills/dom6maps/services/mapeditor/MapWrapWorkflow.scala)
+now copies the surface selection to the cave layer by default.
+
 ## Components
 - **WrapChoiceService** – displays a Swing dialog with radio buttons for
   `hwrap`, `vwrap`, `no-wrap`, or `ground-surface duel`. Selecting the duel
