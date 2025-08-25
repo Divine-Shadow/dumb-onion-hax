@@ -28,4 +28,4 @@ The current map model captures terrain, adjacency, and special links but lacks a
 ## Related Pages
 
 - [Domain Model Progress](domain_model.md)
-- [Manual Breakdown](manual/Dominions_Manual.md)
+- [Map Making Manual](manual/update/README.md)
