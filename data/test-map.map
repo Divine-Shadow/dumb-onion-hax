@@ -10,8 +10,8 @@
 #maptextcol 0.10 0.20 0.30 1.00
 #mapdomcol 1 2 3 4
 #pb 1 2 3 1
-#allowedplayer 31
-#specstart 31 1
+#allowedplayer 26
+#specstart 26 1
 #terrain 1 264
 #landname 1 "Province One"
 #neighbour 1 2
