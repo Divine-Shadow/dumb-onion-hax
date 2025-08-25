@@ -8,6 +8,7 @@ import fs2.text
 import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId}
 import fastparse.*
 import fastparse.NoWhitespace.*
+import scala.math.BigInt
 
 object MapFileParser:
   def parseFile[Sequencer[_]: Sync](path: Path)(using Files[Sequencer]): Stream[Sequencer, MapDirective] =
@@ -24,7 +25,12 @@ object MapFileParser:
 
   private def ws[$: P]: P[Unit] = P(CharIn(" \t").rep(1))
   private def int[$: P]: P[Int] =
-    P(CharIn("0-9").rep(1).!.map(_.toLong.toInt))
+    P(CharIn("0-9").rep(1).!.map(_.toInt))
+  private def long[$: P]: P[Long] =
+    P(CharIn("0-9").rep(1).!)
+      .map(BigInt(_))
+      .filter(_.isValidLong)
+      .map(_.toLong)
   private def dbl[$: P]: P[Double] = P(CharIn("0-9.").rep(1).!.map(_.toDouble))
   private def rest[$: P]: P[String] = P(CharsWhile(_ != '\n').!.map(_.trim))
   private def quoted[$: P]: P[String] = P("\"" ~/ CharsWhile(_ != '"').! ~ "\"")
@@ -109,7 +115,7 @@ object MapFileParser:
     }
 
   private def terrainP[$: P]: P[Option[MapDirective]] =
-    P("#terrain" ~ ws ~ int ~ ws ~ int).map { case (p, m) =>
+    P("#terrain" ~ ws ~ int ~ ws ~ long).map { case (p, m) =>
       Some(Terrain(ProvinceId(p), m))
     }
 

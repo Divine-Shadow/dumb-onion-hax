@@ -31,7 +31,7 @@ object MapModificationServiceSpec extends SimpleIOSuite:
       caveOut = dir.resolve("cave-out.map")
       _ <- IO(Files.write(surfaceIn, """#dom2title surface
 #terrain 1 0
-#terrain 2 33554432
+#terrain 2 67108864
 #gate 1 2
 """.getBytes(StandardCharsets.UTF_8)))
       _ <- IO(Files.write(caveIn, """#dom2title cave
