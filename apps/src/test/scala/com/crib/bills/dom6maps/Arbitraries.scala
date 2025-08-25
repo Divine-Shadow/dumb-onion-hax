@@ -90,7 +90,7 @@ object Arbitraries:
   given Arbitrary[Terrain] =
     Arbitrary(for
       p <- summon[Arbitrary[ProvinceId]].arbitrary
-      m <- Gen.choose(0, Int.MaxValue)
+      m <- Gen.choose(0L, Long.MaxValue)
     yield Terrain(p, m))
 
   given Arbitrary[LandName] =

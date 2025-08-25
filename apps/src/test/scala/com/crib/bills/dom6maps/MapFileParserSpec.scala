@@ -16,12 +16,20 @@ object MapFileParserSpec extends SimpleIOSuite:
       .compile
       .toVector
 
-  private val largeMaskParsedIO =
+  private val longMaskParsedIO =
     MapFileParser
       .parse[IO]
-      .apply(Stream.emits("#terrain 1 2147483712\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .apply(Stream.emits("#terrain 1 68719476736\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
       .compile
       .toVector
+
+  private val overflowMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#terrain 1 9223372036854775808\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+      .attempt
 
   test("parses sample directives") {
     parsedIO.map { parsed =>
@@ -58,9 +66,13 @@ object MapFileParserSpec extends SimpleIOSuite:
   }
 
   test("parses terrain mask above Int.MaxValue") {
-    largeMaskParsedIO.map { parsed =>
-      expect(parsed == Vector(Terrain(ProvinceId(1), -2147483584)))
+    longMaskParsedIO.map { parsed =>
+      expect(parsed == Vector(Terrain(ProvinceId(1), 68719476736L)))
     }
+  }
+
+  test("fails on terrain mask overflow") {
+    overflowMaskParsedIO.map(res => expect(res.isLeft))
   }
 
   test("fails on unknown directives") {
