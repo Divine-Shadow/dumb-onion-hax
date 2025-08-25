@@ -26,11 +26,10 @@ object WrapSeverService:
   ): Boolean =
     (index.locationOf(a), index.locationOf(b)) match
       case (Some(locA), Some(locB)) =>
-        val left = 0
+        val left  = 0
         val right = width.value - 1
-        locA.y.value == locB.y.value &&
-          ((locA.x.value == left && locB.x.value == right) ||
-            (locA.x.value == right && locB.x.value == left))
+        (locA.x.value == left && locB.x.value == right) ||
+          (locA.x.value == right && locB.x.value == left)
       case _ => false
 
   def severVertically(state: MapState): MapState =

@@ -6,6 +6,7 @@ import fs2.io.file.Path
 import model.ProvinceId
 import model.map.{
   MapFileParser,
+  MapSize,
   MapWidth,
   MapHeight,
   MapState,
@@ -58,10 +59,10 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
     )
   }
 
-  test("isLeftRight only matches provinces on the same row") {
+  test("isLeftRight matches provinces across different rows") {
     IO.pure(
       expect(
-        !WrapSeverService.isLeftRight(
+        WrapSeverService.isLeftRight(
           ProvinceId(5),
           ProvinceId(6),
           ProvinceLocations.fromProvinceIdMap(
@@ -74,4 +75,25 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
         )
       )
     )
+  }
+
+  test("severHorizontally removes diagonal left-right neighbours") {
+    val size = MapSize.from(5).toOption
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(5) -> model.map.ProvinceLocation(model.map.XCell(4), model.map.YCell(0)),
+        ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1)),
+        ProvinceId(7) -> model.map.ProvinceLocation(model.map.XCell(1), model.map.YCell(1))
+      )
+    )
+    val state = MapState.empty.copy(
+      size = size,
+      adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
+      wrap = WrapState.FullWrap,
+      provinceLocations = locations
+    )
+    val result = WrapSeverService.severHorizontally(state)
+    val hasDiagonal = result.adjacency.contains((ProvinceId(5), ProvinceId(6)))
+    val hasMiddle = result.adjacency.contains((ProvinceId(6), ProvinceId(7)))
+    IO.pure(expect(result.wrap == WrapState.VerticalWrap && !hasDiagonal && hasMiddle))
   }
