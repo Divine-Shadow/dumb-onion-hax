@@ -1,7 +1,7 @@
 package com.crib.bills.dom6maps
 
 import cats.effect.IO
-import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId}
+import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId, TerrainFlag}
 import com.crib.bills.dom6maps.model.map.*
 import fs2.Stream
 import java.nio.charset.StandardCharsets
@@ -16,10 +16,26 @@ object MapFileParserSpec extends SimpleIOSuite:
       .compile
       .toVector
 
-  private val longMaskParsedIO =
+  private val aboveIntMask = Int.MaxValue.toLong + 1
+  private val aboveIntMaskParsedIO =
     MapFileParser
       .parse[IO]
-      .apply(Stream.emits("#terrain 1 68719476736\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .apply(Stream.emits(s"#terrain 1 $aboveIntMask\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val caveWallMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits(s"#terrain 1 ${TerrainFlag.CaveWall.mask}\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val glamourMask = 1L << 20
+  private val glamourMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits(s"#terrain 1 $glamourMask\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
       .compile
       .toVector
 
@@ -66,8 +82,20 @@ object MapFileParserSpec extends SimpleIOSuite:
   }
 
   test("parses terrain mask above Int.MaxValue") {
-    longMaskParsedIO.map { parsed =>
-      expect(parsed == Vector(Terrain(ProvinceId(1), 68719476736L)))
+    aboveIntMaskParsedIO.map { parsed =>
+      expect(parsed == Vector(Terrain(ProvinceId(1), aboveIntMask)))
+    }
+  }
+
+  test("parses CaveWall terrain flag") {
+    caveWallMaskParsedIO.map { parsed =>
+      expect(parsed == Vector(Terrain(ProvinceId(1), TerrainFlag.CaveWall.mask)))
+    }
+  }
+
+  test("parses Glamour magic site mask") {
+    glamourMaskParsedIO.map { parsed =>
+      expect(parsed == Vector(Terrain(ProvinceId(1), glamourMask)))
     }
   }
 
