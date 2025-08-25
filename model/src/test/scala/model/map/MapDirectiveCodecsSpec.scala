@@ -22,6 +22,7 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       allowedPlayers = Vector(AllowedPlayer(Nation.Atlantis_Early)),
       startingPositions = Vector(SpecStart(Nation.Atlantis_Early, ProvinceId(42))),
       terrains = Vector(Terrain(ProvinceId(5), 7)),
+      features = Vector(ProvinceFeature(ProvinceId(5), FeatureId(9))),
       gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
       provinceLocations = ProvinceLocations.empty
     )
@@ -34,6 +35,7 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       AllowedPlayer(Nation.Atlantis_Early),
       SpecStart(Nation.Atlantis_Early, ProvinceId(42)),
       Terrain(ProvinceId(5), 7),
+      ProvinceFeature(ProvinceId(5), FeatureId(9)),
       Gate(ProvinceId(1), ProvinceId(2)),
       Neighbour(ProvinceId(3), ProvinceId(4)),
       NeighbourSpec(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)
