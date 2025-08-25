@@ -118,6 +118,11 @@ object MapFileParser:
       Some(LandName(ProvinceId(p), n))
     }
 
+  private def featureP[$: P]: P[Option[MapDirective]] =
+    P("#feature" ~ ws ~ int ~ ws ~ int).map { case (p, f) =>
+      Some(ProvinceFeature(ProvinceId(p), FeatureId(f)))
+    }
+
   private def gateP[$: P]: P[Option[MapDirective]] =
     P("#gate" ~ ws ~ int ~ ws ~ int).map { case (a, b) =>
       Some(Gate(ProvinceId(a), ProvinceId(b)))
@@ -161,6 +166,7 @@ object MapFileParser:
       pbP |
       terrainP |
       landnameP |
+      featureP |
       gateP |
       neighbourP |
       neighbourspecP |

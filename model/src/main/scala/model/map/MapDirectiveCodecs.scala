@@ -54,6 +54,10 @@ object MapDirectiveCodecs:
     def encode(value: Terrain): Vector[MapDirective] =
       Vector(value)
 
+  given Encoder[ProvinceFeature] with
+    def encode(value: ProvinceFeature): Vector[MapDirective] =
+      Vector(value)
+
   given Encoder[Gate] with
     def encode(value: Gate): Vector[MapDirective] =
       Vector(value)
@@ -75,13 +79,14 @@ object MapDirectiveCodecs:
       val players = value.allowedPlayers.flatMap(Encoder[AllowedPlayer].encode)
       val starts = value.startingPositions.flatMap(Encoder[SpecStart].encode)
       val terrains = value.terrains.flatMap(Encoder[Terrain].encode)
+      val features = value.features.flatMap(Encoder[ProvinceFeature].encode)
       val gates = value.gates.flatMap(Encoder[Gate].encode)
       val borderPairs = value.borders.map(b => (b.a, b.b)).toSet
       val adjacency = value.adjacency
         .filterNot(borderPairs.contains)
         .flatMap(Encoder[(ProvinceId, ProvinceId)].encode)
       val borders = value.borders.flatMap(Encoder[Border].encode)
-      size ++ wrap ++ title ++ description ++ players ++ starts ++ terrains ++ gates ++ adjacency ++ borders
+      size ++ wrap ++ title ++ description ++ players ++ starts ++ terrains ++ features ++ gates ++ adjacency ++ borders
 
   private def isPassThrough(directive: MapDirective): Boolean =
     directive match
@@ -89,7 +94,7 @@ object MapDirectiveCodecs:
       case Dom2Title(_)                                                => false
       case Description(_)                                              => false
       case WrapAround | HWrapAround | VWrapAround | NoWrapAround       => false
-      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: Gate      => false
+      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: ProvinceFeature | _: Gate      => false
       case Neighbour(_, _) | NeighbourSpec(_, _, _)                    => false
       case _                                                           => true
 

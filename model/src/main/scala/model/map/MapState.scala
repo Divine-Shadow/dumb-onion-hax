@@ -24,6 +24,7 @@ final case class MapState(
     allowedPlayers: Vector[AllowedPlayer],
     startingPositions: Vector[SpecStart],
     terrains: Vector[Terrain],
+    features: Vector[ProvinceFeature],
     gates: Vector[Gate],
     provinceLocations: ProvinceLocations
 )
@@ -36,6 +37,7 @@ object MapState:
     WrapState.NoWrap,
     None,
     None,
+    Vector.empty,
     Vector.empty,
     Vector.empty,
     Vector.empty,
@@ -89,6 +91,8 @@ object MapState:
         state.copy(startingPositions = state.startingPositions :+ ss)
       case t: Terrain =>
         state.copy(terrains = state.terrains :+ t)
+      case pf: ProvinceFeature =>
+        state.copy(features = state.features :+ pf)
       case g: Gate =>
         state.copy(gates = state.gates :+ g)
       case Neighbour(a, b) =>
@@ -107,6 +111,6 @@ object MapState:
       case Dom2Title(_)        => false
       case Description(_)      => false
       case WrapAround | HWrapAround | VWrapAround | NoWrapAround => false
-      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: Gate => false
+      case _: AllowedPlayer | _: SpecStart | _: Terrain | _: ProvinceFeature | _: Gate => false
       case Neighbour(_, _) | NeighbourSpec(_, _, _)              => false
       case _                                                     => true

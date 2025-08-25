@@ -19,6 +19,7 @@ object MapStateSpec extends SimpleIOSuite:
     SpecStart(Nation.Atlantis_Early, ProvinceId(42)),
     Terrain(ProvinceId(5), 7),
     LandName(ProvinceId(5), "LN"),
+    ProvinceFeature(ProvinceId(5), FeatureId(9)),
     Gate(ProvinceId(1), ProvinceId(2)),
     Neighbour(ProvinceId(3), ProvinceId(4)),
     NeighbourSpec(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)
@@ -46,6 +47,7 @@ object MapStateSpec extends SimpleIOSuite:
         allowedPlayers = Vector(AllowedPlayer(Nation.Atlantis_Early)),
         startingPositions = Vector(SpecStart(Nation.Atlantis_Early, ProvinceId(42))),
         terrains = Vector(Terrain(ProvinceId(5), 7)),
+        features = Vector(ProvinceFeature(ProvinceId(5), FeatureId(9))),
         gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
         provinceLocations = ProvinceLocations.fromProvinceIdMap(
           Map(ProvinceId(7) -> ProvinceLocation(XCell(0), YCell(0)))

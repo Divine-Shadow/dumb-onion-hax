@@ -99,6 +99,15 @@ object Arbitraries:
       n <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
     yield LandName(p, n))
 
+  given Arbitrary[FeatureId] =
+    Arbitrary(Gen.choose(0, 1000).map(FeatureId.apply))
+
+  given Arbitrary[ProvinceFeature] =
+    Arbitrary(for
+      p <- summon[Arbitrary[ProvinceId]].arbitrary
+      f <- summon[Arbitrary[FeatureId]].arbitrary
+    yield ProvinceFeature(p, f))
+
   given Arbitrary[Gate] =
     Arbitrary(for
       a <- summon[Arbitrary[ProvinceId]].arbitrary
@@ -150,6 +159,7 @@ object Arbitraries:
       summon[Arbitrary[Pb]].arbitrary,
       summon[Arbitrary[Terrain]].arbitrary,
       summon[Arbitrary[LandName]].arbitrary,
+      summon[Arbitrary[ProvinceFeature]].arbitrary,
       summon[Arbitrary[Gate]].arbitrary,
       summon[Arbitrary[Neighbour]].arbitrary,
       summon[Arbitrary[NeighbourSpec]].arbitrary,
