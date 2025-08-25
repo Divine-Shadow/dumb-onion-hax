@@ -14,7 +14,7 @@ pixels belonging to a province:
 ```
 
 The directive is documented in the Dominions manual's [Basic Map Commands section]
-(../../domain/dominions/manual/sections/6_map_file_commands/6.3_basic_map_commands.md#pb-x-y-len-province-nbr).
+(../../domain/dominions/manual/update/sections/6_map_file_commands/6.3_basic_map_commands.md#pb-x-y-len-province-nbr).
 Maps commonly contain more than 16,000 of these lines, so any algorithm must process them in a
 streaming fashion.
 

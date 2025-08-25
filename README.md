@@ -5,6 +5,8 @@ Built on the Typelevel stack with Cats, FS2, Log4cats, and property-based tests 
 
 See [documentation/engineering/architecture/project_structure.md](documentation/engineering/architecture/project_structure.md) for the module layout and consult [AGENTS.md](AGENTS.md) before contributing.
 
+Refer to the [Dominions 6 Map Making Manual](documentation/domain/dominions/manual/update/README.md) for domain specifics.
+
 The short term goal of this project is to be able to parse map files and then edit them with things like:
 - Sever the adjacency rules between rows 0 and 7
 - Place thrones in specific locations
