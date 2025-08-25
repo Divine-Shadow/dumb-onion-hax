@@ -35,6 +35,8 @@ final case class ColorComponent(value: Double) extends AnyVal
 final case class FloatColor(red: ColorComponent, green: ColorComponent, blue: ColorComponent, alpha: ColorComponent)
 final case class MapTextColor(color: FloatColor) extends MapDirective
 final case class MapDomColor(red: Int, green: Int, blue: Int, alpha: Int) extends MapDirective
+final case class SailDist(value: Int) extends MapDirective
+final case class Features(value: Int) extends MapDirective
 
 import com.crib.bills.dom6maps.model.{Nation, ProvinceId, BorderFlag}
 final case class AllowedPlayer(nation: Nation) extends MapDirective

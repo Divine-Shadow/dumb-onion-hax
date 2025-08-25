@@ -99,6 +99,12 @@ object MapFileParser:
       case (r, g, b, a) => Some(MapDomColor(r, g, b, a))
     }
 
+  private def saildistP[$: P]: P[Option[MapDirective]] =
+    P("#saildist" ~ ws ~ int).map(d => Some(SailDist(d)))
+
+  private def featuresP[$: P]: P[Option[MapDirective]] =
+    P("#features" ~ ws ~ int).map(f => Some(Features(f)))
+
   private def allowedPlayerP[$: P]: P[Option[MapDirective]] =
     P("#allowedplayer" ~ ws ~ int).map { n =>
       Nation.byId.get(n).map(AllowedPlayer.apply)
@@ -173,6 +179,8 @@ object MapFileParser:
       mapnohideP |
       maptextcolP |
       mapdomcolP |
+      saildistP |
+      featuresP |
       allowedPlayerP |
       specStartP |
       pbP |

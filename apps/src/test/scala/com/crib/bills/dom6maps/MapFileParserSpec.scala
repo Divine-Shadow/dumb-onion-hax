@@ -1,7 +1,7 @@
 package com.crib.bills.dom6maps
 
 import cats.effect.IO
-import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId, TerrainFlag}
+import com.crib.bills.dom6maps.model.{BorderFlag, Nation, ProvinceId, TerrainFlag, MagicType}
 import com.crib.bills.dom6maps.model.map.*
 import fs2.Stream
 import java.nio.charset.StandardCharsets
@@ -46,6 +46,41 @@ object MapFileParserSpec extends SimpleIOSuite:
       .compile
       .toVector
       .attempt
+
+  private val sailDistParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#saildist 3\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val featuresParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#features 7\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val newNationParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#allowedplayer 119\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val goodThroneMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits(s"#terrain 1 ${TerrainFlag.GoodThrone.mask}\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
+  private val holyMagicMaskParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits(s"#terrain 1 ${MagicType.Holy.mask.toLong}\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
 
   test("parses sample directives") {
     parsedIO.map { parsed =>
@@ -111,4 +146,24 @@ object MapFileParserSpec extends SimpleIOSuite:
       .toVector
       .attempt
       .map(result => expect(result.isLeft))
+  }
+
+  test("parses saildist directive") {
+    sailDistParsedIO.map(parsed => expect(parsed == Vector(SailDist(3))))
+  }
+
+  test("parses features directive") {
+    featuresParsedIO.map(parsed => expect(parsed == Vector(Features(7))))
+  }
+
+  test("parses new nation IDs") {
+    newNationParsedIO.map(parsed => expect(parsed == Vector(AllowedPlayer(Nation.Feminie_Late))))
+  }
+
+  test("parses GoodThrone terrain flag") {
+    goodThroneMaskParsedIO.map(parsed => expect(parsed == Vector(Terrain(ProvinceId(1), TerrainFlag.GoodThrone.mask))))
+  }
+
+  test("parses Holy magic type mask") {
+    holyMagicMaskParsedIO.map(parsed => expect(parsed == Vector(Terrain(ProvinceId(1), MagicType.Holy.mask.toLong))))
   }
