@@ -19,6 +19,8 @@ object MapStateSpec extends SimpleIOSuite:
     SpecStart(Nation.Atlantis_Early, ProvinceId(42)),
     Terrain(ProvinceId(5), 7),
     LandName(ProvinceId(5), "LN"),
+    SetLand(ProvinceId(8)),
+    Feature(FeatureId(99)),
     ProvinceFeature(ProvinceId(5), FeatureId(9)),
     Gate(ProvinceId(1), ProvinceId(2)),
     Neighbour(ProvinceId(3), ProvinceId(4)),
@@ -57,7 +59,9 @@ object MapStateSpec extends SimpleIOSuite:
         ImageFile("map.tga"),
         Pb(0, 0, 1, ProvinceId(7)),
         Comment("note"),
-        LandName(ProvinceId(5), "LN")
+        LandName(ProvinceId(5), "LN"),
+        SetLand(ProvinceId(8)),
+        Feature(FeatureId(99))
       )
         expect(layer.state == expected && residual == expectedResidual && layer.state == oldState)
     }

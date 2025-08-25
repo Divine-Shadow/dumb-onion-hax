@@ -96,6 +96,7 @@ object MapDirectiveCodecs:
       case WrapAround | HWrapAround | VWrapAround | NoWrapAround       => false
       case _: AllowedPlayer | _: SpecStart | _: Terrain | _: ProvinceFeature | _: Gate      => false
       case Neighbour(_, _) | NeighbourSpec(_, _, _)                    => false
+      case SetLand(_) | Feature(_)                                     => true
       case _                                                           => true
 
   def merge(state: MapState, passThrough: Vector[MapDirective]): Vector[MapDirective] =

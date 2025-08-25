@@ -42,6 +42,8 @@ final case class SpecStart(nation: Nation, province: ProvinceId) extends MapDire
 final case class Pb(x: Int, y: Int, length: Int, province: ProvinceId) extends MapDirective
 final case class Terrain(province: ProvinceId, mask: Long) extends MapDirective
 final case class LandName(province: ProvinceId, name: String) extends MapDirective
+final case class SetLand(province: ProvinceId) extends MapDirective
+final case class Feature(id: FeatureId) extends MapDirective
 final case class FeatureId(value: Int) extends AnyVal
 final case class ProvinceFeature(province: ProvinceId, id: FeatureId) extends MapDirective
 final case class Gate(a: ProvinceId, b: ProvinceId) extends MapDirective

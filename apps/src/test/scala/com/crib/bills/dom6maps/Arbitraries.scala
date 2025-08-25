@@ -102,6 +102,12 @@ object Arbitraries:
   given Arbitrary[FeatureId] =
     Arbitrary(Gen.choose(0, 1000).map(FeatureId.apply))
 
+  given Arbitrary[SetLand] =
+    Arbitrary(summon[Arbitrary[ProvinceId]].arbitrary.map(SetLand.apply))
+
+  given Arbitrary[Feature] =
+    Arbitrary(summon[Arbitrary[FeatureId]].arbitrary.map(Feature.apply))
+
   given Arbitrary[ProvinceFeature] =
     Arbitrary(for
       p <- summon[Arbitrary[ProvinceId]].arbitrary
@@ -159,6 +165,8 @@ object Arbitraries:
       summon[Arbitrary[Pb]].arbitrary,
       summon[Arbitrary[Terrain]].arbitrary,
       summon[Arbitrary[LandName]].arbitrary,
+      summon[Arbitrary[SetLand]].arbitrary,
+      summon[Arbitrary[Feature]].arbitrary,
       summon[Arbitrary[ProvinceFeature]].arbitrary,
       summon[Arbitrary[Gate]].arbitrary,
       summon[Arbitrary[Neighbour]].arbitrary,
