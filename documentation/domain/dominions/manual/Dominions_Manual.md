@@ -7,6 +7,8 @@ Illwinter Game Design
 
 This directory breaks the original manual into smaller linked sections.
 
+* [Dominions 6 Map Making Manual](update/README.md)
+
 * [1 Introduction](sections/1_introduction.md)
 * [2 Requirements](sections/2_requirements.md)
 * [3 Data Directories](sections/3_data_directories.md)
