@@ -16,12 +16,12 @@ enum TerrainFlag(val mask: Int):
   case ManySites         extends TerrainFlag(1024)
   case DeepSea           extends TerrainFlag(2048)
   case Cave              extends TerrainFlag(4096)
-  case Mountains         extends TerrainFlag(4194304)
-  case GoodThrone        extends TerrainFlag(16777216)
-  case GoodStart         extends TerrainFlag(33554432)
-  case BadThrone         extends TerrainFlag(67108864)
-  case Warmer            extends TerrainFlag(536870912)
-  case Colder            extends TerrainFlag(1073741824)
+  case Mountains         extends TerrainFlag(8388608)
+  case GoodThrone        extends TerrainFlag(33554432)
+  case GoodStart         extends TerrainFlag(67108864)
+  case BadThrone         extends TerrainFlag(134217728)
+  case Warmer            extends TerrainFlag(1073741824)
+  case Colder            extends TerrainFlag(-2147483648)
 
 object TerrainFlag:
   val Throne: TerrainFlag = TerrainFlag.GoodStart

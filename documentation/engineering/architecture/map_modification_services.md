@@ -6,7 +6,7 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 - Accept two input `.map` files representing surface and cave layers.
 - Remove existing `#gate` directives from both maps and append new ones.
 - Update the throne layer so that designated provinces become thrones.
-- Setting a throne modifies the province's `#terrain` bitmask by adding `33554432` which corresponds to `TerrainFlag.GoodStart`.
+ - Setting a throne modifies the province's `#terrain` bitmask by adding `67108864` which corresponds to `TerrainFlag.GoodStart`.
 - Magic numbers are avoided by manipulating `TerrainFlag` values through domain types and helper functions.
 
 ## Domain Types
