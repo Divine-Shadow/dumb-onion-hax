@@ -36,6 +36,8 @@ object Renderer:
         case Pb(x,y,l,p)           => s"#pb $x $y $l ${p.value}"
         case Terrain(p,m)          => s"#terrain ${p.value} $m"
         case LandName(p,n)         => s"#landname ${p.value} \"$n\""
+        case SetLand(p)            => s"#setland ${p.value}"
+        case Feature(f)            => s"#feature ${f.value}"
         case ProvinceFeature(p,f)  => s"#feature ${p.value} ${f.value}"
         case Gate(a,b)             => s"#gate ${a.value} ${b.value}"
         case Neighbour(a,b)        => s"#neighbour ${a.value} ${b.value}"
