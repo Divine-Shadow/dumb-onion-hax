@@ -95,12 +95,12 @@ object MapFileParser:
 
   private def allowedPlayerP[$: P]: P[Option[MapDirective]] =
     P("#allowedplayer" ~ ws ~ int).map { n =>
-      Nation.values.find(_.id == n).map(AllowedPlayer.apply)
+      Nation.byId.get(n).map(AllowedPlayer.apply)
     }
 
   private def specStartP[$: P]: P[Option[MapDirective]] =
     P("#specstart" ~ ws ~ int ~ ws ~ int).map { case (n, p) =>
-      Nation.values.find(_.id == n).map(SpecStart(_, ProvinceId(p)))
+      Nation.byId.get(n).map(SpecStart(_, ProvinceId(p)))
     }
 
   private def pbP[$: P]: P[Option[MapDirective]] =
