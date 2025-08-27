@@ -10,7 +10,7 @@ trait PlacementPlanner[Sequencer[_]]:
 class PlacementPlannerImpl[Sequencer[_]] extends PlacementPlanner[Sequencer]:
   override def plan(size: MapSize, config: GroundSurfaceDuelConfig): (Vector[GateSpec], Vector[ThronePlacement]) =
     val mids = EdgeMidpoints.of(size)
-    val corners = CornerProvinces.all(size)
+    val corners = CornerLocations.all(size)
     val offset = size.value * size.value
     val gates = Vector(
       GateSpec(mids.top, ProvinceId(mids.top.value + offset)),
@@ -19,7 +19,7 @@ class PlacementPlannerImpl[Sequencer[_]] extends PlacementPlanner[Sequencer]:
       GateSpec(mids.right, ProvinceId(mids.right.value + offset))
     )
     val level = config.throneLevel
-    val thrones = corners.map(p => ThronePlacement(p, level))
+    val thrones = corners.map(loc => ThronePlacement(loc, level))
     (gates, thrones)
 
 class PlacementPlannerStub[Sequencer[_]](

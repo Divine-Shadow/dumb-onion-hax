@@ -18,6 +18,10 @@ object GroundSurfaceDuelPipeSpec extends SimpleIOSuite:
       Gate(ProvinceId(1), ProvinceId(2)),
       AllowedPlayer(Nation.Agartha_Early),
       SpecStart(Nation.Agartha_Early, ProvinceId(1)),
+      Pb(0, 0, 1, ProvinceId(1)),
+      Pb(4 * 256, 0, 1, ProvinceId(5)),
+      Pb(0, 4 * 160, 1, ProvinceId(21)),
+      Pb(4 * 256, 4 * 160, 1, ProvinceId(25)),
       Terrain(ProvinceId(1), 0),
       Terrain(ProvinceId(5), 0),
       Terrain(ProvinceId(21), 0),
@@ -29,6 +33,10 @@ object GroundSurfaceDuelPipeSpec extends SimpleIOSuite:
       Gate(ProvinceId(2), ProvinceId(3)),
       AllowedPlayer(Nation.Ulm_Early),
       SpecStart(Nation.Ulm_Early, ProvinceId(1)),
+      Pb(0, 0, 1, ProvinceId(1)),
+      Pb(4 * 256, 0, 1, ProvinceId(5)),
+      Pb(0, 4 * 160, 1, ProvinceId(21)),
+      Pb(4 * 256, 4 * 160, 1, ProvinceId(25)),
       Terrain(ProvinceId(1), 0),
       Terrain(ProvinceId(5), 0),
       Terrain(ProvinceId(21), 0),
@@ -60,11 +68,18 @@ object GroundSurfaceDuelPipeSpec extends SimpleIOSuite:
           Gate(ProvinceId(11), ProvinceId(36)),
           Gate(ProvinceId(15), ProvinceId(40))
         )
-        val thrones = Vector(1, 5, 21, 25).map(ProvinceId.apply)
+        val thrones = Vector(
+          ProvinceLocation(XCell(0), YCell(0)),
+          ProvinceLocation(XCell(4), YCell(0)),
+          ProvinceLocation(XCell(0), YCell(4)),
+          ProvinceLocation(XCell(4), YCell(4))
+        )
         val center = ProvinceId(13)
         def hasThrones(state: MapState) =
-          thrones.forall { id =>
-            state.terrains.exists { case Terrain(p, m) if p == id => TerrainMask(m).hasFlag(TerrainFlag.Throne); case _ => false }
+          thrones.forall { loc =>
+            state.provinceLocations.provinceIdAt(loc).exists { id =>
+              state.terrains.exists { case Terrain(p, m) if p == id => TerrainMask(m).hasFlag(TerrainFlag.Throne); case _ => false }
+            }
           }
         val surfChecks =
           gates.forall(surfRes.gates.contains) &&

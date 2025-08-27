@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 import model.ProvinceId
 import model.{TerrainFlag, TerrainMask}
 import model.map.{Gate, Terrain, MapFileParser}
-import model.map.{GateSpec, ThronePlacement, ThroneLevel}
+import model.map.{GateSpec, ThronePlacement, ThroneLevel, ProvinceLocation, XCell, YCell}
 
 object MapModificationServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
@@ -22,7 +22,7 @@ object MapModificationServiceSpec extends SimpleIOSuite:
     val writer = new MapWriterImpl[IO]
     val service = new MapModificationServiceImpl[IO](loader, gateService, throneService, writer)
     val gates = Vector(GateSpec(ProvinceId(3), ProvinceId(4)))
-    val thrones = Vector(ThronePlacement(ProvinceId(1), ThroneLevel(1)))
+    val thrones = Vector(ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1)))
     for
       dir <- IO(Files.createTempDirectory("maps"))
       surfaceIn = dir.resolve("surface.map")
@@ -30,6 +30,9 @@ object MapModificationServiceSpec extends SimpleIOSuite:
       surfaceOut = dir.resolve("surface-out.map")
       caveOut = dir.resolve("cave-out.map")
       _ <- IO(Files.write(surfaceIn, """#dom2title surface
+#mapsize 1280 800
+#pb 0 0 1 1
+#pb 256 0 1 2
 #terrain 1 0
 #terrain 2 67108864
 #gate 1 2

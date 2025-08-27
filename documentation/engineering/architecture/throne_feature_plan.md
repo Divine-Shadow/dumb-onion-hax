@@ -3,14 +3,14 @@
 This plan describes how to apply throne placements to a map layer using existing services.
 
 ## Goals
-- Enable random level 1 thrones in designated provinces.
-- Enable random level 2 thrones in designated provinces.
-- Apply specific thrones to explicitly paired provinces.
+- Enable random level 1 thrones in designated coordinates.
+- Enable random level 2 thrones in designated coordinates.
+- Apply specific thrones to explicitly paired coordinates.
 
 ## Plan
 1. **Model Input**
-   - Convert province identifiers to `ProvinceId`.
-   - For random lists, map each province to `ThronePlacement(province, ThroneLevel(1))` or `ThroneLevel(2)`.
+   - Convert coordinate pairs to `ProvinceLocation`.
+   - For random lists, map each location to `ThronePlacement(location, ThroneLevel(1))` or `ThroneLevel(2)`.
    - For fixed pairs, map to `ThronePlacement` using the given level.
 2. **Combine Placements**
    - Concatenate the three vectors into one `Vector[ThronePlacement]`.
@@ -18,7 +18,7 @@ This plan describes how to apply throne placements to a map layer using existing
    - Parse the target map layer via `MapLayerLoader` to obtain a `MapState`.
 4. **Apply Thrones**
    - Call `ThronePlacementService.update` with the current `MapState` and combined placements.
-   - The service toggles `TerrainFlag.Throne` on designated provinces and clears it elsewhere.
+   - The service toggles `TerrainFlag.Throne` on provinces resolved from the designated coordinates and clears it elsewhere.
 5. **Persist Changes**
    - Use `MapWriter` or the higher-level `MapModificationService` to render the updated map layer to disk.
 
@@ -27,8 +27,8 @@ This plan describes how to apply throne placements to a map layer using existing
   - When checked the view writes a sample configuration file `throne-override.conf`:
     ```
     overrides = [
-      { province = 1, level = 3 },
-      { province = 15, level = 1 }
+      { x = 0, y = 0, level = 3 },
+      { x = 4, y = 2, level = 1 }
     ]
     ```
     The file is parsed into a `ThroneConfiguration` once the user confirms the dialog.

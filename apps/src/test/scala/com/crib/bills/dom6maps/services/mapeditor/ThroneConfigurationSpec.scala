@@ -6,15 +6,14 @@ import weaver.SimpleIOSuite
 import pureconfig.*
 import java.nio.file.Files
 import java.nio.charset.StandardCharsets
-import model.ProvinceId
-import model.map.{ThronePlacement, ThroneLevel}
+import model.map.{ThronePlacement, ThroneLevel, ProvinceLocation, XCell, YCell}
 
 object ThroneConfigurationSpec extends SimpleIOSuite:
   test("parses overrides config") {
     val contents =
       """overrides = [
-        { province = 1, level = 2 },
-        { province = 5, level = 3 }
+        { x = 0, y = 0, level = 2 },
+        { x = 4, y = 0, level = 3 }
       ]"""
     for
       file <- IO(Files.createTempFile("throne", ".conf"))
@@ -22,8 +21,8 @@ object ThroneConfigurationSpec extends SimpleIOSuite:
       cfg <- IO(ConfigSource.file(file).loadOrThrow[ThroneConfiguration])
       expected = ThroneConfiguration(
         Vector(
-          ThronePlacement(ProvinceId(1), ThroneLevel(2)),
-          ThronePlacement(ProvinceId(5), ThroneLevel(3))
+          ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(2)),
+          ThronePlacement(ProvinceLocation(XCell(4), YCell(0)), ThroneLevel(3))
         )
       )
     yield expect(cfg == expected)

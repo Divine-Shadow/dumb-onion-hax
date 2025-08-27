@@ -5,14 +5,14 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 ## Requirements
 - Accept two input `.map` files representing surface and cave layers.
 - Remove existing `#gate` directives from both maps and append new ones.
-- Update the throne layer so that designated provinces become thrones.
+- Update the throne layer so that provinces at designated coordinates become thrones.
 - Setting a throne modifies the province's `#terrain` bitmask by adding `67108864` which corresponds to `TerrainFlag.GoodStart`.
 - Magic numbers are avoided by manipulating `TerrainFlag` values through domain types and helper functions.
 
 ## Domain Types
 - `GateSpec`: pairs of `ProvinceId` values describing a gate connection.
 - `ThroneLevel`: value class wrapping an `Int` representing throne strength.
-- `ThronePlacement`: province identifier and throne level.
+- `ThronePlacement`: `ProvinceLocation` and throne level.
 - `TerrainMask`: value class wrapping a `Long` with methods:
   - `withFlag(flag: TerrainFlag): TerrainMask`
   - `withoutFlag(flag: TerrainFlag): TerrainMask`
@@ -35,7 +35,7 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
    - Replaces existing gates in a `MapState` with new ones from `Vector[GateSpec]`.
 3. **ThronePlacementService**
    - Accepts `Vector[ThronePlacement]` and rewrites `Terrain` entries in `MapState` by toggling flags via `TerrainMask`.
-   - Ensures non-specified provinces have throne flags cleared.
+   - Ensures provinces not resolved from placements have throne flags cleared.
 4. **MapModificationService**
    - Higher-order orchestrator that:
      1. Loads surface and cave layers via `MapLayerLoader`.
