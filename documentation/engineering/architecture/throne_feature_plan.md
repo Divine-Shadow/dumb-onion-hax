@@ -22,6 +22,20 @@ This plan describes how to apply throne placements to a map layer using existing
 5. **Persist Changes**
    - Use `MapWriter` or the higher-level `MapModificationService` to render the updated map layer to disk.
 
+## User Interface
+- **ThroneFeatureView** – presents existing throne inputs along with an "Override Thrones" checkbox.
+  - When checked the view writes a sample configuration file `throne-override.conf`:
+    ```
+    overrides = [
+      { province = 1, level = 3 },
+      { province = 15, level = 1 }
+    ]
+    ```
+    The file is parsed into a `ThroneConfiguration` once the user confirms the dialog.
+  - If the box is unchecked no file is produced and only the in-memory selections are used.
+- The view follows the pattern of [Wrap Selection Service](../wrap_selection_service.md) by remaining agnostic to logic and merely returning user choices.
+- `ThroneFeatureService` composes the resulting configuration with other chosen operations before applying and persisting changes.
+
 ## Implementation
 - `ThroneFeatureService` orchestrates the above workflow by loading the map layer, applying throne placements, and writing the result.
 
