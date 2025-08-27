@@ -22,6 +22,9 @@ This plan describes how to apply throne placements to a map layer using existing
 5. **Persist Changes**
    - Use `MapWriter` or the higher-level `MapModificationService` to render the updated map layer to disk.
 
+## Implementation
+- `ThroneFeatureService` orchestrates the above workflow by loading the map layer, applying throne placements, and writing the result.
+
 ## Alignment with Codebase Principles
 - **Capability Traits** – The plan leans on `ThronePlacementService` and `MapLayerLoader`, respecting the contract/implementation split.
 - **Domain-Driven Types** – `ProvinceId`, `ThroneLevel`, and `ThronePlacement` avoid primitives while modeling the domain clearly.
