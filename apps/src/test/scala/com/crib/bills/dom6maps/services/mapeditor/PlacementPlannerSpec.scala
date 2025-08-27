@@ -19,6 +19,11 @@ object PlacementPlannerSpec extends SimpleIOSuite:
       GateSpec(ProvinceId(11), ProvinceId(36)),
       GateSpec(ProvinceId(15), ProvinceId(40))
     )
-    val expectedThrones = Vector(1, 5, 21, 25).map(p => ThronePlacement(ProvinceId(p), ThroneLevel(1)))
+    val expectedThrones = Vector(
+      ProvinceLocation(XCell(0), YCell(0)),
+      ProvinceLocation(XCell(4), YCell(0)),
+      ProvinceLocation(XCell(0), YCell(4)),
+      ProvinceLocation(XCell(4), YCell(4))
+    ).map(loc => ThronePlacement(loc, ThroneLevel(1)))
     expect(gates == expectedGates && thrones == expectedThrones).pure[IO]
   }

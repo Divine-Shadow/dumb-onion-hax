@@ -15,7 +15,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 ## Domain Types
 - `MapSize`: value class wrapping an odd `Int` side length with constructor validation.
 - `EdgeMidpoints`: pure function computing midpoint province identifiers for a given `MapSize`.
-- `CornerProvinces`: pure function returning the four corner province identifiers.
+- `CornerLocations`: pure function returning the four corner coordinates.
 - `CenterProvince`: pure function returning the central province identifier.
 - `SurfaceNation` and `UndergroundNation`: value classes wrapping `Nation`.
 - `PlayerSpawn`: nation and province pair for `allowedplayer`/`specstart` placement.
@@ -28,7 +28,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 2. **PlacementPlanner**
    - Uses `MapSize` to derive:
      - `Vector[GateSpec]` linking surface and cave midpoints.
-     - `Vector[ThronePlacement]` for corner provinces on each layer.
+     - `Vector[ThronePlacement]` for corner coordinates on each layer.
    - Pure and side-effect free.
 3. **GroundSurfaceDuelPipe**
    - Orchestrates transformation of both states.
@@ -61,7 +61,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 
 ## Testing Strategy
 - Provide `Stub` instances for all capabilities to verify pure placement logic using in-memory `MapState` values.
-- Integration tests compose real services to confirm that gates, thrones, and severing appear in the expected provinces for a small sample map.
+- Integration tests compose real services to confirm that gates, thrones, and severing appear at the expected coordinates for a small sample map.
 - Run `sbt compile` as a sanity check for documentation changes.
 
 [Back to Architecture Guide Index](README.md)

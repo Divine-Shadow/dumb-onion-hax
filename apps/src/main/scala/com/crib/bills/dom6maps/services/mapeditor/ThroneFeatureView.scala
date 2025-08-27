@@ -23,8 +23,8 @@ class ThroneFeatureViewImpl[Sequencer[_]](using Sync[Sequencer])
   private val configFileName = "throne-override.conf"
   private val sampleConfig =
     """overrides = [
-  { province = 1, level = 3 },
-  { province = 15, level = 1 }
+  { x = 0, y = 0, level = 3 },
+  { x = 4, y = 2, level = 1 }
 ]
 """
   private val sequencer = summon[Sync[Sequencer]]
@@ -39,9 +39,9 @@ class ThroneFeatureViewImpl[Sequencer[_]](using Sync[Sequencer])
         val p = new JPanel()
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS))
         val summary =
-          s"""Random L1: ${config.randomLevelOne.map(_.value).mkString(",")}
-Random L2: ${config.randomLevelTwo.map(_.value).mkString(",")}
-Fixed: ${config.fixed.map(p => s"${p.province.value}:${p.level.value}").mkString(",")}"""
+          s"""Random L1: ${config.randomLevelOne.map(l => s"(${l.x.value},${l.y.value})").mkString(",")}
+Random L2: ${config.randomLevelTwo.map(l => s"(${l.x.value},${l.y.value})").mkString(",")}
+Fixed: ${config.fixed.map(p => s"(${p.location.x.value},${p.location.y.value}):${p.level.value}").mkString(",")}"""
         p.add(new JLabel(summary))
         p
       }

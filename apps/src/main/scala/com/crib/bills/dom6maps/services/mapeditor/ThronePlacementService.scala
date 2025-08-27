@@ -4,8 +4,7 @@ package apps.services.mapeditor
 import cats.Applicative
 import cats.syntax.all.*
 import cats.effect.Sync
-import model.TerrainFlag
-import model.TerrainMask
+import model.{ProvinceId, TerrainFlag, TerrainMask}
 import model.map.{MapState, Terrain, ThronePlacement}
 
 trait ThronePlacementService[Sequencer[_]]:
@@ -15,7 +14,14 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
   protected val sequencer = summon[Sync[Sequencer]]
 
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
-    val throneSet = thrones.map(_.province).toSet
+    val resolved: Vector[ProvinceId] = thrones.flatMap { tp =>
+      state.provinceLocations.provinceIdAt(tp.location) match
+        case Some(id) => id :: Nil
+        case None =>
+          println(s"Unresolved throne location: ${tp.location}")
+          Nil
+    }
+    val throneSet = resolved.toSet
     val updatedTerrains = state.terrains.map {
       case t @ Terrain(province, mask) =>
         val updated =
@@ -25,7 +31,7 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
         t.copy(mask = updated.value)
     }
     val updatedState = state.copy(terrains = updatedTerrains)
-    sequencer.delay(println(s"Placing ${thrones.size} thrones")).as(updatedState)
+    sequencer.delay(println(s"Placing ${resolved.size} thrones")).as(updatedState)
 
 class ThronePlacementServiceStub[Sequencer[_]: Applicative] extends ThronePlacementService[Sequencer]:
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =

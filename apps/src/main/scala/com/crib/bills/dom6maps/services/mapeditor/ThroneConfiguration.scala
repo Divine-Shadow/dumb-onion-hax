@@ -3,13 +3,15 @@ package apps.services.mapeditor
 
 import pureconfig.ConfigReader
 import pureconfig.generic.derivation.default.*
-import model.ProvinceId
-import model.map.{ThronePlacement, ThroneLevel}
+import model.map.{ProvinceLocation, ThronePlacement, ThroneLevel, XCell, YCell}
 
 final case class ThroneConfiguration(overrides: Vector[ThronePlacement]) derives ConfigReader
 
 object ThroneConfiguration:
-  given ConfigReader[ProvinceId] = ConfigReader[Int].map(ProvinceId(_))
+  given ConfigReader[XCell] = ConfigReader[Int].map(XCell(_))
+  given ConfigReader[YCell] = ConfigReader[Int].map(YCell(_))
+  given ConfigReader[ProvinceLocation] =
+    ConfigReader.forProduct2("x", "y")((x: XCell, y: YCell) => ProvinceLocation(x, y))
   given ConfigReader[ThroneLevel] = ConfigReader[Int].map(ThroneLevel(_))
   given ConfigReader[ThronePlacement] =
-    ConfigReader.forProduct2("province", "level")((p: ProvinceId, l: ThroneLevel) => ThronePlacement(p, l))
+    ConfigReader.forProduct3("x", "y", "level")((x: XCell, y: YCell, l: ThroneLevel) => ThronePlacement(ProvinceLocation(x, y), l))

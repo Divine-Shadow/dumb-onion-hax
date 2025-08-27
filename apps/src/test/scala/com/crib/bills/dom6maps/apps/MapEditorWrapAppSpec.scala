@@ -157,6 +157,10 @@ dest="${destRoot.toString}"
 #dom2title test
 #imagefile test.tga
 #mapsize 1280 800
+#pb 0 0 1 1
+#pb 1024 0 1 5
+#pb 0 640 1 21
+#pb 1024 640 1 25
 #wraparound
 #terrain 1 0
 #terrain 5 0

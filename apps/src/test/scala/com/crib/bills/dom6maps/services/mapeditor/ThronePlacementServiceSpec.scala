@@ -6,16 +6,25 @@ import cats.syntax.all.*
 import weaver.SimpleIOSuite
 import model.ProvinceId
 import model.{TerrainFlag, TerrainMask}
-import model.map.{MapState, Terrain, ThronePlacement, ThroneLevel}
+import model.map.{MapState, Terrain, ThronePlacement, ThroneLevel, ProvinceLocation, ProvinceLocations, XCell, YCell}
 
 object ThronePlacementServiceSpec extends SimpleIOSuite:
   test("update sets and clears throne flag") {
     val service = new ThronePlacementServiceImpl[IO]
-    val state = MapState.empty.copy(terrains = Vector(
-      Terrain(ProvinceId(1), 0),
-      Terrain(ProvinceId(2), TerrainFlag.Throne.mask)
-    ))
-    val placements = Vector(ThronePlacement(ProvinceId(1), ThroneLevel(1)))
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(1) -> ProvinceLocation(XCell(0), YCell(0)),
+        ProvinceId(2) -> ProvinceLocation(XCell(1), YCell(0))
+      )
+    )
+    val state = MapState.empty.copy(
+      terrains = Vector(
+        Terrain(ProvinceId(1), 0),
+        Terrain(ProvinceId(2), TerrainFlag.Throne.mask)
+      ),
+      provinceLocations = locations
+    )
+    val placements = Vector(ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1)))
     for
       res <- service.update(state, placements)
       mask1 = res.terrains.collectFirst { case Terrain(ProvinceId(1), m) => TerrainMask(m) }.get
