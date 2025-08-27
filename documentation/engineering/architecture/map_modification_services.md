@@ -51,3 +51,4 @@ Map modification services inject gate and throne data into Dominions 6 maps. The
 
 ## Future Work
 - Integrate external specifications for gate and throne data.
+- Apply [Throne Feature Application Plan](throne_feature_plan.md) for scripted throne placement scenarios.
