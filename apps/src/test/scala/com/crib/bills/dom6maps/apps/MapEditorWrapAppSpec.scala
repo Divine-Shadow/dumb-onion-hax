@@ -24,7 +24,8 @@ import services.mapeditor.{
   WrapChoice,
   WrapChoiceService,
   WrapChoices,
-  MapLayerLoaderImpl
+  MapLayerLoaderImpl,
+  ThroneFeatureView
 }
 import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
@@ -53,6 +54,12 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
         undergroundNation: model.map.UndergroundNation
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
       (model.map.MapState.empty, model.map.MapState.empty).pure[ErrorChannel].pure[IO]
+
+  private class StubThroneFeatureView extends ThroneFeatureView[IO]:
+    override def chooseConfig[ErrorChannel[_]](
+        config: model.map.ThroneFeatureConfig
+    )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
+      IO.pure(errorChannel.pure(config))
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
@@ -62,7 +69,9 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
           new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
-          new StubGroundSurfaceDuelPipe
+          new StubGroundSurfaceDuelPipe,
+          new StubThroneFeatureView,
+          new ThronePlacementServiceImpl[IO]
         )
         .attempt
       exists <- IO(JFiles.exists(configFile))
@@ -93,7 +102,9 @@ dest="${destRoot.toString}"
           new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
-          new StubGroundSurfaceDuelPipe
+          new StubGroundSurfaceDuelPipe,
+          new StubThroneFeatureView,
+          new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destEntries <- Fs2Files[IO].list(Path.fromNioPath(destRoot)).compile.toList
@@ -142,7 +153,9 @@ dest="${destRoot.toString}"
           new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
-          new StubGroundSurfaceDuelPipe
+          new StubGroundSurfaceDuelPipe,
+          new StubThroneFeatureView,
+          new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
@@ -187,7 +200,9 @@ dest="${destRoot.toString}"
           new MapLayerLoaderImpl[IO],
           new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)),
           new StubGroundSurfaceNationService(model.Nation.Atlantis_Early, model.Nation.Mictlan_Early),
-          dueler
+          dueler,
+          new StubThroneFeatureView,
+          new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
       destDir = Path.fromNioPath(destRoot.resolve("newer"))
