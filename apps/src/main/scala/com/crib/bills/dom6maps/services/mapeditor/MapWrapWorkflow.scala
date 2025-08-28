@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 import cats.instances.either.*
 import fs2.io.file.Path
-import model.map.{GroundSurfaceDuelConfig, MapState}
+import model.map.{GroundSurfaceDuelConfig, ThroneFeatureConfig}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
 
@@ -22,6 +22,8 @@ class MapWrapWorkflowImpl(
     chooser: WrapChoiceService[IO],
     nationChooser: GroundSurfaceNationService[IO],
     dueler: GroundSurfaceDuelPipe[IO],
+    throneView: ThroneFeatureView[IO],
+    throneService: ThronePlacementService[IO],
     currentVersion: Version
   ) extends MapWrapWorkflow:
   private type ErrorOr[A] = Either[Throwable, A]
@@ -44,6 +46,12 @@ class MapWrapWorkflowImpl(
       (bytes, outPath) = copied.main
       layerEC <- loader.load[ErrorOr](bytes)
       layer <- IO.fromEither(layerEC)
+      throneCfgEC <- throneView.chooseConfig[ErrorOr](
+        ThroneFeatureConfig(Vector.empty, Vector.empty, Vector.empty)
+      )
+      throneCfg <- IO.fromEither(throneCfgEC)
+      updatedState <- throneService.update(layer.state, throneCfg.placements)
+      baseLayer = layer.copy(state = updatedState)
       wrapEC <- chooser.chooseWraps[ErrorOr]()
       wrapChoices <- IO.fromEither(wrapEC)
       _ <- wrapChoices.main match
@@ -57,7 +65,7 @@ class MapWrapWorkflowImpl(
                 nations <- IO.fromEither(nationsEC)
                 duelResEC <- dueler
                   .apply[ErrorOr](
-                    layer.state,
+                    baseLayer.state,
                     caveLayer.state,
                     GroundSurfaceDuelConfig.default,
                     nations.surface,
@@ -65,7 +73,7 @@ class MapWrapWorkflowImpl(
                   )
                 duelRes <- IO.fromEither(duelResEC)
                 (surfRes, caveRes) = duelRes
-                surfWritten <- writer.write[ErrorOr](layer.copy(state = surfRes), outPath)
+                surfWritten <- writer.write[ErrorOr](baseLayer.copy(state = surfRes), outPath)
                 _ <- IO.fromEither(surfWritten)
                 caveWritten <- writer.write[ErrorOr](caveLayer.copy(state = caveRes), caveOutPath)
                 _ <- IO.fromEither(caveWritten)
@@ -73,9 +81,9 @@ class MapWrapWorkflowImpl(
             case None => IO.raiseError(new NoSuchElementException("cave map not found"))
         case wrapChoice =>
           for
-            convertedEC <- converter.convert[ErrorOr](layer.state, wrapChoice)
+            convertedEC <- converter.convert[ErrorOr](baseLayer.state, wrapChoice)
             converted <- IO.fromEither(convertedEC)
-            written <- writer.write[ErrorOr](layer.copy(state = converted), outPath)
+            written <- writer.write[ErrorOr](baseLayer.copy(state = converted), outPath)
             _ <- IO.fromEither(written)
             _ <- wrapChoices.cave match
               case Some(caveChoice) =>

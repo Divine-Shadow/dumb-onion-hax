@@ -18,12 +18,15 @@ import services.mapeditor.{
   PlacementPlannerImpl,
   GateDirectiveServiceImpl,
   ThronePlacementServiceImpl,
+  ThroneFeatureViewImpl,
   GroundSurfaceNationServiceImpl,
   GroundSurfaceNationService,
   SpawnPlacementServiceImpl,
   GroundSurfaceDuelPipe,
   MapLayerLoaderImpl,
-  MapLayerLoader
+  MapLayerLoader,
+  ThroneFeatureView,
+  ThronePlacementService
 }
 import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
@@ -42,7 +45,9 @@ dest="/path/to/dominions/maps"
       loader: MapLayerLoader[IO],
       chooser: WrapChoiceService[IO],
       nationChooser: GroundSurfaceNationService[IO],
-      dueler: GroundSurfaceDuelPipe[IO]
+      dueler: GroundSurfaceDuelPipe[IO],
+      throneView: ThroneFeatureView[IO],
+      throneService: ThronePlacementService[IO]
   ): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
     val copier = new MapEditorCopierImpl[IO]
@@ -50,7 +55,20 @@ dest="/path/to/dominions/maps"
     val converter = new WrapConversionServiceImpl[IO]
     val checker = new GithubReleaseCheckerImpl[IO]
     val workflow =
-      new MapWrapWorkflowImpl(finder, copier, writer, loader, converter, checker, chooser, nationChooser, dueler, currentVersion)
+      new MapWrapWorkflowImpl(
+        finder,
+        copier,
+        writer,
+        loader,
+        converter,
+        checker,
+        chooser,
+        nationChooser,
+        dueler,
+        throneView,
+        throneService,
+        currentVersion
+      )
     val action =
       for
         exists <- IO(JFiles.exists(NioPath.of(configFileName)))
@@ -73,4 +91,11 @@ dest="/path/to/dominions/maps"
       new ThronePlacementServiceImpl[IO],
       new SpawnPlacementServiceImpl[IO]
     )
-    runWith(loader, new WrapChoiceServiceImpl[IO], new GroundSurfaceNationServiceImpl[IO], dueler)
+    runWith(
+      loader,
+      new WrapChoiceServiceImpl[IO],
+      new GroundSurfaceNationServiceImpl[IO],
+      dueler,
+      new ThroneFeatureViewImpl[IO],
+      new ThronePlacementServiceImpl[IO]
+    )
