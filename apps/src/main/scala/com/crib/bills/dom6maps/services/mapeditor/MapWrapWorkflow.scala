@@ -8,6 +8,8 @@ import fs2.io.file.Path
 import model.map.{GroundSurfaceDuelConfig, ThroneFeatureConfig}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
+import pureconfig.*
+import java.nio.file.{Files as JFiles, Path as NioPath}
 
 trait MapWrapWorkflow:
   def run(cfg: PathsConfig): IO[Unit]
@@ -46,8 +48,18 @@ class MapWrapWorkflowImpl(
       (bytes, outPath) = copied.main
       layerEC <- loader.load[ErrorOr](bytes)
       layer <- IO.fromEither(layerEC)
+      overridesEC <- IO {
+        val path = NioPath.of("throne-override.conf")
+        if JFiles.exists(path) then
+          ConfigSource
+            .file(path)
+            .load[ThroneConfiguration]
+            .leftMap(f => RuntimeException(f.toString))
+        else Right(ThroneConfiguration(Vector.empty))
+      }
+      overrides <- IO.fromEither(overridesEC)
       throneCfgEC <- throneView.chooseConfig[ErrorOr](
-        ThroneFeatureConfig(Vector.empty, Vector.empty, Vector.empty)
+        ThroneFeatureConfig(Vector.empty, Vector.empty, overrides.overrides)
       )
       throneCfg <- IO.fromEither(throneCfgEC)
       updatedState <- throneService.update(layer.state, throneCfg.placements)
