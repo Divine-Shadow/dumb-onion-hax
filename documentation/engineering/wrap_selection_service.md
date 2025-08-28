@@ -9,11 +9,12 @@ now copies the surface selection to the cave layer by default.
 
 ## Components
 - **WrapChoiceService** – displays a Swing dialog with radio buttons for
-  `hwrap`, `vwrap`, `no-wrap`, or `ground-surface duel`. Selecting the duel
-  option disables wrap choices and cave-layer selection. Otherwise the dialog
-  offers a checkbox to enable independent wrap selection for the cave layer.
-  It returns the main map selection along with an optional cave selection. The
-  service contains only UI code so rendering can be replaced later.
+  `hwrap`, `vwrap`, `full-wrap`, `no-wrap`, or `ground-surface duel`.
+  Selecting the duel option disables wrap choices and cave-layer selection.
+  Otherwise the dialog offers a checkbox to enable independent wrap selection
+  for the cave layer. It returns the main map selection along with an optional
+  cave selection. The service contains only UI code so rendering can be
+  replaced later.
 - **WrapConversionService** – applies the selected wrap to `MapState` by
   severing the appropriate neighbour connections. It delegates to
   `WrapSeverService` for the transformation logic. The duel option bypasses this

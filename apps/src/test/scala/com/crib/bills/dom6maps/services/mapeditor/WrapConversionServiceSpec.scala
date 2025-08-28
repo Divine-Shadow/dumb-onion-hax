@@ -14,6 +14,7 @@ import model.map.{
   MapHeight,
   NoWrapAround,
   VWrapAround,
+  WrapAround,
   WrapState
 }
 import WrapSeverService.{isTopBottom, isLeftRight}
@@ -63,6 +64,20 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
     )
   }
 
+  test("convert to full-wrap") {
+    val service = new WrapConversionServiceImpl[IO]
+    for
+      (state, _, _) <- load
+      resEC <- service.convert[EC](state, WrapChoice.FullWrap)
+      res <- IO.fromEither(resEC)
+      directives = Encoder[MapState].encode(res)
+    yield expect.all(
+      res.wrap == WrapState.FullWrap,
+      res.adjacency == state.adjacency,
+      directives.contains(WrapAround)
+    )
+  }
+
   test("convert to no-wrap") {
     val service = new WrapConversionServiceImpl[IO]
     for
@@ -102,5 +117,17 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
     yield expect.all(
       res.wrap == WrapState.VerticalWrap,
       directives.contains(VWrapAround)
+    )
+  }
+
+  test("convert no-wrap map to full-wrap renders directive") {
+    val service = new WrapConversionServiceImpl[IO]
+    for
+      resEC <- service.convert[EC](MapState.empty, WrapChoice.FullWrap)
+      res <- IO.fromEither(resEC)
+      directives = Encoder[MapState].encode(res)
+    yield expect.all(
+      res.wrap == WrapState.FullWrap,
+      directives.contains(WrapAround)
     )
   }

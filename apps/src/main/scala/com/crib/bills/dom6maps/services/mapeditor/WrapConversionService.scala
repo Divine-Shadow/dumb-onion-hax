@@ -28,6 +28,8 @@ class WrapConversionServiceImpl[Sequencer[_]: Sync] extends WrapConversionServic
         WrapSeverService.severVertically(state).copy(wrap = WrapState.HorizontalWrap)
       case WrapChoice.VWrap =>
         WrapSeverService.severHorizontally(state).copy(wrap = WrapState.VerticalWrap)
+      case WrapChoice.FullWrap =>
+        state.copy(wrap = WrapState.FullWrap)
       case WrapChoice.NoWrap =>
         WrapSeverService
           .severHorizontally(WrapSeverService.severVertically(state))
