@@ -27,12 +27,16 @@ class WrapConversionServiceImpl[Sequencer[_]: Sync] extends WrapConversionServic
       case WrapChoice.HWrap =>
         WrapSeverService.severVertically(state).copy(wrap = WrapState.HorizontalWrap)
       case WrapChoice.VWrap =>
-        WrapSeverService.severHorizontally(state).copy(wrap = WrapState.VerticalWrap)
+        WrapSeverService
+          .severHorizontally(state)
+          .copy(wrap = WrapState.VerticalWrap)
       case WrapChoice.FullWrap =>
         state.copy(wrap = WrapState.FullWrap)
       case WrapChoice.NoWrap =>
         WrapSeverService
-          .severHorizontally(WrapSeverService.severVertically(state))
+          .severHorizontally(
+            WrapSeverService.severVertically(state)
+          )
           .copy(wrap = WrapState.NoWrap)
       case WrapChoice.GroundSurfaceDuel => state
     sequencer.delay(println(s"Converting map to $target")).as(errorChannel.pure(result))

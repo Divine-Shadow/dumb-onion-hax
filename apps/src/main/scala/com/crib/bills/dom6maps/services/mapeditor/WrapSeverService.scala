@@ -56,16 +56,9 @@ object WrapSeverService:
   def severHorizontally(state: MapState): MapState =
     state.size match
       case Some(sz) =>
-        val width = MapWidth(sz.value)
-        val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.HorizontalWrap
-        val newAdj =
-          if shouldSever then
-            state.adjacency.filterNot((a, b) => isLeftRight(a, b, state.provinceLocations, width))
-          else state.adjacency
-        val newBorders =
-          if shouldSever then
-            state.borders.filterNot(b => isLeftRight(b.a, b.b, state.provinceLocations, width))
-          else state.borders
+        val width      = MapWidth(sz.value)
+        val newAdj     = state.adjacency.filterNot((a, b) => isLeftRight(a, b, state.provinceLocations, width))
+        val newBorders = state.borders.filterNot(b => isLeftRight(b.a, b.b, state.provinceLocations, width))
         val newWrap = state.wrap match
           case WrapState.FullWrap       => WrapState.VerticalWrap
           case WrapState.HorizontalWrap => WrapState.NoWrap
