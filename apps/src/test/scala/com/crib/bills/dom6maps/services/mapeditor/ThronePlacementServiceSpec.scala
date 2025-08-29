@@ -6,7 +6,18 @@ import cats.syntax.all.*
 import weaver.SimpleIOSuite
 import model.ProvinceId
 import model.{TerrainFlag, TerrainMask}
-import model.map.{MapState, Terrain, ThronePlacement, ThroneLevel, ProvinceLocation, ProvinceLocations, XCell, YCell}
+import model.map.{
+  FeatureId,
+  MapState,
+  ProvinceFeature,
+  Terrain,
+  ThronePlacement,
+  ThroneLevel,
+  ProvinceLocation,
+  ProvinceLocations,
+  XCell,
+  YCell
+}
 
 object ThronePlacementServiceSpec extends SimpleIOSuite:
   test("update sets and clears throne flag") {
@@ -31,6 +42,7 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
       mask2 = res.terrains.collectFirst { case Terrain(ProvinceId(2), m) => TerrainMask(m) }.get
     yield expect.all(
       mask1.hasFlag(TerrainFlag.Throne),
-      !mask2.hasFlag(TerrainFlag.Throne)
+      !mask2.hasFlag(TerrainFlag.Throne),
+      res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(5001)))
     )
   }

@@ -35,7 +35,8 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       AllowedPlayer(Nation.Feminie_Late),
       SpecStart(Nation.Feminie_Late, ProvinceId(42)),
       Terrain(ProvinceId(5), TerrainFlag.GoodThrone.mask | MagicType.Holy.mask.toLong),
-      ProvinceFeature(ProvinceId(5), FeatureId(9)),
+      SetLand(ProvinceId(5)),
+      Feature(FeatureId(9)),
       Gate(ProvinceId(1), ProvinceId(2)),
       Neighbour(ProvinceId(3), ProvinceId(4)),
       NeighbourSpec(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)

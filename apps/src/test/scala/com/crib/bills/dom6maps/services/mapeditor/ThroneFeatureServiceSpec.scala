@@ -9,7 +9,19 @@ import java.nio.file.Files
 import java.nio.charset.StandardCharsets
 import model.ProvinceId
 import model.{TerrainFlag, TerrainMask}
-import model.map.{Terrain, ThroneFeatureConfig, ThronePlacement, ThroneLevel, MapFileParser, ProvinceLocation, XCell, YCell}
+import model.map.{
+  Feature,
+  FeatureId,
+  MapFileParser,
+  ProvinceLocation,
+  SetLand,
+  Terrain,
+  ThroneFeatureConfig,
+  ThronePlacement,
+  ThroneLevel,
+  XCell,
+  YCell
+}
 
 object ThroneFeatureServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
@@ -43,14 +55,24 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
       resultEC <- service.apply[EC](Path.fromNioPath(in), config, Path.fromNioPath(out))
       _ <- IO.fromEither(resultEC)
       directives <- MapFileParser.parseFile[IO](Path.fromNioPath(out)).compile.toVector
+      featureAt = (p: ProvinceId) =>
+        directives.sliding(2).collectFirst {
+          case Vector(SetLand(id), Feature(f)) if id == p => f
+        }
       mask1 = directives.collectFirst { case Terrain(ProvinceId(1), m) => TerrainMask(m) }.get
       mask2 = directives.collectFirst { case Terrain(ProvinceId(2), m) => TerrainMask(m) }.get
       mask3 = directives.collectFirst { case Terrain(ProvinceId(3), m) => TerrainMask(m) }.get
       mask4 = directives.collectFirst { case Terrain(ProvinceId(4), m) => TerrainMask(m) }.get
+      f2 = featureAt(ProvinceId(2))
+      f3 = featureAt(ProvinceId(3))
+      f4 = featureAt(ProvinceId(4))
     yield expect.all(
       !mask1.hasFlag(TerrainFlag.Throne),
       mask2.hasFlag(TerrainFlag.Throne),
       mask3.hasFlag(TerrainFlag.Throne),
-      mask4.hasFlag(TerrainFlag.Throne)
+      mask4.hasFlag(TerrainFlag.Throne),
+      f2.contains(FeatureId(5001)),
+      f3.contains(FeatureId(5002)),
+      f4.contains(FeatureId(5002))
     )
   }
