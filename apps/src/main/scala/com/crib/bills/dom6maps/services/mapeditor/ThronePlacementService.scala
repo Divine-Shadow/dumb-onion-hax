@@ -5,7 +5,14 @@ import cats.Applicative
 import cats.syntax.all.*
 import cats.effect.Sync
 import model.{ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{MapState, Terrain, ThronePlacement}
+import model.map.{
+  FeatureId,
+  MapState,
+  ProvinceFeature,
+  Terrain,
+  ThronePlacement,
+  ThroneLevel
+}
 
 trait ThronePlacementService[Sequencer[_]]:
   def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState]
@@ -13,15 +20,22 @@ trait ThronePlacementService[Sequencer[_]]:
 class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementService[Sequencer]:
   protected val sequencer = summon[Sync[Sequencer]]
 
+  private def featureIdFor(level: ThroneLevel): FeatureId =
+    level.value match
+      case 1 => FeatureId(5001)
+      case 2 => FeatureId(5002)
+      case 3 => FeatureId(5003)
+      case other => FeatureId(5000 + other)
+
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
-    val resolved: Vector[ProvinceId] = thrones.flatMap { tp =>
+    val resolved: Vector[(ProvinceId, ThroneLevel)] = thrones.flatMap { tp =>
       state.provinceLocations.provinceIdAt(tp.location) match
-        case Some(id) => id :: Nil
+        case Some(id) => (id, tp.level) :: Nil
         case None =>
           println(s"Unresolved throne location: ${tp.location}")
           Nil
     }
-    val throneSet = resolved.toSet
+    val throneSet = resolved.map(_._1).toSet
     val updatedTerrains = state.terrains.map {
       case t @ Terrain(province, mask) =>
         val updated =
@@ -30,7 +44,10 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
           else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
         t.copy(mask = updated.value)
     }
-    val updatedState = state.copy(terrains = updatedTerrains)
+    val features = resolved.map { case (province, level) =>
+      ProvinceFeature(province, featureIdFor(level))
+    }
+    val updatedState = state.copy(terrains = updatedTerrains, features = features)
     sequencer.delay(println(s"Placing ${resolved.size} thrones")).as(updatedState)
 
 class ThronePlacementServiceStub[Sequencer[_]: Applicative] extends ThronePlacementService[Sequencer]:

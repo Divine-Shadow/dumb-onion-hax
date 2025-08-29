@@ -56,7 +56,7 @@ object MapDirectiveCodecs:
 
   given Encoder[ProvinceFeature] with
     def encode(value: ProvinceFeature): Vector[MapDirective] =
-      Vector(value)
+      Vector(SetLand(value.province), Feature(value.id))
 
   given Encoder[Gate] with
     def encode(value: Gate): Vector[MapDirective] =
