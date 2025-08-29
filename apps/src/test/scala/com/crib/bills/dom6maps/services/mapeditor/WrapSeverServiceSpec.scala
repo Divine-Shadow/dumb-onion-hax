@@ -97,3 +97,66 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
     val hasMiddle = result.adjacency.contains((ProvinceId(6), ProvinceId(7)))
     IO.pure(expect(result.wrap == WrapState.VerticalWrap && !hasDiagonal && hasMiddle))
   }
+
+  test("severHorizontally removes left-right neighbours when wrap is HorizontalWrap") {
+    val size = MapSize.from(5).toOption
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(5) -> model.map.ProvinceLocation(model.map.XCell(4), model.map.YCell(0)),
+        ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1)),
+        ProvinceId(7) -> model.map.ProvinceLocation(model.map.XCell(1), model.map.YCell(1))
+      )
+    )
+    val state = MapState.empty.copy(
+      size = size,
+      adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
+      wrap = WrapState.HorizontalWrap,
+      provinceLocations = locations
+    )
+    val result = WrapSeverService.severHorizontally(state)
+    val hasLeftRight = result.adjacency.contains((ProvinceId(5), ProvinceId(6)))
+    val hasMiddle    = result.adjacency.contains((ProvinceId(6), ProvinceId(7)))
+    IO.pure(expect(result.wrap == WrapState.NoWrap && !hasLeftRight && hasMiddle))
+  }
+
+  test("severHorizontally removes left-right neighbours when wrap is VerticalWrap") {
+    val size = MapSize.from(5).toOption
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(5) -> model.map.ProvinceLocation(model.map.XCell(4), model.map.YCell(0)),
+        ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1)),
+        ProvinceId(7) -> model.map.ProvinceLocation(model.map.XCell(1), model.map.YCell(1))
+      )
+    )
+    val state = MapState.empty.copy(
+      size = size,
+      adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
+      wrap = WrapState.VerticalWrap,
+      provinceLocations = locations
+    )
+    val result = WrapSeverService.severHorizontally(state)
+    val hasLeftRight = result.adjacency.contains((ProvinceId(5), ProvinceId(6)))
+    val hasMiddle    = result.adjacency.contains((ProvinceId(6), ProvinceId(7)))
+    IO.pure(expect(result.wrap == WrapState.VerticalWrap && !hasLeftRight && hasMiddle))
+  }
+
+  test("severHorizontally removes left-right neighbours when wrap is NoWrap") {
+    val size = MapSize.from(5).toOption
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(5) -> model.map.ProvinceLocation(model.map.XCell(4), model.map.YCell(0)),
+        ProvinceId(6) -> model.map.ProvinceLocation(model.map.XCell(0), model.map.YCell(1)),
+        ProvinceId(7) -> model.map.ProvinceLocation(model.map.XCell(1), model.map.YCell(1))
+      )
+    )
+    val state = MapState.empty.copy(
+      size = size,
+      adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
+      wrap = WrapState.NoWrap,
+      provinceLocations = locations
+    )
+    val result = WrapSeverService.severHorizontally(state)
+    val hasLeftRight = result.adjacency.contains((ProvinceId(5), ProvinceId(6)))
+    val hasMiddle    = result.adjacency.contains((ProvinceId(6), ProvinceId(7)))
+    IO.pure(expect(result.wrap == WrapState.NoWrap && !hasLeftRight && hasMiddle))
+  }
