@@ -43,7 +43,7 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
     yield expect.all(
       mask1.hasFlag(TerrainFlag.Throne),
       !mask2.hasFlag(TerrainFlag.Throne),
-      res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(5001)))
+      res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(1332)))
     )
   }
 

@@ -13,6 +13,7 @@ import model.map.{
   ThronePlacement,
   ThroneLevel
 }
+import model.dominions.{Feature as DomFeature}
 
 trait ThronePlacementService[Sequencer[_]]:
   def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState]
@@ -20,18 +21,19 @@ trait ThronePlacementService[Sequencer[_]]:
 class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementService[Sequencer]:
   protected val sequencer = summon[Sync[Sequencer]]
 
-  private def featureIdFor(level: ThroneLevel): FeatureId =
-    level.value match
-      case 1 => FeatureId(5001)
-      case 2 => FeatureId(5002)
-      case 3 => FeatureId(5003)
-      case other => FeatureId(5000 + other)
+  private def featureIdFor(level: ThroneLevel): Option[FeatureId] =
+    val thrones = level.value match
+      case 1 => DomFeature.levelOneThrones
+      case 2 => DomFeature.levelTwoThrones
+      case 3 => DomFeature.levelThreeThrones
+      case _ => Nil
+    thrones.headOption.map(f => FeatureId(f.id.value))
 
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
     val resolved: Vector[(ProvinceId, FeatureId)] = thrones.flatMap { tp =>
       state.provinceLocations.provinceIdAt(tp.location) match
         case Some(id) =>
-          val feature = tp.id.orElse(tp.level.map(featureIdFor))
+          val feature = tp.id.orElse(tp.level.flatMap(featureIdFor))
           feature match
             case Some(fid) => (id, fid) :: Nil
             case None =>

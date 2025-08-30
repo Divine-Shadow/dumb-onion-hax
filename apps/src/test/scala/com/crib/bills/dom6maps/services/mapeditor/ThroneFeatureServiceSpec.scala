@@ -52,9 +52,9 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
 #terrain 3 0
 #terrain 4 0
 #setland 1
-#feature 5001
+#feature 1332
 #setland 2
-#feature 5003
+#feature 1383
 """.getBytes(StandardCharsets.UTF_8)))
       resultEC <- service.apply[EC](Path.fromNioPath(in), config, Path.fromNioPath(out))
       _ <- IO.fromEither(resultEC)
@@ -77,8 +77,8 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
       mask3.hasFlag(TerrainFlag.Throne),
       mask4.hasFlag(TerrainFlag.Throne),
       f1.isEmpty,
-      f2 == Vector(FeatureId(5001)),
-      f3 == Vector(FeatureId(5002)),
-      f4 == Vector(FeatureId(5002))
+      f2 == Vector(FeatureId(1332)),
+      f3 == Vector(FeatureId(1359)),
+      f4 == Vector(FeatureId(1359))
     )
   }
