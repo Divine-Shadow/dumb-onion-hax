@@ -36,9 +36,16 @@ class WrapChoiceServiceImpl[Sequencer[_]](using Sync[Sequencer])
           _ <- sequencer.delay(cavePanel.setEnabledAll(false))
           caveBox <- sequencer.delay(new JCheckBox("modify cave layer"))
           throneSummary <- sequencer.delay {
+            val fixedSummary = config.fixed
+              .map { p =>
+                val spec =
+                  p.level.map(l => l.value.toString).orElse(p.id.map(fid => s"id=${fid.value}")).getOrElse("?")
+                s"(${p.location.x.value},${p.location.y.value}):$spec"
+              }
+              .mkString(",")
             s"""Random L1: ${config.randomLevelOne.map(l => s"(${l.x.value},${l.y.value})").mkString(",")}
 Random L2: ${config.randomLevelTwo.map(l => s"(${l.x.value},${l.y.value})").mkString(",")}
-Fixed: ${config.fixed.map(p => s"(${p.location.x.value},${p.location.y.value}):${p.level.value}").mkString(",")}"""
+Fixed: $fixedSummary"""
           }
           throneLabel <- sequencer.delay(new JLabel(throneSummary))
           throneBox <- sequencer.delay(new JCheckBox("Override Thrones"))

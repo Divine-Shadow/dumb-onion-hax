@@ -46,3 +46,19 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
       res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(5001)))
     )
   }
+
+  test("explicit feature id is applied") {
+    val service = new ThronePlacementServiceImpl[IO]
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(1) -> ProvinceLocation(XCell(0), YCell(0))
+      )
+    )
+    val state = MapState.empty.copy(provinceLocations = locations)
+    val placements = Vector(
+      ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), FeatureId(1358))
+    )
+    for
+      res <- service.update(state, placements)
+    yield expect(res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(1358))))
+  }

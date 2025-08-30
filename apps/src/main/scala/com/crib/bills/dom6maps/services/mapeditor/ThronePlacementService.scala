@@ -28,9 +28,15 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
       case other => FeatureId(5000 + other)
 
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
-    val resolved: Vector[(ProvinceId, ThroneLevel)] = thrones.flatMap { tp =>
+    val resolved: Vector[(ProvinceId, FeatureId)] = thrones.flatMap { tp =>
       state.provinceLocations.provinceIdAt(tp.location) match
-        case Some(id) => (id, tp.level) :: Nil
+        case Some(id) =>
+          val feature = tp.id.orElse(tp.level.map(featureIdFor))
+          feature match
+            case Some(fid) => (id, fid) :: Nil
+            case None =>
+              println(s"Missing throne level or id at location: ${tp.location}")
+              Nil
         case None =>
           println(s"Unresolved throne location: ${tp.location}")
           Nil
@@ -44,8 +50,8 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
           else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
         t.copy(mask = updated.value)
     }
-    val features = resolved.map { case (province, level) =>
-      ProvinceFeature(province, featureIdFor(level))
+    val features = resolved.map { case (province, fid) =>
+      ProvinceFeature(province, fid)
     }
     val updatedState = state.copy(terrains = updatedTerrains, features = features)
     sequencer.delay(println(s"Placing ${resolved.size} thrones")).as(updatedState)
