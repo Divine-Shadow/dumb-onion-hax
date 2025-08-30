@@ -18,14 +18,12 @@ import services.mapeditor.{
   PlacementPlannerImpl,
   GateDirectiveServiceImpl,
   ThronePlacementServiceImpl,
-  ThroneFeatureViewImpl,
   GroundSurfaceNationServiceImpl,
   GroundSurfaceNationService,
   SpawnPlacementServiceImpl,
   GroundSurfaceDuelPipe,
   MapLayerLoaderImpl,
   MapLayerLoader,
-  ThroneFeatureView,
   ThronePlacementService
 }
 import services.update.GithubReleaseCheckerImpl
@@ -46,7 +44,6 @@ dest="/path/to/dominions/maps"
       chooser: WrapChoiceService[IO],
       nationChooser: GroundSurfaceNationService[IO],
       dueler: GroundSurfaceDuelPipe[IO],
-      throneView: ThroneFeatureView[IO],
       throneService: ThronePlacementService[IO]
   ): IO[ExitCode] =
     val finder = new LatestEditorFinderImpl[IO]
@@ -65,7 +62,6 @@ dest="/path/to/dominions/maps"
         chooser,
         nationChooser,
         dueler,
-        throneView,
         throneService,
         currentVersion
       )
@@ -96,6 +92,5 @@ dest="/path/to/dominions/maps"
       new WrapChoiceServiceImpl[IO],
       new GroundSurfaceNationServiceImpl[IO],
       dueler,
-      new ThroneFeatureViewImpl[IO],
       new ThronePlacementServiceImpl[IO]
     )

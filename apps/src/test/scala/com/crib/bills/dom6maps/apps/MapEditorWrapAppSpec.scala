@@ -25,7 +25,7 @@ import services.mapeditor.{
   WrapChoiceService,
   WrapChoices,
   MapLayerLoaderImpl,
-  ThroneFeatureView
+  MapEditorSettings
 }
 import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
@@ -35,9 +35,10 @@ import java.nio.file.attribute.FileTime
 object MapEditorWrapAppSpec extends SimpleIOSuite:
   override def maxParallelism = 1
   private class StubWrapChoiceService(selections: WrapChoices) extends WrapChoiceService[IO]:
-    override def chooseWraps[ErrorChannel[_]]()(using
-        errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
-    ) = IO.pure(errorChannel.pure(selections))
+    override def chooseSettings[ErrorChannel[_]](
+        config: model.map.ThroneFeatureConfig
+    )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
+      IO.pure(errorChannel.pure(MapEditorSettings(selections, config)))
 
   private class StubGroundSurfaceNationService(surface: model.Nation, underground: model.Nation)
       extends GroundSurfaceNationService[IO]:
@@ -55,11 +56,6 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
     )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
       (model.map.MapState.empty, model.map.MapState.empty).pure[ErrorChannel].pure[IO]
 
-  private class StubThroneFeatureView extends ThroneFeatureView[IO]:
-    override def chooseConfig[ErrorChannel[_]](
-        config: model.map.ThroneFeatureConfig
-    )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      IO.pure(errorChannel.pure(config))
   test("creates sample config when missing") {
     for
       configFile <- IO(JPath.of("map-editor-wrap.conf"))
@@ -70,7 +66,6 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe,
-          new StubThroneFeatureView,
           new ThronePlacementServiceImpl[IO]
         )
         .attempt
@@ -103,7 +98,6 @@ dest="${destRoot.toString}"
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, None)),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe,
-          new StubThroneFeatureView,
           new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
@@ -154,7 +148,6 @@ dest="${destRoot.toString}"
           new StubWrapChoiceService(WrapChoices(WrapChoice.HWrap, Some(WrapChoice.VWrap))),
           new StubGroundSurfaceNationService(model.Nation.Agartha_Early, model.Nation.Atlantis_Early),
           new StubGroundSurfaceDuelPipe,
-          new StubThroneFeatureView,
           new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))
@@ -201,7 +194,6 @@ dest="${destRoot.toString}"
           new StubWrapChoiceService(WrapChoices(WrapChoice.GroundSurfaceDuel, None)),
           new StubGroundSurfaceNationService(model.Nation.Atlantis_Early, model.Nation.Mictlan_Early),
           dueler,
-          new StubThroneFeatureView,
           new ThronePlacementServiceImpl[IO]
         )
         .guarantee(IO(JFiles.deleteIfExists(configFile)))

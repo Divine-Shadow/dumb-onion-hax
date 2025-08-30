@@ -24,7 +24,6 @@ class MapWrapWorkflowImpl(
     chooser: WrapChoiceService[IO],
     nationChooser: GroundSurfaceNationService[IO],
     dueler: GroundSurfaceDuelPipe[IO],
-    throneView: ThroneFeatureView[IO],
     throneService: ThronePlacementService[IO],
     currentVersion: Version
   ) extends MapWrapWorkflow:
@@ -58,15 +57,13 @@ class MapWrapWorkflowImpl(
         else Right(ThroneConfiguration(Vector.empty))
       }
       overrides <- IO.fromEither(overridesEC)
-      throneCfgEC <- throneView.chooseConfig[ErrorOr](
+      settingsEC <- chooser.chooseSettings[ErrorOr](
         ThroneFeatureConfig(Vector.empty, Vector.empty, overrides.overrides)
       )
-      throneCfg <- IO.fromEither(throneCfgEC)
-      updatedState <- throneService.update(layer.state, throneCfg.placements)
+      settings <- IO.fromEither(settingsEC)
+      updatedState <- throneService.update(layer.state, settings.thrones.placements)
       baseLayer = layer.copy(state = updatedState)
-      wrapEC <- chooser.chooseWraps[ErrorOr]()
-      wrapChoices <- IO.fromEither(wrapEC)
-      _ <- wrapChoices.main match
+      _ <- settings.wraps.main match
         case WrapChoice.GroundSurfaceDuel =>
           copied.cave match
             case Some((caveBytes, caveOutPath)) =>
@@ -97,7 +94,7 @@ class MapWrapWorkflowImpl(
             converted <- IO.fromEither(convertedEC)
             written <- writer.write[ErrorOr](baseLayer.copy(state = converted), outPath)
             _ <- IO.fromEither(written)
-            _ <- wrapChoices.cave match
+            _ <- settings.wraps.cave match
               case Some(caveChoice) =>
                 copied.cave match
                   case Some((caveBytes, caveOutPath)) =>
