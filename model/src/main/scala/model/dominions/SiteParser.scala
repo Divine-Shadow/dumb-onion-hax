@@ -11,7 +11,14 @@ object SiteParser:
   final case class SiteNumber(value: Int) extends AnyVal
   final case class Rarity(value: Int) extends AnyVal
   final case class MagicPath(value: String) extends AnyVal
-  final case class Site(name: SiteName, number: SiteNumber, rarity: Rarity, path: MagicPath)
+  final case class IsThrone(value: Boolean) extends AnyVal
+  final case class Site(
+      name: SiteName,
+      number: SiteNumber,
+      rarity: Rarity,
+      path: MagicPath,
+      throne: IsThrone
+  )
 
   def parseFile[F[_]: Sync](path: Path)(using Files[F]): Stream[F, Site] =
     Files[F].readAll(path).through(parse)
@@ -43,7 +50,8 @@ object SiteParser:
       name: Option[SiteName] = None,
       number: Option[SiteNumber] = None,
       rarity: Option[Rarity] = None,
-      path: Option[MagicPath] = None
+      path: Option[MagicPath] = None,
+      throne: Option[IsThrone] = None
   ):
     def toSite: Option[Site] =
       for
@@ -51,12 +59,13 @@ object SiteParser:
         num <- number
         r <- rarity
         p <- path
-      yield Site(n, num, r, p)
+      yield Site(n, num, r, p, throne.getOrElse(IsThrone(false)))
 
   private object Partial:
     private val namePattern = raw"^(.*)\((\d+)\)$$".r
     private val pathPattern = raw"^path:\s*(.*)$$".r
     private val rarityPattern = raw"^rarity:\s*(\d+)$$".r
+    private val thronePattern = raw"^throne:\s*(\d+)$$".r
 
     def apply(): Partial = new Partial()
 
@@ -68,4 +77,6 @@ object SiteParser:
           partial.copy(path = Some(MagicPath(p.trim)))
         case rarityPattern(r) =>
           partial.copy(rarity = Some(Rarity(r.toInt)))
+        case thronePattern(_) =>
+          partial.copy(throne = Some(IsThrone(true)))
         case _ => partial
