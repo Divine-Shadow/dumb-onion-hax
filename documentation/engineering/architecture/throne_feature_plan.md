@@ -29,10 +29,10 @@ This plan describes how to apply throne placements to a map layer using existing
     ```
     overrides = [
       { x = 0, y = 0, level = 3 },
-      { x = 4, y = 2, level = 1 }
+      { x = 4, y = 2, id = 1358 }
     ]
     ```
-    The file is parsed into a `ThroneConfiguration` once the user confirms the dialog.
+    Each placement may specify either a throne `level` or a specific throne `id` and is parsed into a `ThroneConfiguration` once the user confirms the dialog.
   - If the box is unchecked no file is produced and only the in-memory selections are used.
 - `ThroneFeatureService` composes the resulting configuration with other chosen operations before applying and persisting changes.
 
