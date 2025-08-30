@@ -33,7 +33,8 @@ object SiteParserSpec extends SimpleIOSuite:
         SiteParser.SiteName("The Silver Throne"),
         SiteParser.SiteNumber(1364),
         SiteParser.Rarity(12),
-        SiteParser.MagicPath("Holy")
+        SiteParser.MagicPath("Holy"),
+        SiteParser.IsThrone(true)
       )
       expect(sites == List(expected))
     }
