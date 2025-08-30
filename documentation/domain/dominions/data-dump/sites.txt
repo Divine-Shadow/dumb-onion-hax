@@ -1,0 +1,12962 @@
+The Smouldercone(1)
+	F: 4
+	hcom1: 923
+	hcom2: 89
+	hcom3: 87
+	incscale4: 2
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	scale1: Heat(max 4)
+	sprite: 0
+
+The Coral Towers(2)
+	W: 5
+	hcom1: 104
+	hmon1: 209
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Cathedral of the Spheres(3)
+	A: 2
+	S: 5
+	W: 1
+	hcom1: 41
+	hmon1: 51
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+Swamps of Pythia(4)
+	hcom1: 296
+	hmon1: 1831
+	level: 0
+	loc: 0
+	mon1: 1840
+	path: Nature
+	rarity: 5
+	sprite: 59
+
+Forest of Avalon(5)
+	N: 3
+	hcom1: 212
+	hcom2: 2128
+	hmon1: 65
+	hmon2: 64
+	incscale2: 5
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Magic(max 2)
+	sprite: 57
+
+Tower of Avalon(6)
+	G: 2
+	hcom1: 153
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 60
+
+The Keep of Ulm(7)
+	hcom1: 748
+	hcom2: 1973
+	hcom3: 1982
+	hcom4: 113
+	hmon1: 66
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Forges of Ulm(8)
+		Unknown Attribute<7B02>: 2
+	E: 5
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Temple City(9)
+	D: 4
+	N: 2
+	hcom1: 177
+	hcom2: 1366
+	hmon1: 783
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Tower of a Thousand Stars(10)
+	N: 1
+	S: 4
+	hcom1: 301
+	hmon1: 747
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 44
+
+The Citadel of Frozen Crystal(11)
+	A: 3
+	W: 2
+	deccscale2: 2
+	hmon1: 2547
+	hmon2: 358
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	scale1: Cold(max 2)
+	sprite: 24
+
+Empoisoners Guild(12)
+	hcom1: 502
+	hmon1: 503
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 62
+
+The House of Fiery Justice(13)
+	F: 4
+	S: 1
+	hcom1: 222
+	hcom2: 223
+	holyfire: 50%
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+The Grove of Gaia(14)
+	N: 5
+	hmon1: 769
+	incscale2: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 2)
+	sprite: 57
+
+The Halls of Andvare(15)
+	E: 3
+	hcom1: 323
+	hmon1: 463
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 37
+
+Iron Woods(16)
+	D: 2
+	G: 1
+	S: 1
+	hcom1: 3398
+	hmon1: 1310
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 58
+
+The Sunken City(17)
+	S: 3
+	W: 2
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+Ravens Vale(18)
+	hmon1: 414
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 48
+
+Hidden Grove(19)
+	hcom1: 516
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Surakid's Tower(20)
+	D: 2
+	S: 4
+	level: 1
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 44
+
+Mine of the Cyclops(21)
+		Unknown Attribute<7B02>: 2
+	D: 2
+	E: 2
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Bolivar's Tower of Reflections(22)
+	G: 4
+	com1: 341
+	level: 3
+	loc: 0
+	path: Glamour
+	rarity: 5
+	sprite: 75
+
+The Unholy Sepulchre(23)
+	D: 5
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+The Unholy Sepulchre(24)
+	D: 9
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+The Unholy Sepulchre(25)
+	D: 13
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Starke's Ice Cave(26)
+	W: 4
+	deccscale2: 2
+	level: 1
+	loc: 0
+	path: Water
+	rarity: 5
+	scale1: Cold(max 2)
+	sprite: 25
+
+The Queen's Galley(27)
+	D: 3
+	level: 1
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 47
+
+Hoburg(28)
+	N: 1
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 56
+	sup: 75
+
+The Ruined Keep(29)
+	D: 2
+	hcom1: 2477
+	hmon1: 1020
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 47
+
+Temple of the Land(30)
+	N: 1
+	hcom1: 732
+	hmon1: 726
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+Temple of the Rain(31)
+	W: 1
+	hcom1: 733
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+Temple of the Moon(32)
+	S: 1
+	hcom1: 734
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+High Temple of the Sun(33)
+	B: 3
+	F: 2
+	hcom1: 735
+	hmon1: 725
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+House of Fiery Justice(34)
+	F: 4
+	S: 1
+	hmon1: 135
+	holypow: 50%
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+Vanhalla(35)
+	A: 1
+	G: 1
+	hcom1: 948
+	hmon1: 262
+	hmon2: 261
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+Oleg's Alchemical Device(36)
+	level: 1
+	loc: 0
+	path: Fire
+	provinc: 150
+	rarity: 5
+	sprite: 6
+
+The Deepest Cave of the Province(37)
+	E: 1
+	level: 2
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+Temple of the Everburning Pyre(38)
+	F: 1
+	hcom1: 1970
+	hcom2: 1966
+	hmon1: 990
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 6
+
+The Smouldercone(39)
+	F: 3
+	hcom1: 923
+	hcom2: 89
+	incscale3: 2
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	scale1: Heat(max 3)
+	sprite: 1
+
+The Citadel of Frozen Crystal(40)
+	A: 1
+	W: 1
+	hcom1: 1004
+	hmon1: 2576
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Ravens Vale(41)
+	D: 1
+	E: 1
+	hcom1: 1003
+	hmon1: 2548
+	hmon2: 1280
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 30
+
+Black Forest(42)
+	G: 1
+	S: 1
+	hcom1: 1028
+	hcom2: 1011
+	level: 0
+	loc: 0
+	path: Glamour
+	rarity: 5
+	sprite: 70
+
+The Sacred Swamp(43)
+	N: 3
+	hcom1: 761
+	hmon1: 1859
+	hmon2: 1850
+	level: 1
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 59
+
+The Black Temple(44)
+	hcom1: 1237
+	hmon1: 738
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+The Void Gate(45)
+	hcom1: 332
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 45
+	voidgate: 20%
+
+Niefelheim(46)
+	D: 2
+	W: 4
+	addtolimitedrecruitment: 999
+	hcom1: 844
+	hmon1: 845
+	level: 2
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+Well of Urd(47)
+	D: 1
+	G: 1
+	S: 2
+	hcom1: 281
+	hmon1: 784
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 41
+
+The Grove of Gaia(48)
+	N: 5
+	hmon1: 787
+	incscale2: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 2)
+	sprite: 57
+
+The Grove of Gaia(49)
+	E: 1
+	N: 3
+	hmon1: 704
+	incscale1: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 1)
+	sprite: 57
+
+The Heavenly Gate(50)
+	A: 1
+	S: 2
+	astralrange: 1
+	hcom1: 803
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	rit: S
+	ritrng: 1
+	sprite: 45
+
+The Celestial City(51)
+	E: 1
+	W: 1
+	hcom1: 793
+	hcom2: 1892
+	hmon1: 791
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+The Celestial City(52)
+	D: 1
+	E: 1
+	hmon1: 1577
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+The Bamboo Grove(53)
+	hcom1: 940
+	hmon1: 1544
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+The Gate of Spring and Autumn(54)
+	D: 1
+	F: 1
+	S: 2
+	W: 2
+	astralrange: 1
+	hcom1: 941
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	rit: S
+	ritrng: 1
+	sprite: 45
+
+Temple of the Dead(55)
+	D: 3
+	hcom1: 1655
+	hmon1: 1654
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+...(56)
+	level: 6
+	loc: 0
+	rarity: 6
+
+Swamps of Pythia(57)
+	hcom1: 3660
+	hmon1: 1831
+	level: 0
+	loc: 0
+	mon1: 1840
+	path: Nature
+	rarity: 5
+	sprite: 59
+
+Vanhalla(58)
+	A: 2
+	E: 1
+	G: 1
+	hcom1: 263
+	hcom2: 264
+	hmon1: 262
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+Helhalla(59)
+	G: 1
+	hcom1: 1507
+	hcom2: 847
+	hmon1: 855
+	hmon2: 1503
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 51
+
+God Forest(60)
+	F: 1
+	N: 1
+	hcom1: 890
+	hmon1: 889
+	hmon2: 3097
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+God Mountain(61)
+	E: 2
+	G: 1
+	allrange: 1
+	hcom1: 894
+	hcom2: 3652
+	hcom3: 891
+	hcom4: 877
+	hmon1: 876
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	rit: FAWESDNGB
+	ritrng: 1
+	sprite: 29
+
+The Temple Marsh(62)
+	D: 2
+	N: 2
+	W: 1
+	hcom1: 2238
+	hmon1: 164
+	hmon2: 2236
+	hmon3: 2237
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 62
+
+The City of Tombs(63)
+	D: 3
+	F: 1
+	hcom1: 1095
+	hmon1: 1166
+	hmon2: 3850
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Temple of the Spheres(64)
+	S: 1
+	hcom1: 670
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+The Desert Eye(65)
+	S: 3
+	ench: 40%
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 41
+
+Gold Mine(66)
+	bringgold: 100
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Silver Mine(67)
+	bringgold: 60
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Copper Mine(68)
+	bringgold: 30
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Iron Mine(69)
+	bringres: 60
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+The Royal Academy(70)
+	A: 1
+	S: 1
+	hcom1: 3011
+	hcom2: 1030
+	hcom3: 3861
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+House of Justice(71)
+	F: 1
+	hcom1: 2199
+	hcom2: 745
+	hmon1: 2114
+	hmon2: 3868
+	holypow: 25%
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+Palace of Pearls(72)
+	N: 2
+	W: 4
+	hcom1: 2397
+	hcom2: 2805
+	hmon1: 2387
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Mount Cephalos(73)
+	A: 2
+	S: 2
+	hcom1: 1650
+	hcom2: 1075
+	hmon1: 1074
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 10
+
+Lykeion(74)
+	E: 2
+	hcom1: 1606
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Akademeia(75)
+	hcom1: 1070
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Temple Sanguine(76)
+	hcom1: 1967
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 87
+
+Temple of the Shroud(77)
+	F: 3
+	S: 3
+	hcom1: 3691
+	hcom2: 1111
+	hmon1: 1108
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Lotus Gardens(78)
+	N: 2
+	S: 3
+	hcom1: 1144
+	hmon1: 1141
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+The Carrion Grove(79)
+	D: 1
+	N: 4
+	hmon1: 787
+	incscale4: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 4)
+	sprite: 58
+
+The Carrion Grove(80)
+	D: 1
+	N: 6
+	hmon1: 787
+	incscale4: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 4)
+	sprite: 58
+
+The Carrion Grove(81)
+	D: 1
+	N: 9
+	hmon1: 787
+	incscale4: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 4)
+	sprite: 58
+
+The Wheel of Pain(82)
+	hmon1: 1157
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 31
+
+Irminsul(83)
+	D: 1
+	E: 3
+	N: 2
+	hcom1: 1161
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 61
+
+The Great Cauldron(84)
+	B: 2
+	hcom1: 1177
+	hcom2: 1178
+	hmon1: 1183
+	hmon2: 1176
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 86
+
+The Bitter Stream(85)
+	D: 3
+	W: 1
+	hmon1: 1185
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 49
+
+Steppes of Sauromatia(86)
+	hmon1: 1185
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 49
+
+High Temple of the Land(87)
+	N: 1
+	hcom1: 1190
+	hcom2: 1194
+	hmon1: 727
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 62
+
+High Temple of the Sky and the Rain(88)
+	A: 1
+	W: 1
+	hcom1: 1191
+	hcom2: 1907
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Temple of the Moon(89)
+	S: 1
+	hcom1: 1192
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+Temple of the Sun(90)
+	F: 1
+	hcom1: 1193
+	hmon1: 725
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 6
+
+Carnutes(91)
+	E: 2
+	N: 1
+	S: 3
+	hcom1: 1223
+	hcom2: 1204
+	hmon1: 1222
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Temple of the Pure War(92)
+	A: 1
+	hmon1: 1247
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+Mountain of the Mystics(93)
+	E: 1
+	F: 1
+	N: 1
+	hmon1: 1248
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Palace of the Eagle Kings(94)
+	A: 3
+	W: 1
+	hcom1: 1286
+	hmon1: 127
+	hmon2: 1289
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 15
+
+Mountain of the Oni Kings(95)
+		Unknown Attribute<7902>: 1
+	A: 1
+	D: 3
+	E: 1
+	F: 1
+	hcom1: 1316
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Patala(96)
+	E: 1
+	W: 2
+	hmon1: 1318
+	hmon2: 1319
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+The Jeweled City(97)
+	S: 1
+	hcom1: 1320
+	hcom2: 1321
+	hcom3: 1322
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 37
+
+Mount Kailasa(98)
+	E: 2
+	hmon1: 1327
+	hmon2: 1328
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+The Lotus Garden(99)
+	G: 1
+	N: 1
+	S: 2
+	hcom1: 1329
+	hcom2: 1330
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Augurs' Circle(100)
+	D: 1
+	hcom1: 1115
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 47
+
+The Grove of Aphros(101)
+	G: 1
+	N: 4
+	W: 1
+	hcom1: 2399
+	hmon1: 2401
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 67
+
+Temple of the Land(102)
+	N: 1
+	hcom1: 732
+	hmon1: 726
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+High Temple of the Rain(103)
+	W: 1
+	hcom1: 1421
+	hcom2: 1420
+	hmon1: 1423
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+Temple of the Moon(104)
+	S: 1
+	hcom1: 734
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+Temple of the Sun(105)
+	B: 1
+	F: 1
+	hcom1: 1424
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+Mount Shinuyama(106)
+		Unknown Attribute<7902>: 1
+	D: 2
+	E: 1
+	F: 1
+	W: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+Tombs of the Oracles(107)
+	D: 2
+	hcom1: 1438
+	level: 3
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+Mines of the Pale Ones(108)
+	E: 1
+	F: 1
+	bringres: 75
+	level: 3
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+Halls of the Oracles(109)
+	hcom1: 1457
+	hcom2: 1467
+	hcom3: 1468
+	level: 3
+	loc: 0
+	path: Earth
+	rarity: 5
+	scry: 1
+	sprite: 35
+
+Roots of the Earth(110)
+	E: 3
+	F: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+Halls of the Oracles(111)
+	hcom1: 2506
+	hcom2: 1459
+	hmon1: 2189
+	hmon2: 2188
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	scry: 1
+	sprite: 35
+
+The Chamber of the Seal(112)
+	D: 1
+	hmon1: 1456
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+Gnipahålan(113)
+	D: 4
+	E: 1
+	hcom1: 1010
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+Vanhalla(114)
+	A: 2
+	G: 1
+	hcom1: 948
+	hmon1: 1513
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+The Halls of Andvare(115)
+	E: 3
+	hcom1: 323
+	hmon1: 463
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 37
+
+The Gorge of Ancient Cities(116)
+	E: 1
+	S: 3
+	W: 2
+	hcom1: 1521
+	hcom2: 2883
+	hmon1: 1522
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 25
+
+The Carrion Grove(117)
+	D: 1
+	hcom1: 901
+	hcom2: 709
+	hmon1: 787
+	incscale4: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 4)
+	sprite: 58
+
+The Grove of Gaia(118)
+	N: 6
+	hmon1: 769
+	incscale3: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 3)
+	sprite: 57
+
+The Smouldercone(119)
+		Unknown Attribute<6C00>: 2
+	F: 5
+	hcom1: 1542
+	hcom2: 1538
+	hcom3: 1537
+	hmon1: 1661
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+Temple of the All-Consuming Flame(120)
+	F: 1
+	hcom1: 1536
+	hmon1: 1543
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 6
+
+Temple of the All-Consuming Flame(121)
+	F: 1
+	hmon1: 90
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 6
+
+The Sibylline Caves(122)
+	N: 1
+	S: 3
+	hcom1: 1557
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	scry: 1
+	sprite: 47
+
+The Cerulean Tower(123)
+	hcom1: 3172
+	hmon1: 1556
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 22
+
+Gymnasium(124)
+	hmon1: 747
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 22
+
+The Enchanted Isle(125)
+	N: 1
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 64
+
+The Coast of Ice and Bones(126)
+	D: 1
+	W: 3
+	hcom1: 1618
+	hmon1: 1630
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 19
+
+The Forest of Avalon(127)
+	G: 1
+	N: 1
+	hcom1: 1666
+	hmon1: 1648
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+The Basalt City(128)
+	E: 3
+	F: 1
+	hcom1: 1695
+	hmon1: 1690
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 37
+
+The Dark Crystal(129)
+	W: 2
+	hcom1: 1702
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 25
+
+The Heavenly Gate(130)
+	A: 1
+	S: 1
+	hcom1: 1712
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 45
+
+Sri Pada(131)
+	A: 1
+	D: 3
+	hcom1: 1739
+	hcom2: 1738
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 10
+
+Lanka(132)
+	N: 2
+	hmon1: 1745
+	hmon2: 1746
+	hmon3: 1747
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 83
+
+Tir na n'Og(133)
+	G: 3
+	hcom1: 1754
+	hcom2: 1773
+	hmon1: 1753
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 10
+
+Mag Mor(134)
+	E: 1
+	N: 2
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 60
+
+Mound of Ancient Kings(135)
+	G: 3
+	N: 2
+	hcom1: 856
+	hmon1: 849
+	level: 0
+	loc: 0
+	path: Glamour
+	rarity: 5
+	sprite: 72
+
+Isle of Balor(136)
+	A: 2
+	W: 1
+	hcom1: 1802
+	hmon1: 1817
+	hmon2: 1801
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 26
+
+Rath Chimbaith(137)
+	D: 2
+	G: 1
+	hcom1: 1791
+	hcom2: 1792
+	hmon1: 1790
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 13
+
+The Imperial Capital(138)
+	hcom1: 765
+	hmon1: 763
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Temple of the Spheres(139)
+	S: 1
+	hcom1: 1874
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+Grand Cathedral(140)
+	S: 1
+	hcom1: 1961
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+Hall of Elders(141)
+	A: 1
+	F: 1
+	S: 1
+	hcom1: 1937
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+Palace of the Sage King(142)
+	hcom1: 2001
+	hmon1: 2000
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Temple of the Sage King(143)
+	E: 1
+	F: 1
+	S: 2
+	hcom1: 1987
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 93
+
+The Twin Cities(144)
+	D: 1
+	hcom1: 2011
+	hcom2: 2027
+	hcom3: 2028
+	hmon1: 2025
+	hmon2: 2026
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Mount Seir(145)
+	E: 2
+	F: 1
+	S: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Gomorrah(146)
+	B: 2
+	hcom1: 2031
+	hcom2: 2032
+	hmon1: 2030
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 85
+
+Mount Hermon(147)
+	E: 2
+	F: 2
+	S: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Campus Sceleris(148)
+	D: 1
+	hmon1: 809
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 47
+
+The House of Water(149)
+	E: 1
+	W: 2
+	hmon1: 2176
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+The First City(150)
+	hcom1: 2269
+	hcom2: 2181
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Swamps of Ur(151)
+	N: 3
+	hmon1: 2962
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 59
+
+Temple of Storms and Flames(152)
+	A: 3
+	B: 2
+	F: 2
+	hcom1: 2266
+	hmon1: 2262
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 87
+
+Forest of Spider(153)
+	D: 1
+	G: 1
+	N: 1
+	hcom1: 2295
+	hmon1: 2301
+	hmon2: 2302
+	hmon3: 2308
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Great Mababwe(154)
+	E: 2
+	F: 1
+	hcom1: 2297
+	hcom2: 2296
+	hmon1: 2309
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 94
+
+Novgård(155)
+	A: 1
+	F: 1
+	G: 1
+	hcom1: 2342
+	hmon1: 2349
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+Pine of Skulls(156)
+	D: 1
+	N: 1
+	hmon1: 2352
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 61
+
+Campus Sceleris(157)
+	D: 5
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 93
+
+Campus Sceleris(158)
+	D: 9
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 93
+
+Campus Sceleris(159)
+	D: 13
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 93
+
+Palace of Pearls(160)
+	N: 1
+	W: 4
+	hcom1: 1061
+	hcom2: 1088
+	hcom3: 2865
+	hmon1: 1059
+	hmon2: 2863
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Palace of the Setting Sun(161)
+	F: 1
+	S: 1
+	hcom1: 3043
+	hcom2: 3045
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Grove of Aphros(162)
+	G: 1
+	N: 3
+	W: 1
+	hcom1: 2399
+	hmon1: 2401
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 58
+
+The Grove of Aphros(163)
+	N: 2
+	W: 2
+	hcom1: 2399
+	hmon1: 2401
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 58
+
+The City of Unfullfilled Dreams(164)
+	G: 1
+	S: 3
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 46
+
+The Chamber of the Broken Seal(165)
+	D: 5
+	deccscale2: 3
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	scale1: Death(max 2)
+	sprite: 54
+
+The Chamber of the Broken Seal(166)
+	D: 1
+	hmon1: 2508
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+The Womb of the Earth(167)
+	W: 1
+	hcom1: 2493
+	hmon1: 2492
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+Spire Horn Mountain(168)
+	A: 1
+	hmon1: 2558
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 9
+
+Ravens Vale(169)
+	E: 1
+	hcom1: 2560
+	hmon1: 2559
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 28
+
+Lake Urmia(170)
+	A: 1
+	S: 1
+	W: 1
+	hmon1: 2592
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 19
+
+Mountain of the Everburning Caverns(171)
+	F: 1
+	hcom1: 2629
+	hmon1: 2587
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+Palace of the Sun Kings(172)
+	A: 1
+	F: 1
+	S: 1
+	hcom1: 2658
+	hcom2: 2659
+	hmon1: 2653
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+Tombs of the Sun Kings(173)
+	D: 1
+	E: 1
+	hcom1: 2663
+	hmon1: 2667
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Cavern of the Sun(174)
+	E: 1
+	F: 3
+	hcom1: 2684
+	hmon1: 2672
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 7
+
+House of Knives(175)
+	D: 2
+	hcom1: 2736
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+House of Jaguars(176)
+	hcom1: 2736
+	level: 0
+	loc: 0
+	path: Blood
+	rarity: 5
+	sprite: 90
+
+The Sacred Cenote(177)
+	W: 1
+	hcom1: 2732
+	hmon1: 2730
+	hmon2: 2731
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 23
+
+The Flooded City(178)
+	E: 1
+	W: 2
+	hcom1: 2714
+	hmon1: 2729
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+The Cave of Perpetual Darkness(179)
+	D: 1
+	hcom1: 2719
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+The Flooded City(180)
+	E: 1
+	W: 1
+	hcom1: 2749
+	hmon1: 2747
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+The Obsidian Cavern(181)
+	D: 2
+	hcom1: 2754
+	hmon1: 2743
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 54
+
+Telkhinis(182)
+	A: 1
+	D: 1
+	E: 3
+	W: 1
+	hcom1: 2833
+	hcom2: 2834
+	hcom3: 2836
+	hmon1: 2839
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 36
+
+Telkhinis(183)
+	A: 1
+	D: 1
+	E: 6
+	W: 1
+	hcom1: 2833
+	hcom2: 2834
+	hcom3: 2836
+	hmon1: 2839
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 36
+
+Telkhinis(184)
+	A: 1
+	D: 1
+	E: 9
+	W: 1
+	hcom1: 2833
+	hcom2: 2834
+	hcom3: 2836
+	hmon1: 2839
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 36
+
+Ker-Ys(185)
+	E: 2
+	G: 2
+	W: 1
+	hcom1: 2917
+	hcom2: 2919
+	hcom3: 2921
+	hmon1: 2915
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 25
+
+Great Temple of the Moon(186)
+	S: 2
+	hcom1: 2948
+	hcom2: 2952
+	hmon1: 2953
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+The Swamps of Ur(187)
+	N: 1
+	hmon1: 2963
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 59
+
+The House of Water(188)
+	E: 1
+	W: 1
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 24
+
+Pine of Skulls(189)
+	N: 1
+	S: 1
+	hmon1: 2992
+	hmon2: 2997
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 61
+
+Oak of Storms(190)
+	A: 1
+	N: 1
+	hcom1: 2999
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 14
+
+Hall of the Dawn(191)
+	A: 1
+	F: 1
+	hcom1: 3000
+	hcom2: 3001
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+The Royal Academy(192)
+	hcom1: 3010
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Red River(193)
+	F: 1
+	W: 1
+	hmon1: 3052
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 5
+
+City of Gold and Marble(194)
+	A: 1
+	E: 1
+	addtolimitedrecruitment: 4
+	hcom1: 3112
+	hcom2: 3117
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Forge of the Cyclopes(195)
+	E: 2
+	F: 2
+	hcom1: 3118
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	res: 150
+	sprite: 1
+
+The Burning Fields(196)
+	D: 1
+	E: 1
+	F: 1
+	addtolimitedrecruitment: 2
+	hcom1: 3139
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 2
+
+Fortress of the Cyclopes(197)
+	E: 1
+	F: 1
+	hcom1: 3138
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Orichalcum Palace(198)
+	A: 1
+	G: 1
+	hcom1: 3158
+	hcom2: 3157
+	hmon1: 3159
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Black Korkyra(199)
+	E: 1
+	W: 1
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 26
+
+Gold Apple Tree(200)
+	F: 1
+	ageratereduction: 50
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 10
+	unr: -5
+
+Orichalcum Mine(201)
+	bringgold: 200
+	bringres: 150
+	level: 0
+	loc: 516
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+Shattered Volcano(202)
+	D: 1
+	F: 1
+	level: 0
+	loc: 0
+	natcom: 3226
+	nationalrecruits: 96
+	natmon: 3227
+	path: Fire
+	rarity: 5
+	sprite: 2
+
+Telepylos(203)
+	E: 1
+	hcom1: 3225
+	hcom2: 3228
+	hmon1: 3216
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Burning Mountain(204)
+	F: 3
+	incscale2: 2
+	level: 0
+	loc: 223
+	path: Fire
+	rarity: 5
+	scale1: Heat(max 2)
+	sprite: 1
+
+Sublime Palace(205)
+	F: 1
+	S: 1
+	hcom1: 3289
+	hmon1: 3281
+	level: 0
+	loc: 0
+	maximizeorder: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Great Mirror(206)
+	S: 1
+	hcom1: 3286
+	hcom2: 3285
+	hmon1: 3280
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	scry: 1
+	scryrange: 3
+	sprite: 46
+
+The Onyx Court(207)
+	E: 1
+	exp: 4
+	hcom1: 3288
+	hcom2: 3287
+	hmon1: 3282
+	hmon2: 3283
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 92
+
+Fountain of Youth(208)
+	W: 1
+	ageratereduction: 50
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 23
+	unr: -5
+
+Jannah(209)
+	A: 1
+	E: 1
+	F: 1
+	hcom1: 3341
+	hmon1: 3342
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Great Dam(210)
+	W: 1
+	incscale2: 3
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	scale1: Growth(max 2)
+	sprite: 19
+
+The Vault of Incense and Marvels(211)
+	G: 1
+	level: 0
+	loc: 0
+	path: Air
+	provinc: 150
+	rarity: 5
+	sprite: 10
+
+Thrymsheim(212)
+	W: 1
+	addtolimitedrecruitment: 1
+	hcom1: 3399
+	hmon1: 3400
+	level: 2
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 18
+
+The Iron Wood(213)
+	D: 1
+	N: 2
+	S: 1
+	hcom1: 3409
+	hcom2: 3414
+	hmon1: 3406
+	hmon2: 3421
+	hmon3: 3422
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 58
+
+The Three Deserts(214)
+	A: 1
+	D: 1
+	F: 1
+	incscale1: 2
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	scale1: Heat(max 1)
+	scorch: 2
+	sprite: 2
+
+Iram of a Thousand Pillars(215)
+	F: 1
+	G: 1
+	hcom1: 3468
+	hcom2: 3469
+	hmon1: 3463
+	hmon2: 3477
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+Jannah(216)
+	N: 1
+	hcom1: 3466
+	hmon1: 3467
+	incscale3: 3
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	scale1: Growth(max 3)
+	sprite: 57
+
+City of Brass(217)
+	F: 1
+	hcom1: 3465
+	hcom2: 3472
+	hmon1: 3464
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 4
+
+Seminary of Magisters(218)
+	A: 1
+	E: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The Cathedral Cavern(219)
+	E: 1
+	hcom1: 3606
+	hcom2: 3595
+	hmon1: 3593
+	level: 3
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 38
+
+Grand Dolmen(220)
+	E: 2
+	hcom1: 3602
+	hcom2: 3599
+	hcom3: 3605
+	hmon1: 3597
+	hmon2: 3598
+	level: 3
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 30
+
+Mount Anboto(221)
+	A: 2
+	N: 1
+	hcom1: 3603
+	level: 0
+	loc: 0
+	path: Air
+	rarity: 5
+	sprite: 10
+
+The Cathedral of the Emerald(222)
+	F: 1
+	hcom1: 3616
+	hmon1: 3613
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 99
+
+The Caves of Pyrene(223)
+	E: 1
+	hcom1: 3589
+	hcom2: 3590
+	hmon1: 3633
+	hmon2: 3587
+	hmon3: 3588
+	level: 3
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 38
+
+The Pleasure Orchard(224)
+	A: 1
+	B: 2
+	N: 1
+	hcom1: 3622
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+Fir Bolg Highlands(225)
+	hcom1: 2469
+	hcom2: 1788
+	hmon1: 1785
+	hmon2: 1786
+	hmon3: 1787
+	hmon4: 3630
+	hmon5: 3634
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+Nidakettil(226)
+	A: 1
+	D: 3
+	S: 1
+	hcom1: 3681
+	hcom2: 3685
+	hmon1: 3677
+	level: 0
+	loc: 0
+	path: Death
+	rarity: 5
+	sprite: 52
+
+The Sublime Palace(227)
+	E: 1
+	S: 1
+	hcom1: 3795
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Cerulean Cathedral(228)
+	F: 1
+	S: 1
+	hcom1: 3801
+	hmon1: 3789
+	hmon2: 3790
+	hmon3: 3791
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Veiled City(229)
+	F: 1
+	G: 2
+	S: 1
+	hcom1: 3816
+	hcom2: 3820
+	hmon1: 3819
+	level: 0
+	loc: 0
+	path: Glamour
+	rarity: 5
+	sprite: 71
+
+The Senate Palace(230)
+	E: 1
+	F: 1
+	N: 1
+	S: 1
+	hcom1: 3923
+	hcom2: 3924
+	hcom3: 3925
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Void Gate(231)
+	hcom1: 3857
+	level: 0
+	loc: 0
+	path: Astral
+	rarity: 5
+	sprite: 45
+	voidgate: 20%
+
+The Hall of Mirrors(232)
+	G: 1
+	hcom1: 3860
+	level: 0
+	loc: 0
+	path: Glamour
+	rarity: 5
+	scry: 1
+	scryrange: 3
+	sprite: 71
+
+Great Mine of the Deep(233)
+	bringgold: 150
+	bringres: 100
+	level: 0
+	loc: 516
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+Great Mine of the Deep(234)
+	bringgold: 75
+	bringres: 50
+	level: 0
+	loc: 516
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+Bhuva Loka(235)
+	A: 1
+	S: 2
+	level: 0
+	loc: 16607
+	n_sum1: 1
+	path: Air
+	rarity: 5
+	sprite: 10
+	sum1: 3668
+	summon1: 3668
+
+Muspelheim(236)
+	A: 1
+	F: 1
+	hcom1: 3958
+	hcom2: 3959
+	hcom3: 3960
+	hmon1: 3969
+	hmon2: 3970
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 2
+
+The Rift of Surtr(237)
+		Unknown Attribute<7000>: 2
+	D: 1
+	F: 2
+	hcom1: 3961
+	hmon1: 3971
+	level: 0
+	loc: 0
+	path: Fire
+	rarity: 5
+	sprite: 1
+
+The Meltwater Gorge(238)
+	W: 1
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 20
+
+The Shrine Serene(239)
+	hcom1: 3975
+	hmon1: 3974
+	level: 0
+	loc: 0
+	path: Holy
+	rarity: 5
+	sprite: 91
+
+The Empty Slot(240)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(241)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(242)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(243)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(244)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(245)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(246)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(247)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(248)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(249)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(250)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(251)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(252)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(253)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(254)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(255)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(256)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(257)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(258)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(259)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(260)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(261)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(262)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(263)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(264)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(265)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(266)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(267)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(268)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(269)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(270)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(271)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(272)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(273)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(274)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(275)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(276)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(277)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(278)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(279)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(280)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(281)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(282)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(283)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(284)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(285)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(286)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(287)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(288)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(289)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(290)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(291)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(292)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(293)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(294)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(295)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(296)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(297)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(298)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(299)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Cave of Storms(300)
+	A: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+The Healing Spring(301)
+	N: 1
+	heal: 10%
+	level: 0
+	loc: 0
+	path: Water
+	rarity: 5
+	sprite: 23
+
+The Sacred Mountain(302)
+	E: 1
+	level: 0
+	loc: 0
+	path: Earth
+	rarity: 5
+	sprite: 29
+
+The Grove of Irminsul(303)
+	N: 1
+	level: 0
+	loc: 0
+	path: Nature
+	rarity: 5
+	sprite: 57
+
+The Crystal Cavern(304)
+	G: 1
+	level: 0
+	loc: 0
+	path: Glamour
+	rarity: 5
+	sprite: 68
+
+The Empty Slot(305)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(306)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(307)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(308)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(309)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(310)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(311)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(312)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(313)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(314)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(315)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(316)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(317)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(318)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(319)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(320)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(321)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(322)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(323)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(324)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(325)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(326)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(327)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(328)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(329)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(330)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(331)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(332)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(333)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(334)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(335)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(336)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(337)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(338)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(339)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(340)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(341)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(342)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(343)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(344)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(345)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(346)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(347)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(348)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(349)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(350)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(351)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(352)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(353)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(354)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(355)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(356)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(357)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(358)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(359)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(360)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(361)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(362)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(363)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(364)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(365)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(366)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(367)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(368)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(369)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(370)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(371)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(372)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(373)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(374)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(375)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(376)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(377)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(378)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(379)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(380)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(381)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(382)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(383)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(384)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(385)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(386)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(387)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(388)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(389)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(390)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(391)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(392)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(393)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(394)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(395)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(396)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(397)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(398)
+	level: 6
+	loc: 0
+	rarity: 6
+
+The Empty Slot(399)
+	level: 6
+	loc: 0
+	rarity: 6
+
+Lava Lake(400)
+	F: 1
+	W: 1
+	level: 0
+	loc: 735
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Tar Pits(401)
+	F: 1
+	level: 1
+	loc: 219
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Sun Ridge(402)
+	F: 2
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 0
+	sprite: 3
+
+Gold-Leafed Tree(403)
+	F: 2
+	level: 2
+	loc: 223
+	path: Fire
+	rarity: 1
+	sprite: 10
+
+Bronze Pillar(404)
+	F: 1
+	level: 3
+	loc: 735
+	path: Fire
+	rarity: 0
+	sprite: 3
+
+Smoking Mountain(405)
+	F: 1
+	level: 0
+	loc: 223
+	path: Fire
+	rarity: 1
+	sprite: 1
+
+Plain of Perpetual Drought(406)
+	F: 1
+	incscale2: 2
+	level: 0
+	loc: 8
+	path: Fire
+	rarity: 0
+	scale1: Heat(max 2)
+	sprite: 2
+
+Magus Temple(407)
+	F: 1
+	S: 1
+	com1: 480
+	lab: lab
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 1
+	sprite: 4
+
+Alchemists Guild(408)
+	E: 1
+	F: 1
+	com1: 551
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 1
+	sprite: 4
+
+Smoke Forest(409)
+	A: 1
+	F: 1
+	level: 1
+	loc: 2
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Rage Wind Heath(410)
+	A: 1
+	F: 1
+	level: 1
+	loc: 9
+	path: Fire
+	rarity: 1
+	sprite: 2
+
+Candle Marsh(411)
+	F: 1
+	W: 1
+	level: 1
+	loc: 134
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Copper Cliff(412)
+	E: 1
+	F: 1
+	level: 1
+	loc: 197631
+	path: Fire
+	rarity: 1
+	sprite: 0
+
+Stargazers Cliff(413)
+	F: 1
+	S: 1
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 1
+	sprite: 0
+
+Desert of Bones(414)
+	D: 1
+	F: 1
+	com1: 2245
+	incscale2: 2
+	level: 1
+	loc: 8
+	path: Fire
+	rarity: 0
+	scale1: Heat(max 2)
+	sprite: 2
+
+Lantern Forest(415)
+	F: 1
+	N: 1
+	level: 1
+	loc: 2
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Shimmering Haze(416)
+	F: 1
+	G: 1
+	level: 1
+	loc: 262169
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Orichalcum Mine(417)
+	bringgold: 200
+	bringres: 150
+	level: 2
+	loc: 516
+	nationalrecruits: 77
+	natmon: 3159
+	path: Fire
+	rarity: 1
+	sprite: 1
+
+Volcano(418)
+	F: 3
+	incscale1: 2
+	level: 0
+	loc: 223
+	path: Fire
+	rarity: 2
+	scale1: Heat(max 1)
+	sprite: 1
+
+Solar Lens(419)
+	F: 1
+	firerange: 3
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 2
+	rit: F
+	ritrng: 3
+	sprite: 5
+
+Solar Circle(420)
+	F: 1
+	evo: 20%
+	level: 2
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 5
+
+Tower of the Golden Order(421)
+	F: 3
+	S: 2
+	com1: 101
+	lab: lab
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Tower of the Golden Order(422)
+	F: 2
+	S: 3
+	com1: 101
+	lab: lab
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Tower of the Golden Order(423)
+	F: 2
+	S: 2
+	com1: 101
+	lab: lab
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Academy of Magic(424)
+	F: 1
+	com1: 3493
+	com2: 3492
+	lab: lab
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Academy of High Magics(425)
+	F: 2
+	S: 1
+	com1: 3502
+	com2: 3493
+	com3: 3492
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Ashen Fields(426)
+	F: 1
+	conj: 20%
+	level: 1
+	loc: 9
+	path: Fire
+	rarity: 2
+	sprite: 2
+
+Fountain of Fire(427)
+	F: 3
+	incscale2: 2
+	level: 1
+	loc: 735
+	path: Fire
+	rarity: 2
+	scale1: Heat(max 2)
+	sprite: 5
+
+The Steel Ovens(428)
+	const: 20%
+	level: 0
+	loc: 17119
+	path: Fire
+	rarity: 1
+	res: 125
+	sprite: 1
+
+High Temple of the Magii(429)
+	F: 2
+	S: 2
+	com1: 480
+	com2: 481
+	lab: lab
+	level: 1
+	loc: 16607
+	path: Fire
+	rarity: 1
+	sprite: 4
+
+The Citadel of Pyriphlegeton(430)
+	F: 4
+	com1: 98
+	com2: 99
+	lab: lab
+	level: 2
+	loc: 17119
+	path: Fire
+	rarity: 1
+	sprite: 4
+
+The Fire Prison(431)
+	F: 4
+	ench: 20%
+	level: 2
+	loc: 279263
+	path: Fire
+	rarity: 1
+	sprite: 7
+
+The Temple of the Raging God(432)
+	F: 2
+	com1: 389
+	com2: 98
+	com3: 241
+	deccscale2: 0
+	level: 2
+	loc: 16607
+	path: Fire
+	rarity: 1
+	scale1: Turmoil(max 2)
+	sprite: 6
+
+The Brass Door Hill(433)
+	F: 2
+	G: 1
+	level: 3
+	loc: 16607
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Prison of the Desert Sun(434)
+	F: 5
+	incscale2: 2
+	level: 4
+	loc: 16392
+	path: Fire
+	rarity: 2
+	scale1: Heat(max 2)
+	scale2: Heat(max 2)
+	sprite: 6
+
+The Desert of Ptah(435)
+	D: 2
+	E: 2
+	F: 2
+	level: 0
+	loc: 16392
+	path: Fire
+	rarity: 5
+	sprite: 2
+
+Fountain of Rubies(436)
+	F: 3
+	level: 2
+	loc: 735
+	path: Fire
+	provinc: 300
+	rarity: 2
+	sprite: 5
+
+Dragon Forest(437)
+	A: 1
+	F: 2
+	level: 2
+	loc: 16386
+	path: Fire
+	rarity: 2
+	sprite: 3
+
+Enchanted Pyre(438)
+	F: 1
+	level: 1
+	loc: 262367
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Rageflame Tower(439)
+	F: 1
+	level: 1
+	loc: 262367
+	path: Fire
+	rarity: 1
+	sprite: 4
+
+Steam Swamp(440)
+	F: 1
+	W: 1
+	level: 2
+	loc: 128
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Smoke Gorge(441)
+	A: 1
+	F: 1
+	level: 2
+	loc: 8
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Magma Pit(442)
+	E: 1
+	F: 1
+	level: 2
+	loc: 516
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Starfire Crystals(443)
+	F: 1
+	S: 1
+	level: 2
+	loc: 262148
+	path: Fire
+	rarity: 1
+	sprite: 0
+
+Ash Valley(444)
+	D: 1
+	F: 1
+	level: 2
+	loc: 8
+	path: Fire
+	rarity: 1
+	sprite: 2
+
+Flame Forest(445)
+	F: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Fire
+	rarity: 1
+	sprite: 3
+
+Fiery Mirage(446)
+	F: 1
+	G: 1
+	level: 3
+	loc: 8
+	path: Fire
+	rarity: 2
+	sprite: 2
+
+City of Ashes(447)
+	D: 1
+	F: 1
+	com1: 2245
+	level: 2
+	loc: 16392
+	path: Fire
+	rarity: 2
+	sprite: 6
+
+Temple of the Solar Bull(448)
+	F: 2
+	com1: 1873
+	level: 2
+	loc: 223
+	path: Fire
+	rarity: 2
+	sprite: 6
+
+Smoulderstone(449)
+	F: 1
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Wildfire Glade(450)
+	F: 1
+	level: 1
+	loc: 2
+	path: Fire
+	rarity: 0
+	sprite: 3
+
+Caverns of Glowing Moss(451)
+	F: 1
+	level: 1
+	loc: 516
+	path: Fire
+	rarity: 0
+	sprite: 7
+
+Glowing Fissure(452)
+	F: 1
+	level: 1
+	loc: 4
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Smouldering Maze(453)
+	F: 1
+	firerange: 2
+	level: 1
+	loc: 223
+	path: Fire
+	rarity: 1
+	rit: F
+	ritrng: 2
+	sprite: 5
+
+Scorched Tower(454)
+	F: 2
+	horror: 3%
+	level: 2
+	loc: 16607
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+House of Embers(455)
+	F: 1
+	level: 1
+	loc: 278751
+	path: Fire
+	rarity: 2
+	sprite: 4
+
+Heart of the Desert(456)
+	F: 2
+	firerange: 2
+	incscale2: 2
+	level: 3
+	loc: 16392
+	path: Fire
+	rarity: 2
+	rit: F
+	ritrng: 2
+	scale1: Heat(max 2)
+	sprite: 5
+
+Egg of the Phoenix(457)
+	F: 2
+	level: 3
+	loc: 262367
+	path: Fire
+	rarity: 2
+	sprite: 3
+
+House of Aratron(458)
+	E: 1
+	F: 2
+	com1: 551
+	level: 2
+	loc: 16607
+	path: Fire
+	rarity: 2
+	sprite: 6
+
+Rune of Fire(459)
+	firerange: 2
+	level: 2
+	loc: 223
+	path: Fire
+	rarity: 1
+	rit: F
+	ritrng: 2
+	sprite: 5
+
+Maze of Frozen Flames(460)
+	firerange: 2
+	level: 2
+	loc: 16591
+	path: Fire
+	rarity: 2
+	rit: FW
+	ritrng: 2
+	sprite: 5
+	waterrange: 2
+
+Devil's Furnace(461)
+	F: 1
+	level: 3
+	loc: 16607
+	n_sum1: 5
+	path: Fire
+	rarity: 1
+	sprite: 1
+	sum1: 2286
+	summon5: 2286
+
+Isle of Rebirth(462)
+	D: 1
+	F: 1
+	heal: 10%
+	level: 3
+	loc: 16416
+	path: Fire
+	rarity: 2
+	sprite: 0
+
+Dragon Lair(463)
+	F: 2
+	G: 1
+	level: 3
+	loc: 16388
+	path: Fire
+	rarity: 2
+	sprite: 7
+
+Altar of Catharsis(464)
+	level: 4
+	loc: 16607
+	n_sum1: 1
+	path: Fire
+	rarity: 5
+	sprite: 6
+	sum1: 3714
+	summon1: 3714
+
+Wind Spire(465)
+	A: 1
+	level: 0
+	loc: 223
+	path: Air
+	rarity: 0
+	sprite: 13
+
+Thunder Oak(466)
+	A: 1
+	level: 1
+	loc: 223
+	natcom: 2988
+	nationalrecruits: 32
+	path: Air
+	rarity: 0
+	sprite: 14
+
+Canyon of Wild Winds(467)
+	A: 2
+	level: 1
+	loc: 95
+	path: Air
+	rarity: 0
+	sprite: 10
+
+Blasted Heath(468)
+	A: 2
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Cave of Clouds(469)
+	A: 1
+	level: 3
+	loc: 524
+	path: Air
+	rarity: 0
+	sprite: 16
+
+Mist Covered Highlands(470)
+	A: 1
+	level: 0
+	loc: 4
+	path: Air
+	rarity: 0
+	sprite: 10
+
+Desert of Sighs(471)
+	A: 1
+	D: 1
+	com1: 2245
+	level: 1
+	loc: 8
+	path: Air
+	rarity: 0
+	sprite: 11
+
+Cypress Forest(472)
+	A: 1
+	N: 1
+	level: 1
+	loc: 32770
+	path: Air
+	rarity: 0
+	sprite: 14
+
+Howling Gorge(473)
+	A: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 16
+
+Canyon of Playful Winds(474)
+	A: 1
+	level: 1
+	loc: 95
+	path: Air
+	rarity: 1
+	sprite: 9
+
+Elusive Lights(475)
+	A: 1
+	F: 1
+	level: 1
+	loc: 262879
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Ice Mists(476)
+	A: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 10
+
+Thunder Stones(477)
+	A: 1
+	E: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Cloud Pillars(478)
+	A: 1
+	S: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 12
+
+Singing Stones(479)
+	E: 1
+	G: 1
+	level: 1
+	loc: 262879
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Lake of Perpetual Mists(480)
+	A: 1
+	W: 2
+	com1: 341
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Dragon Cliff(481)
+	A: 1
+	conj: 20%
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 10
+
+Tower of the Silver Order(482)
+	A: 3
+	S: 2
+	com1: 100
+	lab: lab
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Tower of the Silver Order(483)
+	A: 2
+	S: 3
+	com1: 100
+	lab: lab
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Tower of the Silver Order(484)
+	A: 2
+	S: 2
+	com1: 100
+	lab: lab
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Academy of Magics(485)
+	A: 1
+	com1: 3496
+	com2: 3492
+	lab: lab
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Academy of High Magics(486)
+	A: 2
+	S: 1
+	com1: 3505
+	com2: 3496
+	com3: 3492
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Cloud Abode(487)
+	A: 2
+	com1: 93
+	com2: 92
+	lab: lab
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 12
+
+Stone Spires(488)
+	A: 2
+	airrange: 2
+	level: 1
+	loc: 8
+	path: Air
+	rarity: 2
+	rit: A
+	ritrng: 2
+	sprite: 13
+
+Tempest Spire(489)
+	A: 1
+	com1: 93
+	evo: 20%
+	level: 1
+	loc: 4
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Blizzard Valley(490)
+	A: 1
+	W: 1
+	deccscale2: 2
+	evo: 20%
+	level: 1
+	loc: 4
+	path: Air
+	rarity: 2
+	scale1: Cold(max 2)
+	sprite: 10
+
+Forest of Joy(491)
+	A: 1
+	level: 1
+	loc: 49154
+	path: Air
+	rarity: 1
+	sprite: 14
+	unr: -5
+
+The Cloven Mountain(492)
+	A: 3
+	E: 1
+	level: 1
+	loc: 16388
+	path: Air
+	rarity: 1
+	sprite: 10
+
+Stairway Mountain(493)
+	A: 2
+	E: 1
+	level: 1
+	loc: 16388
+	path: Air
+	rarity: 1
+	sprite: 10
+
+The Flailing Forest(494)
+	A: 2
+	N: 1
+	level: 2
+	loc: 16386
+	path: Air
+	rarity: 1
+	sprite: 14
+
+The Whirlwind of Cyclon(495)
+	A: 4
+	level: 2
+	loc: 16607
+	path: Air
+	rarity: 1
+	sprite: 12
+
+The Doom Cloud(496)
+	A: 2
+	D: 2
+	deccscale2: 4
+	level: 2
+	loc: 16607
+	path: Air
+	rarity: 1
+	scale1: Misfortune(max 2)
+	sprite: 15
+
+Dragon Mountain(497)
+	A: 1
+	level: 0
+	loc: 16388
+	n_sum1: 3
+	path: Air
+	rarity: 2
+	sprite: 10
+	sum1: 593
+	summon3: 593
+
+Silver Forest(498)
+	A: 1
+	E: 1
+	level: 1
+	loc: 2
+	path: Air
+	provinc: 60
+	rarity: 2
+	sprite: 14
+
+Valley of the Roc(499)
+	A: 1
+	E: 1
+	F: 1
+	level: 3
+	loc: 16388
+	path: Air
+	provinc: 300
+	rarity: 2
+	sprite: 10
+
+Enchanted Windmill(500)
+	A: 1
+	level: 1
+	loc: 223
+	path: Air
+	popgrowth: 20
+	rarity: 0
+	sprite: 11
+	sup: 75
+
+Whisperwind Tower(501)
+	A: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 13
+
+Scorchwind Waste(502)
+	A: 1
+	F: 1
+	level: 2
+	loc: 8
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Saltspray Cliffs(503)
+	A: 1
+	W: 1
+	level: 2
+	loc: 64
+	path: Air
+	rarity: 1
+	sprite: 10
+
+Copper Mists(504)
+	A: 1
+	E: 1
+	level: 2
+	loc: 8
+	path: Air
+	rarity: 1
+	sprite: 10
+
+Moonwind Marsh(505)
+	A: 1
+	S: 1
+	level: 2
+	loc: 128
+	path: Air
+	rarity: 1
+	sprite: 14
+
+Plaguewind Waste(506)
+	A: 1
+	D: 1
+	level: 2
+	loc: 8
+	path: Air
+	rarity: 1
+	sprite: 11
+
+Thunder Woods(507)
+	A: 1
+	N: 1
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 14
+
+Shrieking Skies(508)
+	A: 1
+	G: 1
+	level: 3
+	loc: 262156
+	path: Air
+	rarity: 2
+	sprite: 11
+
+Dragon Jaws(509)
+	A: 1
+	E: 1
+	F: 1
+	level: 0
+	loc: 16388
+	n_sum1: 2
+	path: Air
+	rarity: 2
+	sprite: 10
+	sum1: 593
+	summon2: 593
+
+Tempest Hall(510)
+	A: 3
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+Copper Idol(511)
+	A: 1
+	level: 2
+	loc: 223
+	path: Air
+	rarity: 0
+	sprite: 11
+
+Sparkling Fields(512)
+	A: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 0
+	sprite: 11
+
+Skysplit Oak(513)
+	A: 1
+	level: 1
+	loc: 87
+	path: Air
+	rarity: 0
+	sprite: 14
+
+Wailing Woods(514)
+	A: 1
+	D: 1
+	level: 1
+	loc: 16386
+	path: Air
+	rarity: 1
+	sprite: 14
+	unr: 3
+
+Nest of Obsidian Snakes(515)
+	A: 2
+	level: 3
+	loc: 223
+	path: Air
+	rarity: 1
+	sprite: 16
+
+Black Hawk Nest(516)
+	A: 1
+	level: 2
+	loc: 6
+	n_sum1: 8
+	path: Air
+	rarity: 1
+	sprite: 14
+	sum1: 517
+	summon8: 517
+
+Ziggurat of Thunder(517)
+	A: 2
+	corpselord: 1
+	level: 1
+	loc: 223
+	path: Air
+	rarity: 2
+	sprite: 13
+
+The Highest Peak(518)
+	A: 1
+	airrange: 2
+	level: 2
+	loc: 16388
+	natcom: 1286
+	nationalrecruits: 71
+	path: Air
+	rarity: 1
+	rit: A
+	ritrng: 2
+	sprite: 10
+
+Pinnacle of Power(519)
+	A: 1
+	airrange: 3
+	level: 3
+	loc: 16607
+	path: Air
+	rarity: 2
+	reveal: 0
+	rit: A
+	ritrng: 3
+	sprite: 13
+
+Rune of Air(520)
+	airrange: 2
+	level: 2
+	loc: 255
+	path: Air
+	rarity: 1
+	rit: A
+	ritrng: 2
+	sprite: 12
+
+Translucent Tower(521)
+	airrange: 2
+	com1: 93
+	lab: lab
+	level: 3
+	loc: 16607
+	path: Air
+	rarity: 5
+	rit: A
+	ritrng: 2
+	sprite: 13
+
+Well of White Water(522)
+	W: 1
+	level: 1
+	loc: 735
+	path: Water
+	rarity: 0
+	sprite: 23
+
+Mercury Pond(523)
+	W: 2
+	level: 1
+	loc: 735
+	path: Water
+	rarity: 0
+	sprite: 23
+
+Reverse Stream(524)
+	W: 2
+	level: 2
+	loc: 735
+	path: Water
+	rarity: 1
+	sprite: 20
+
+Weeping Stone(525)
+	W: 1
+	level: 3
+	loc: 735
+	path: Water
+	rarity: 0
+	sprite: 20
+
+Boiling Bog(526)
+	F: 1
+	W: 1
+	level: 1
+	loc: 134
+	path: Water
+	rarity: 0
+	sprite: 21
+
+Lake of Mists(527)
+	W: 1
+	level: 0
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Sinkmarsh(528)
+	W: 1
+	level: 1
+	loc: 130
+	path: Water
+	rarity: 0
+	sprite: 21
+
+Lantern Fens(529)
+	F: 1
+	level: 1
+	loc: 130
+	path: Water
+	rarity: 0
+	sprite: 21
+
+Geyser(530)
+	F: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 23
+
+Pearl Beach(531)
+	S: 1
+	level: 1
+	loc: 64
+	path: Water
+	provinc: 75
+	rarity: 1
+	sprite: 19
+
+Waterfall(532)
+	A: 1
+	W: 1
+	level: 1
+	loc: 735
+	path: Water
+	rarity: 1
+	sprite: 20
+
+Rockside Spring(533)
+	E: 1
+	W: 1
+	level: 1
+	loc: 4
+	path: Water
+	rarity: 0
+	sprite: 20
+
+Well of Yesterdays Waters(534)
+	S: 1
+	W: 1
+	level: 1
+	loc: 735
+	path: Water
+	rarity: 1
+	sprite: 23
+
+Corpse Candles' Marsh(535)
+	D: 1
+	W: 1
+	level: 1
+	loc: 130
+	path: Water
+	rarity: 0
+	sprite: 21
+
+Overgrown Lake(536)
+	N: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 21
+
+Glittering Stream(537)
+	G: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Lifeless Lake(538)
+	D: 1
+	level: 1
+	loc: 262879
+	path: Water
+	rarity: 1
+	sprite: 19
+
+River Fortress(539)
+	W: 1
+	fort: 3
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 2
+	sprite: 22
+
+Bottomless Lake(540)
+	W: 1
+	conj: 20%
+	level: 1
+	loc: 735
+	path: Water
+	rarity: 2
+	sprite: 19
+
+Mist Swamps(541)
+	A: 1
+	W: 1
+	level: 1
+	loc: 130
+	path: Water
+	rarity: 1
+	sprite: 21
+
+Academy of Magic(542)
+	W: 1
+	com1: 3495
+	com2: 3492
+	lab: lab
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 2
+	sprite: 22
+
+Academy of High Magics(543)
+	E: 1
+	W: 2
+	com1: 3504
+	com2: 3495
+	com3: 3492
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Water
+	rarity: 2
+	sprite: 22
+
+Frost Vale(544)
+	W: 1
+	com1: 309
+	deccscale2: 2
+	level: 2
+	loc: 4
+	path: Water
+	rarity: 2
+	scale1: Cold(max 2)
+	sprite: 23
+
+Azure Academy(545)
+	W: 1
+	com1: 97
+	com2: 96
+	fort: 3
+	lab: lab
+	level: 1
+	loc: 16607
+	path: Water
+	rarity: 1
+	sprite: 22
+
+Rustwater(546)
+	E: 1
+	F: 1
+	W: 1
+	level: 1
+	loc: 16607
+	path: Water
+	rarity: 1
+	sprite: 21
+
+The Ferry(547)
+	D: 1
+	W: 1
+	level: 1
+	loc: 16607
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Mount Frost(548)
+	W: 2
+	deccscale2: 2
+	level: 1
+	loc: 16388
+	n_sum1: 5
+	path: Water
+	rarity: 1
+	scale1: Cold(max 2)
+	sprite: 23
+	sum1: 511
+	summon5: 511
+
+The Forest of the Lake(549)
+	N: 1
+	W: 2
+	level: 1
+	loc: 16386
+	path: Water
+	rarity: 1
+	sprite: 21
+
+Stony Swamps(550)
+	E: 1
+	level: 1
+	loc: 16514
+	path: Water
+	rarity: 1
+	sprite: 21
+
+The Frozen Forest(551)
+	N: 1
+	W: 3
+	com1: 309
+	deccscale2: 2
+	level: 2
+	loc: 16386
+	path: Water
+	rarity: 1
+	scale1: Cold(max 2)
+	sprite: 21
+
+The Sea of the Tears of Men(552)
+	D: 2
+	W: 2
+	level: 2
+	loc: 16607
+	path: Water
+	rarity: 2
+	sprite: 19
+
+The Water Sphere(553)
+	W: 3
+	level: 3
+	loc: 16607
+	path: Water
+	rarity: 1
+	rit: W
+	ritrng: 2
+	sprite: 23
+	waterrange: 2
+
+The Sea Underneath(554)
+	W: 5
+	level: 4
+	loc: 17119
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Temple of the Turning Tide(555)
+	W: 1
+	alter: 20%
+	com1: 529
+	level: 1
+	loc: 64
+	path: Water
+	rarity: 2
+	sprite: 24
+
+Black Ice Valley(556)
+	D: 1
+	W: 1
+	evo: 20%
+	level: 1
+	loc: 4
+	path: Water
+	rarity: 2
+	sprite: 19
+
+Frozen Fountain(557)
+	W: 3
+	level: 2
+	loc: 735
+	path: Water
+	rarity: 2
+	sprite: 20
+
+Frozen Lands(558)
+	W: 1
+	deccscale2: 2
+	level: 0
+	loc: 223
+	path: Water
+	rarity: 2
+	scale1: Cold(max 2)
+	sprite: 23
+
+Academy of the Crescent Moon(559)
+	S: 2
+	W: 2
+	com1: 999
+	lab: lab
+	level: 3
+	loc: 16607
+	path: Water
+	rarity: 2
+	sprite: 22
+
+Well of All Waters(560)
+	W: 3
+	level: 3
+	loc: 16607
+	path: Water
+	rarity: 2
+	scry: 1
+	sprite: 23
+
+The Swamp of Dread(561)
+	D: 2
+	W: 1
+	level: 1
+	loc: 16512
+	path: Water
+	rarity: 2
+	sprite: 21
+
+The Sunless Sea(562)
+	W: 3
+	level: 3
+	loc: 16904
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Healing Spring(563)
+	N: 1
+	W: 1
+	heal: 10%
+	level: 2
+	loc: 262367
+	path: Water
+	rarity: 2
+	sprite: 23
+
+Enchanted Well(564)
+	W: 1
+	level: 1
+	loc: 262879
+	path: Water
+	rarity: 0
+	sprite: 23
+
+Icebrick Tower(565)
+	W: 1
+	level: 1
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 22
+
+Steam Fountain(566)
+	F: 1
+	W: 1
+	level: 2
+	loc: 16
+	path: Water
+	rarity: 1
+	sprite: 23
+
+Rain Ridge(567)
+	A: 1
+	W: 1
+	level: 2
+	loc: 4
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Meltwater Stream(568)
+	E: 1
+	W: 1
+	level: 2
+	loc: 4
+	path: Water
+	rarity: 1
+	sprite: 20
+
+Moonlit Lake(569)
+	S: 1
+	W: 1
+	level: 2
+	loc: 4
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Oasis of the Dead(570)
+	D: 1
+	W: 1
+	level: 2
+	loc: 8
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Double Bottom Lake(571)
+	G: 1
+	W: 1
+	level: 2
+	loc: 2
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Rainbow Fountain(572)
+	G: 1
+	W: 1
+	level: 3
+	loc: 16
+	path: Water
+	rarity: 2
+	sprite: 20
+
+Merman Village(573)
+	com1: 1067
+	level: 0
+	loc: 64
+	mon1: 1065
+	path: Water
+	rarity: 0
+	sprite: 19
+
+Turtle Village(574)
+	com1: 1294
+	level: 0
+	loc: 64
+	mon1: 1292
+	path: Water
+	rarity: 0
+	sprite: 19
+
+Ichtyid Enclave(575)
+	S: 1
+	W: 1
+	com1: 2805
+	level: 1
+	loc: 96
+	mon1: 974
+	path: Astral
+	rarity: 2
+	sprite: 41
+
+Mermage Coven(576)
+	W: 2
+	com1: 2815
+	level: 1
+	loc: 96
+	mon1: 1065
+	path: Water
+	rarity: 2
+	sprite: 19
+
+Isle of the Saoi(577)
+	E: 1
+	W: 1
+	com1: 2832
+	level: 1
+	loc: 32
+	mon1: 2838
+	path: Earth
+	rarity: 2
+	sprite: 36
+
+Temple of the Sacred River(578)
+	D: 1
+	W: 1
+	com1: 1877
+	com2: 1878
+	level: 2
+	loc: 223
+	path: Water
+	rarity: 2
+	sprite: 24
+
+Garden of Frozen Flowers(579)
+	W: 1
+	level: 1
+	loc: 223
+	natcom: 204
+	nationalrecruits: 71
+	path: Water
+	rarity: 0
+	sprite: 21
+
+Wellspring of Secrets(580)
+	W: 1
+	level: 3
+	loc: 223
+	path: Water
+	rarity: 0
+	sprite: 20
+
+Lake of Living Water(581)
+	W: 1
+	level: 3
+	loc: 223
+	path: Water
+	rarity: 0
+	sprite: 19
+
+Subterranean Lake(582)
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Forgotten Oasis(583)
+	W: 1
+	level: 1
+	loc: 8
+	path: Water
+	rarity: 1
+	sprite: 18
+	sup: 15
+
+Plaguewater Oasis(584)
+	D: 1
+	disease: 5%
+	level: 1
+	loc: 8
+	path: Water
+	rarity: 1
+	sprite: 18
+
+Frozen Glen(585)
+	W: 1
+	level: 1
+	loc: 2
+	path: Water
+	rarity: 1
+	sprite: 21
+
+Melting Cliffs(586)
+	E: 1
+	W: 1
+	level: 2
+	loc: 223
+	path: Water
+	rarity: 1
+	sprite: 20
+
+Pool of Perpetual Night(587)
+	W: 1
+	level: 3
+	loc: 16607
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Enchanted Glacier(588)
+	W: 1
+	level: 1
+	loc: 4
+	n_sum1: 3
+	path: Water
+	rarity: 1
+	sprite: 19
+	sum1: 2231
+	summon3: 2231
+
+Wellspring of the Virgins(589)
+	W: 1
+	heal: 3%
+	level: 1
+	loc: 16607
+	path: Water
+	rarity: 2
+	sprite: 20
+
+Sign of Nodens(590)
+	W: 2
+	heal: 3%
+	level: 3
+	loc: 16450
+	path: Water
+	rarity: 2
+	sprite: 23
+
+Rune of Water(591)
+	level: 2
+	loc: 255
+	path: Water
+	rarity: 1
+	rit: W
+	ritrng: 2
+	sprite: 23
+	waterrange: 2
+
+Pharos(592)
+	allrange: 2
+	level: 1
+	loc: 16448
+	path: Water
+	rarity: 2
+	rit: FAWESDNGB
+	ritrng: 2
+	scry: 2
+	scryrange: 8
+	sprite: 22
+
+Tower of Ice(593)
+	W: 2
+	lab: lab
+	level: 3
+	loc: 16396
+	path: Water
+	rarity: 2
+	rit: W
+	ritrng: 2
+	sprite: 25
+	waterrange: 2
+
+Tomb of Ice(594)
+	W: 1
+	deccscale2: 2
+	level: 3
+	loc: 16607
+	path: Water
+	rarity: 5
+	scale1: Cold(max 2)
+	sprite: 25
+
+Wellspring of Abundance(595)
+	W: 2
+	incscale2: 3
+	level: 4
+	loc: 16607
+	path: Water
+	provinc: 30
+	rarity: 5
+	res: 30
+	scale1: Growth(max 2)
+	sprite: 20
+
+The Golden City(596)
+	level: 0
+	loc: 17440
+	mon1: 1056
+	path: Water
+	provinc: 100
+	rarity: 2
+	res: 30
+	sprite: 24
+
+Mineral Cave(597)
+	E: 1
+	level: 1
+	loc: 607
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Earth Blood Seepage(598)
+	E: 2
+	level: 1
+	loc: 735
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Firbolg Fortress(599)
+	E: 2
+	fort: 4
+	level: 2
+	loc: 223
+	path: Earth
+	rarity: 1
+	sprite: 32
+
+Iron Cliff(600)
+	E: 1
+	level: 3
+	loc: 197631
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Canyon of Sand(601)
+	E: 1
+	level: 0
+	loc: 197631
+	path: Earth
+	rarity: 1
+	sprite: 33
+
+Mine of Superior Iron(602)
+		Unknown Attribute<7B02>: 1
+	bringres: 100
+	level: 0
+	loc: 4
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Great Iron Mine(603)
+	bringres: 150
+	level: 0
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Great Gold Mine(604)
+	bringgold: 150
+	level: 0
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Great Silver Mine(605)
+	bringgold: 100
+	level: 0
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Hidden Gold Mine(606)
+	bringgold: 150
+	level: 1
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Gem Deposits(607)
+	level: 1
+	loc: 262879
+	path: Earth
+	provinc: 125
+	rarity: 0
+	sprite: 29
+
+Gorge(608)
+	E: 1
+	level: 1
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 33
+
+Magma Cave(609)
+	E: 1
+	F: 1
+	level: 1
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Standing Stones(610)
+	A: 1
+	E: 1
+	level: 1
+	loc: 262367
+	path: Earth
+	rarity: 1
+	sprite: 30
+
+Water Filled Cave(611)
+	E: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+Starlight Chasm(612)
+	E: 1
+	S: 1
+	level: 1
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 33
+
+Chasm of Strange Lights(613)
+	E: 1
+	G: 1
+	level: 1
+	loc: 516
+	path: Earth
+	rarity: 0
+	sprite: 33
+
+Cave of the Pale Ones(614)
+	D: 1
+	E: 1
+	level: 1
+	loc: 735
+	mon1: 1465
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+Forest of Truffles(615)
+	E: 1
+	N: 1
+	level: 1
+	loc: 2
+	path: Earth
+	rarity: 0
+	sprite: 31
+
+Entrance(616)
+	E: 1
+	conj: 20%
+	level: 1
+	loc: 262879
+	path: Earth
+	rarity: 2
+	sprite: 33
+
+Tower of the Iron Order(617)
+	E: 3
+	S: 2
+	com1: 477
+	lab: lab
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Tower of the Iron Order(618)
+	E: 2
+	S: 3
+	com1: 477
+	lab: lab
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Tower of the Iron Order(619)
+	E: 2
+	S: 2
+	com1: 477
+	lab: lab
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Academy of Magic(620)
+	E: 1
+	com1: 3494
+	com2: 3492
+	lab: lab
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Academy of High Magics(621)
+	E: 2
+	F: 1
+	com1: 3503
+	com2: 3494
+	com3: 3492
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Twice Walled Tower(622)
+	E: 1
+	S: 1
+	com1: 344
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Archaic Fortress(623)
+	fort: 3
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Lost Vale of the Elders(624)
+	E: 1
+	N: 1
+	com1: 3982
+	level: 2
+	loc: 4
+	path: Earth
+	rarity: 2
+	sprite: 31
+
+Troll Pit(625)
+	level: 2
+	loc: 735
+	mon1: 518
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Troglodyte Den(626)
+	E: 1
+	level: 3
+	loc: 735
+	mon1: 447
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Runaway Pit(627)
+	E: 1
+	S: 2
+	level: 3
+	loc: 735
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Steel Swamps(628)
+	E: 1
+	W: 1
+	level: 0
+	loc: 16512
+	path: Earth
+	rarity: 1
+	res: 50
+	sprite: 31
+
+White Man Hill(629)
+	N: 1
+	incscale2: 3
+	level: 0
+	loc: 16607
+	path: Earth
+	rarity: 1
+	scale1: Growth(max 2)
+	sprite: 30
+	sup: 150
+
+The Forgotten Fortress(630)
+	D: 1
+	E: 2
+	G: 1
+	fort: 3
+	level: 2
+	loc: 16607
+	path: Earth
+	rarity: 1
+	sprite: 32
+
+The Jervellan Wall(631)
+	fort: 3
+	level: 1
+	loc: 16607
+	path: Earth
+	rarity: 1
+	sprite: 32
+
+Ten Thousand Things(632)
+	A: 1
+	E: 1
+	F: 1
+	N: 1
+	W: 1
+	level: 1
+	loc: 279263
+	path: Earth
+	rarity: 1
+	sprite: 31
+
+The Broken Maze(633)
+	E: 2
+	S: 1
+	level: 2
+	loc: 278751
+	path: Earth
+	rarity: 1
+	sprite: 33
+
+The Labyrinth(634)
+	E: 2
+	S: 2
+	level: 2
+	loc: 16607
+	mon1: 234
+	path: Earth
+	rarity: 1
+	sprite: 33
+
+The Chasm of Black Roses(635)
+	D: 2
+	E: 1
+	N: 1
+	level: 3
+	loc: 16388
+	path: Earth
+	rarity: 1
+	sprite: 33
+
+The Underworld(636)
+	E: 3
+	com1: 411
+	level: 3
+	loc: 17119
+	mon1: 447
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+The Statues of the Overlords(637)
+	earthrange: 2
+	incscale2: 0
+	level: 0
+	loc: 16607
+	path: Earth
+	rarity: 2
+	rit: E
+	ritrng: 2
+	scale1: Order(max 2)
+	scale2: Productivity(max 2)
+	sprite: 30
+
+The Cornerstone(638)
+	E: 4
+	S: 1
+	incscale2: 0
+	level: 3
+	loc: 278751
+	path: Earth
+	rarity: 2
+	scale1: Order(max 2)
+	sprite: 34
+
+The Factory(639)
+	E: 3
+	level: 4
+	loc: 278751
+	n_sum1: 3
+	path: Earth
+	rarity: 2
+	sprite: 32
+	sum1: 532
+	summon3: 532
+
+Castle Arcanum(640)
+	E: 1
+	F: 1
+	com1: 312
+	com2: 875
+	fort: 4
+	level: 1
+	loc: 16477
+	path: Earth
+	rarity: 1
+	sprite: 32
+
+Ancient Forge(641)
+	E: 1
+	const: 20%
+	level: 1
+	loc: 262879
+	path: Earth
+	rarity: 2
+	sprite: 29
+
+Chamber of Changes(642)
+	E: 1
+	alter: 20%
+	level: 1
+	loc: 262879
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Circle of Standing Stones(643)
+	E: 1
+	ench: 20%
+	level: 1
+	loc: 262879
+	path: Earth
+	rarity: 2
+	sprite: 30
+
+Conjurer's Cave(644)
+	E: 1
+	conj: 30%
+	level: 3
+	loc: 516
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+The Statue of the Sitting God(645)
+	S: 1
+	ench: 20%
+	incscale2: 0
+	level: 2
+	loc: 16607
+	path: Earth
+	rarity: 0
+	scale1: Order(max 2)
+	sprite: 34
+
+The Jade Pagoda(646)
+	E: 1
+	S: 1
+	W: 1
+	com1: 1894
+	com2: 808
+	level: 1
+	loc: 16607
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+The Imperial Quarry(647)
+	E: 1
+	level: 1
+	loc: 214015
+	path: Earth
+	rarity: 0
+	sprite: 29
+
+Dolmen(648)
+	E: 1
+	level: 1
+	loc: 17119
+	path: Earth
+	rarity: 1
+	sprite: 30
+
+Forest of Golden Leaves(649)
+	E: 1
+	F: 1
+	N: 1
+	level: 0
+	loc: 16386
+	path: Earth
+	rarity: 2
+	sprite: 31
+
+The Vaults Beneath(650)
+	E: 1
+	level: 3
+	loc: 16607
+	path: Earth
+	rarity: 2
+	res: 250
+	sprite: 35
+
+The Deepest Mine(651)
+	E: 4
+	level: 2
+	loc: 16900
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+The Sun Below(652)
+	F: 4
+	level: 4
+	loc: 16904
+	nationalrecruits: 26
+	natmon: 2672
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Endless Caverns(653)
+	E: 1
+	W: 1
+	level: 2
+	loc: 516
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Glowing Caverns(654)
+	G: 1
+	N: 1
+	W: 1
+	level: 2
+	loc: 516
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+The Mosaic Desert(655)
+	A: 1
+	E: 1
+	F: 1
+	G: 1
+	com1: 2245
+	level: 2
+	loc: 16392
+	path: Earth
+	rarity: 2
+	sprite: 30
+
+Villa of Ever Changing Fresques(656)
+	A: 1
+	E: 1
+	F: 1
+	G: 1
+	N: 1
+	S: 1
+	level: 2
+	loc: 16400
+	path: Earth
+	rarity: 2
+	sprite: 32
+
+Bear Mountain(657)
+	E: 2
+	level: 0
+	loc: 16388
+	path: Earth
+	rarity: 2
+	sprite: 29
+
+The Cliff of Seven Directions(658)
+	E: 1
+	S: 1
+	incscale2: 5
+	level: 3
+	loc: 16388
+	path: Earth
+	rarity: 2
+	scale1: Magic(max 2)
+	sprite: 34
+
+Enchanted Tower(659)
+	E: 1
+	level: 1
+	loc: 262367
+	path: Earth
+	rarity: 0
+	sprite: 32
+
+Earthroot Tower(660)
+	E: 1
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 1
+	sprite: 32
+
+Sulphur Cliffs(661)
+	E: 1
+	F: 1
+	level: 2
+	loc: 8
+	path: Earth
+	rarity: 1
+	sprite: 30
+
+Snowcap Mountain(662)
+	E: 1
+	W: 1
+	level: 2
+	loc: 4
+	path: Earth
+	rarity: 1
+	sprite: 29
+
+Thundertop Mountain(663)
+	A: 1
+	E: 1
+	level: 2
+	loc: 4
+	path: Earth
+	rarity: 1
+	sprite: 29
+
+Meteorite Cliffs(664)
+	E: 1
+	S: 1
+	level: 2
+	loc: 223
+	path: Earth
+	rarity: 1
+	sprite: 29
+
+Iron Tomb(665)
+	D: 1
+	E: 1
+	level: 2
+	loc: 262660
+	path: Earth
+	rarity: 1
+	sprite: 34
+
+Rock Forest(666)
+	E: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Earth
+	rarity: 1
+	sprite: 31
+
+Ctonian Gate(667)
+	E: 3
+	level: 2
+	loc: 735
+	path: Earth
+	rarity: 2
+	sprite: 33
+
+Ravine of Perpetual Echoes(668)
+	E: 1
+	G: 1
+	level: 3
+	loc: 4
+	path: Earth
+	rarity: 2
+	sprite: 33
+
+Deep Crevasse(669)
+	E: 1
+	level: 1
+	loc: 255
+	path: Earth
+	rarity: 0
+	sprite: 33
+
+Mud Field(670)
+	E: 1
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 0
+	sprite: 30
+
+Quicksand(671)
+	E: 1
+	level: 1
+	loc: 223
+	path: Earth
+	rarity: 0
+	sprite: 30
+
+Stone Tree Grove(672)
+	E: 1
+	level: 2
+	loc: 18
+	path: Earth
+	rarity: 1
+	sprite: 31
+
+Flooded Mines(673)
+	D: 1
+	E: 1
+	level: 1
+	loc: 215
+	path: Earth
+	rarity: 2
+	sprite: 28
+
+Underworld Entrance(674)
+	E: 2
+	level: 3
+	loc: 223
+	path: Earth
+	rarity: 2
+	res: 30
+	sprite: 33
+
+Abyss(675)
+	E: 1
+	level: 1
+	loc: 255
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Heart of the Mountain(676)
+	E: 2
+	earthrange: 3
+	level: 3
+	loc: 16388
+	path: Earth
+	rarity: 2
+	rit: E
+	ritrng: 3
+	sprite: 35
+
+Basilisk Cave(677)
+	E: 1
+	alter: 20%
+	level: 2
+	loc: 223
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Rune of Earth(678)
+	earthrange: 2
+	level: 2
+	loc: 255
+	path: Earth
+	rarity: 1
+	rit: E
+	ritrng: 2
+	sprite: 34
+
+Cavern of Marble Spheres(679)
+	E: 1
+	S: 2
+	level: 3
+	loc: 16900
+	path: Earth
+	rarity: 2
+	sprite: 28
+
+Halls of the Mountain King(680)
+	E: 1
+	bringgold: 75
+	level: 4
+	loc: 16388
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+Ruined Halls of the Mountain King(681)
+	level: 4
+	loc: 16388
+	path: Earth
+	rarity: 5
+	sprite: 35
+
+City of the Ancients(682)
+	adventure: 10
+	level: 2
+	loc: 16607
+	path: Earth
+	rarity: 5
+	sprite: 32
+
+The World Pillar(683)
+	A: 1
+	E: 4
+	level: 0
+	loc: 16388
+	path: Earth
+	rarity: 2
+	sprite: 34
+
+Library(684)
+	com1: 478
+	level: 0
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 44
+
+Painted Cave(685)
+	S: 1
+	level: 1
+	loc: 735
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Maze(686)
+	S: 2
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Monolith(687)
+	S: 2
+	level: 2
+	loc: 262367
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Starflower Garden(688)
+	S: 1
+	level: 3
+	loc: 262879
+	path: Astral
+	rarity: 0
+	sprite: 42
+
+Lake of Reflected Time(689)
+	S: 1
+	level: 0
+	loc: 262367
+	path: Astral
+	rarity: 1
+	sprite: 43
+
+Strange Opening(690)
+	S: 2
+	deccscale2: 4
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 1
+	scale1: Misfortune(max 2)
+	sprite: 45
+
+Sages Guild(691)
+	S: 1
+	com1: 478
+	lab: lab
+	level: 1
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 44
+
+Abandoned Laboratory(692)
+	lab: lab
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 1
+	sprite: 44
+
+Crystal Flames(693)
+	F: 1
+	S: 1
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Mirror Palace(694)
+	A: 1
+	S: 1
+	level: 1
+	loc: 278751
+	path: Astral
+	provinc: 40
+	rarity: 1
+	sprite: 44
+	sup: 40
+
+Caves of Passing Time(695)
+	E: 1
+	S: 1
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 1
+	sprite: 47
+
+Scrying Pool(696)
+	S: 1
+	W: 1
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 2
+	scry: 1
+	scryrange: 4
+	sprite: 43
+
+Pyramid of Life(697)
+	D: 1
+	S: 1
+	level: 1
+	loc: 262367
+	path: Astral
+	rarity: 1
+	sprite: 46
+
+Totem Collection(698)
+	N: 1
+	S: 1
+	incscale2: 4
+	level: 1
+	loc: 223
+	path: Astral
+	rarity: 1
+	scale1: Luck(max 2)
+	sprite: 42
+
+Dream Collection(699)
+	G: 1
+	S: 1
+	level: 1
+	loc: 459775
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Gateway(700)
+	S: 1
+	conj: 20%
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 2
+	sprite: 45
+
+Distortion(701)
+	S: 1
+	allrange: 2
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 2
+	rit: FAWESDNGB
+	ritrng: 2
+	sprite: 42
+	thau: 20%
+
+Void Alignment(702)
+	S: 1
+	astralrange: 1
+	ench: 20%
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 2
+	rit: S
+	ritrng: 1
+	sprite: 42
+
+Village of Strange Men(703)
+	S: 1
+	alter: 20%
+	level: 1
+	loc: 262367
+	path: Astral
+	rarity: 2
+	sprite: 41
+
+The Ancient Master(704)
+	exp: 8
+	level: 1
+	loc: 16607
+	path: Astral
+	rarity: 1
+	sprite: 41
+
+Citadel of the Lore Masters(705)
+	S: 2
+	com1: 479
+	com2: 478
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 1
+	sprite: 46
+
+The Metal Spires(706)
+	S: 3
+	com1: 101
+	com2: 100
+	com3: 477
+	lab: lab
+	level: 3
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Academy of Magic(707)
+	S: 1
+	com1: 3497
+	com2: 3509
+	lab: lab
+	level: 1
+	loc: 223
+	path: Astral
+	rarity: 2
+	sprite: 44
+
+Academy of High Magics(708)
+	G: 1
+	S: 2
+	com1: 3506
+	com2: 3497
+	com3: 3509
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 44
+
+The Council of Sages(709)
+	A: 1
+	E: 1
+	S: 1
+	W: 1
+	com1: 479
+	level: 1
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 46
+
+Moon Mages Circle(710)
+	D: 1
+	S: 2
+	com1: 342
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 41
+
+The Hidden Kingdom of Elludia(711)
+	D: 1
+	G: 1
+	S: 2
+	com1: 630
+	com2: 629
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 46
+
+The Grey Tower of Nexus(712)
+	S: 1
+	com1: 391
+	com2: 106
+	level: 3
+	loc: 278528
+	mon1: 390
+	path: Astral
+	rarity: 5
+	sprite: 44
+
+The Ultimate Gateway(713)
+	conj: 40%
+	level: 3
+	loc: 279263
+	path: Astral
+	rarity: 2
+	sprite: 45
+
+Library of Time(714)
+	S: 4
+	com1: 106
+	level: 4
+	loc: 278751
+	path: Astral
+	rarity: 2
+	reveal: 999
+	sprite: 46
+
+Temple of the All-Seeing Eye(715)
+	level: 3
+	loc: 17119
+	path: Astral
+	rarity: 2
+	scry: 1
+	sprite: 46
+
+Hall of Enlightenment(716)
+	S: 2
+	ench: 30%
+	level: 4
+	loc: 278532
+	path: Astral
+	rarity: 2
+	sprite: 46
+
+Moonlit Pond of Pearls(717)
+	S: 3
+	level: 2
+	loc: 223
+	path: Astral
+	rarity: 2
+	sprite: 43
+
+Strange House in the Mist(718)
+	S: 1
+	level: 3
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 42
+	voidgate: 20%
+
+The Cave of Souls(719)
+	D: 1
+	S: 2
+	level: 1
+	loc: 16900
+	path: Astral
+	rarity: 2
+	sprite: 47
+
+The Mountain of the Past(720)
+	S: 4
+	level: 4
+	loc: 16392
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+The Endless Field of Cubes(721)
+	S: 4
+	horror: 2%
+	level: 4
+	loc: 278536
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Enchanted Gate(722)
+	S: 1
+	level: 1
+	loc: 262879
+	path: Astral
+	rarity: 0
+	sprite: 45
+
+Skywatch Tower(723)
+	S: 1
+	level: 1
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 44
+
+Nightlight Fen(724)
+	F: 1
+	S: 1
+	level: 2
+	loc: 128
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Moon Mirror(725)
+	G: 1
+	S: 1
+	level: 2
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 41
+
+Voidwind Plain(726)
+	A: 1
+	S: 1
+	level: 2
+	loc: 262367
+	path: Astral
+	rarity: 1
+	sprite: 41
+
+Mooncatch Lake(727)
+	S: 1
+	W: 1
+	level: 2
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 43
+
+Mountain Crater(728)
+	E: 1
+	S: 1
+	level: 2
+	loc: 4
+	path: Astral
+	rarity: 1
+	sprite: 40
+
+Painted Crypt(729)
+	D: 1
+	S: 1
+	level: 2
+	loc: 262879
+	path: Astral
+	rarity: 1
+	sprite: 46
+
+Moonvine Forest(730)
+	N: 1
+	S: 1
+	level: 2
+	loc: 2
+	path: Astral
+	rarity: 1
+	sprite: 43
+
+Huge Crater(731)
+	E: 1
+	S: 1
+	level: 0
+	loc: 197119
+	path: Astral
+	rarity: 5
+	sprite: 42
+
+The Forgotten City(732)
+	adventure: 10
+	horror: 2%
+	level: 3
+	loc: 278751
+	path: Astral
+	rarity: 2
+	sprite: 46
+
+Unfound Door(733)
+	S: 1
+	level: 4
+	loc: 262399
+	path: Astral
+	rarity: 0
+	sprite: 45
+
+Starlit Pond(734)
+	S: 1
+	level: 1
+	loc: 215
+	path: Astral
+	rarity: 0
+	sprite: 43
+
+Garden of Pearls(735)
+	S: 2
+	level: 2
+	loc: 262359
+	path: Astral
+	rarity: 0
+	sprite: 40
+
+Impossible Angle(736)
+	S: 1
+	horror: 4%
+	level: 2
+	loc: 262367
+	path: Astral
+	rarity: 1
+	sprite: 45
+
+Moonlit Halls(737)
+	S: 1
+	level: 1
+	loc: 223
+	path: Astral
+	rarity: 1
+	sprite: 41
+
+Brook of Glimmering Pearls(738)
+	S: 1
+	W: 1
+	level: 1
+	loc: 262359
+	path: Astral
+	rarity: 1
+	sprite: 43
+
+Seer's Grave(739)
+	S: 1
+	level: 2
+	loc: 262911
+	path: Astral
+	rarity: 2
+	reveal: 3
+	sprite: 42
+
+Dreaming Stone(740)
+	astralrange: 2
+	level: 2
+	loc: 262911
+	path: Astral
+	rarity: 2
+	reveal: 3
+	rit: S
+	ritrng: 2
+	sprite: 42
+
+Sorcerer's Circle(741)
+	level: 2
+	loc: 262367
+	path: Astral
+	rarity: 2
+	rit: SDNGB
+	ritrng: 2
+	sorceryrange: 2
+	sprite: 44
+	thau: 20%
+
+Archaic Diagram(742)
+	evo: 20%
+	level: 2
+	loc: 262399
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Chamber of Enchantment(743)
+	ench: 20%
+	lab: lab
+	level: 2
+	loc: 262367
+	path: Astral
+	rarity: 2
+	sprite: 45
+
+Unsettling Pattern(744)
+	horror: 5%
+	level: 2
+	loc: 262399
+	path: Astral
+	rarity: 2
+	sprite: 42
+	thau: 20%
+
+Basalt Mirror(745)
+	level: 2
+	loc: 255
+	path: Astral
+	rarity: 2
+	scry: 1
+	sprite: 42
+
+Moonshimmer Swamp(746)
+	G: 1
+	S: 1
+	level: 3
+	loc: 128
+	path: Astral
+	rarity: 2
+	sprite: 43
+
+The Gnomon(747)
+	S: 1
+	astralrange: 3
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 2
+	rit: S
+	ritrng: 3
+	sprite: 42
+
+Seventh House on the Left(748)
+	D: 1
+	blood: 20%
+	level: 3
+	loc: 16607
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+The Halfway Inn(749)
+	level: 0
+	loc: 16607
+	path: Astral
+	provinc: 10
+	rarity: 1
+	sprite: 44
+
+The Forgotten Astrolabium(750)
+	S: 2
+	astralrange: 3
+	level: 3
+	loc: 16607
+	path: Astral
+	rarity: 2
+	rit: S
+	ritrng: 3
+	sprite: 40
+
+Citadel of the Mage King(751)
+	S: 1
+	fort: 1
+	lab: lab
+	level: 6
+	loc: 16398
+	path: Astral
+	rarity: 2
+	rit: SDNGB
+	ritrng: 2
+	sorceryrange: 2
+	sprite: 46
+
+Horror Cult(752)
+	horror: 3%
+	level: 5
+	loc: 223
+	path: Astral
+	rarity: 5
+	sprite: 45
+
+Ancient Scriptorium(753)
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Astral
+	rarity: 5
+	sprite: 44
+
+Secluded Village(754)
+	level: 1
+	loc: 223
+	n_sum1: 3
+	n_sum2: 3
+	n_sum3: 3
+	n_sum4: 6
+	path: Astral
+	rarity: 5
+	sprite: 41
+	sum1: 971
+	sum2: 968
+	sum3: 969
+	sum4: 970
+	summon3: 971
+	summon6: 970
+
+Guild of the Merchant Princes(755)
+	level: 0
+	loc: 17472
+	path: Astral
+	provinc: 50
+	rarity: 2
+	reveal: 0
+	sprite: 41
+
+Dragon Rune(756)
+	S: 1
+	dragonlord: 1
+	level: 2
+	loc: 16639
+	path: Astral
+	rarity: 2
+	sprite: 45
+
+Starfall Tower(757)
+	E: 1
+	S: 1
+	com1: 3893
+	level: 3
+	loc: 223
+	path: Astral
+	rarity: 2
+	sprite: 44
+
+Starfall Waste(758)
+	E: 1
+	S: 1
+	com1: 3893
+	level: 1
+	loc: 16392
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Battlefield(759)
+	D: 1
+	level: 1
+	loc: 262879
+	path: Death
+	rarity: 0
+	sprite: 49
+
+Burial Mound(760)
+	D: 1
+	level: 1
+	loc: 262367
+	path: Death
+	rarity: 0
+	sprite: 47
+
+Graveyard of the Damned(761)
+	D: 2
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 0
+	sprite: 47
+
+Cave of Ghouls(762)
+	D: 2
+	level: 2
+	loc: 735
+	n_sum1: 5
+	path: Death
+	rarity: 1
+	sprite: 54
+	sum1: 198
+	summon5: 198
+
+Well of Pestilence(763)
+	D: 1
+	deathrange: 2
+	deccscale2: 3
+	disease: 5%
+	level: 3
+	loc: 223
+	path: Death
+	rarity: 0
+	rit: D
+	ritrng: 2
+	scale1: Death(max 2)
+	sprite: 54
+
+Haunted Village(764)
+	D: 1
+	level: 0
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 48
+
+Gallows(765)
+	D: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 48
+
+Broken Tower(766)
+	D: 2
+	level: 1
+	loc: 262367
+	path: Death
+	rarity: 1
+	sprite: 51
+
+Forest of the Dead(767)
+	D: 1
+	level: 1
+	loc: 2
+	path: Death
+	rarity: 0
+	sprite: 50
+
+Ashen Forest(768)
+	D: 1
+	level: 2
+	loc: 10
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Banefire Braziers(769)
+	D: 1
+	F: 1
+	deccscale2: 3
+	incscale2: 2
+	level: 1
+	loc: 735
+	natcom: 1095
+	nationalrecruits: 113
+	path: Death
+	rarity: 1
+	scale1: Heat(max 2)
+	scale2: Death(max 2)
+	sprite: 53
+
+Windswept Catacombs(770)
+	A: 1
+	D: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 47
+
+Crypt in the Sand(771)
+	D: 1
+	E: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Witches Bog(772)
+	D: 1
+	W: 1
+	level: 1
+	loc: 134
+	path: Death
+	rarity: 0
+	sprite: 50
+
+Catacombs(773)
+	D: 1
+	S: 1
+	level: 1
+	loc: 262879
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Overgrown Graveyard(774)
+	D: 1
+	N: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Nightmare Meadow(775)
+	D: 1
+	G: 1
+	level: 1
+	loc: 17
+	path: Death
+	rarity: 1
+	sprite: 49
+	unr: 5
+
+Marble Mausoleum(776)
+	D: 1
+	conj: 20%
+	level: 1
+	loc: 735
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Raven Oak(777)
+	D: 1
+	N: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 47
+
+Black Tower(778)
+	D: 3
+	com1: 95
+	com2: 94
+	lab: lab
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 51
+
+Academy of Magic(779)
+	D: 1
+	com1: 3508
+	com2: 3499
+	lab: lab
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 51
+
+Academy of Dark Magics(780)
+	B: 1
+	D: 2
+	com1: 3508
+	com2: 3499
+	com3: 3492
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Death
+	rarity: 2
+	sprite: 51
+
+Death Mound Downs(781)
+	D: 2
+	com1: 310
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Statue of Death(782)
+	D: 2
+	level: 3
+	loc: 735
+	path: Death
+	rarity: 2
+	sprite: 47
+
+Chillsick Swamp(783)
+	D: 1
+	N: 1
+	W: 1
+	disease: 5%
+	level: 1
+	loc: 16514
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Leper Fens(784)
+	D: 2
+	W: 1
+	disease: 10%
+	level: 1
+	loc: 16513
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Grayshade Forest(785)
+	D: 3
+	com1: 3490
+	level: 1
+	loc: 16386
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Litter Skull(786)
+	D: 4
+	com1: 310
+	level: 2
+	loc: 17119
+	n_sum1: 5
+	path: Death
+	rarity: 1
+	sprite: 49
+	sum1: 197
+	summon5: 197
+
+The Crypt Underneath(787)
+	D: 3
+	conj: 20%
+	level: 2
+	loc: 17119
+	path: Death
+	rarity: 1
+	sprite: 54
+
+Flesh Garden of Mortal Remains(788)
+	D: 2
+	N: 1
+	level: 3
+	loc: 16607
+	path: Death
+	rarity: 1
+	sprite: 49
+
+The Bowl of the Lost(789)
+	D: 1
+	level: 3
+	loc: 16607
+	n_sum1: 2
+	path: Death
+	rarity: 1
+	sprite: 53
+	sum1: 185
+	summon2: 185
+
+Skull Temple(790)
+	D: 1
+	level: 0
+	loc: 16607
+	n_sum1: 2
+	n_sum2: 4
+	path: Death
+	rarity: 2
+	sprite: 53
+	sum1: 189
+	sum2: 535
+	summon2: 189
+	summon4: 535
+
+Tomb of the Ancients(791)
+	D: 4
+	level: 3
+	loc: 278532
+	path: Death
+	rarity: 2
+	sprite: 54
+
+The Shaded Lands(792)
+	D: 3
+	level: 0
+	loc: 16607
+	n_sum1: 3
+	path: Death
+	rarity: 2
+	sprite: 52
+	sum1: 676
+	summon3: 676
+	unr: 10
+
+The Shattered Lands(793)
+	D: 2
+	deccscale2: 3
+	level: 0
+	loc: 16392
+	n_sum1: 3
+	path: Death
+	rarity: 2
+	scale1: Death(max 2)
+	sprite: 52
+	sum1: 3477
+	summon3: 3477
+
+The City of a Thousand Wonders(794)
+	D: 2
+	F: 1
+	adventure: 10
+	deccscale2: 3
+	fort: 4
+	level: 1
+	loc: 278751
+	path: Death
+	rarity: 2
+	scale1: Death(max 2)
+	sprite: 53
+
+The Mausoleum of the Great Sarlah(795)
+	D: 3
+	level: 2
+	loc: 16607
+	n_sum1: 5
+	path: Death
+	rarity: 2
+	sprite: 53
+	sum1: 433
+	summon5: 433
+
+The Charnel House(796)
+	A: 1
+	D: 2
+	S: 1
+	deccscale2: 0
+	level: 3
+	loc: 16607
+	path: Death
+	rarity: 2
+	scale1: Turmoil(max 2)
+	sprite: 53
+
+The Shadow Furnace(797)
+	D: 4
+	F: 1
+	level: 4
+	loc: 17119
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Halls of the Dead(798)
+	D: 1
+	ench: 20%
+	level: 1
+	loc: 735
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Banefire Forge(799)
+	D: 1
+	F: 1
+	const: 20%
+	level: 1
+	loc: 735
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Crown of Darkness(800)
+	D: 3
+	disease: 10%
+	level: 4
+	loc: 16388
+	path: Death
+	rarity: 2
+	sprite: 51
+	thau: 40%
+
+The Obsidian Sphere(801)
+	level: 3
+	loc: 16396
+	path: Death
+	rarity: 2
+	scry: 1
+	sprite: 51
+
+The Draining Stone(802)
+	D: 3
+	E: 1
+	deccscale2: 5
+	level: 3
+	loc: 16392
+	path: Death
+	rarity: 2
+	scale1: Drain(max 2)
+	scale2: Death(max 2)
+	sprite: 52
+
+Well of Darkness(803)
+	D: 3
+	level: 2
+	loc: 262879
+	path: Death
+	rarity: 2
+	sprite: 52
+
+Enchanted Tomb(804)
+	D: 1
+	level: 1
+	loc: 735
+	path: Death
+	rarity: 0
+	sprite: 53
+
+Bonedoor Tower(805)
+	D: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 51
+
+Flaming Tomb(806)
+	D: 1
+	F: 1
+	level: 2
+	loc: 735
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Shademist Swamp(807)
+	A: 1
+	D: 1
+	level: 2
+	loc: 128
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Plaguewater Stream(808)
+	D: 1
+	W: 1
+	disease: 3%
+	level: 2
+	loc: 735
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Valley of the Dead(809)
+	D: 1
+	E: 1
+	level: 2
+	loc: 8
+	n_sum1: 3
+	path: Death
+	rarity: 1
+	sprite: 49
+	sum1: 625
+	summon3: 625
+
+Silver Sarcophagus(810)
+	D: 1
+	S: 1
+	level: 2
+	loc: 735
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Carrion Thicket(811)
+	D: 1
+	N: 1
+	level: 2
+	loc: 2
+	n_sum1: 3
+	n_sum2: 3
+	path: Death
+	rarity: 1
+	sprite: 49
+	sum1: 715
+	sum2: 716
+	summon3: 715
+
+The City of the Damned(812)
+	adventure: 7
+	curse: 1%
+	level: 2
+	loc: 16607
+	path: Death
+	rarity: 2
+	sprite: 53
+
+The Bleak Lands(813)
+	D: 2
+	G: 1
+	com1: 3490
+	deccscale2: 3
+	level: 2
+	loc: 16385
+	path: Death
+	rarity: 2
+	scale1: Death(max 2)
+	sprite: 51
+
+Labyrinth of Skulls(814)
+	D: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 0
+	sprite: 53
+
+Garden of Bones(815)
+	D: 1
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 0
+	sprite: 49
+
+Lilium Vale(816)
+	D: 1
+	level: 2
+	loc: 95
+	path: Death
+	rarity: 0
+	sprite: 50
+
+Murder Bog(817)
+	D: 1
+	level: 2
+	loc: 130
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Swamp of Shadows(818)
+	D: 1
+	level: 1
+	loc: 128
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Murdering Mire(819)
+	D: 1
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 1
+	sprite: 50
+
+Animal Cemetery(820)
+	level: 2
+	loc: 219
+	n_sum1: 2
+	n_sum2: 5
+	path: Death
+	rarity: 1
+	sprite: 49
+	sum1: 716
+	sum2: 715
+	summon2: 716
+	summon5: 715
+
+Gloom Gate(821)
+	D: 2
+	G: 1
+	deathrange: 2
+	level: 3
+	loc: 255
+	path: Death
+	rarity: 1
+	rit: D
+	ritrng: 2
+	sprite: 54
+
+Tomb of the Grand Thaumathurg(822)
+	D: 1
+	deathrange: 2
+	level: 3
+	loc: 16479
+	path: Death
+	rarity: 2
+	rit: D
+	ritrng: 2
+	sprite: 53
+
+Sigil of the Ancients(823)
+	deathrange: 3
+	level: 3
+	loc: 16639
+	path: Death
+	rarity: 2
+	rit: D
+	ritrng: 3
+	sprite: 52
+
+Circle of Sending(824)
+	allrange: 2
+	horror: 2%
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 2
+	rit: FAWESDNGB
+	ritrng: 2
+	sprite: 47
+
+Nidus of Power(825)
+	level: 2
+	loc: 255
+	path: Death
+	rarity: 2
+	sprite: 47
+	thau: 20%
+
+Conjurer's Circle(826)
+	conj: 20%
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 47
+
+Plague Barrow(827)
+	D: 1
+	disease: 2%
+	level: 1
+	loc: 223
+	path: Death
+	rarity: 2
+	sprite: 49
+
+Nightmare Swamp(828)
+	D: 1
+	G: 1
+	level: 3
+	loc: 128
+	path: Death
+	rarity: 2
+	sprite: 50
+
+Pit of Despair(829)
+	D: 1
+	G: 1
+	level: 1
+	loc: 16607
+	path: Death
+	rarity: 2
+	sprite: 54
+	unr: 5
+
+Imperial Tomb(830)
+	D: 1
+	level: 2
+	loc: 1247
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Blackrose Tower(831)
+	D: 1
+	N: 1
+	com1: 2362
+	level: 1
+	loc: 16386
+	path: Death
+	rarity: 1
+	sprite: 51
+
+Dusk Spiral(832)
+	D: 1
+	N: 1
+	com1: 2361
+	level: 1
+	loc: 16386
+	path: Death
+	rarity: 1
+	sprite: 51
+
+The Three Towers of Despair(833)
+	D: 2
+	G: 1
+	level: 3
+	loc: 214015
+	n_sum1: 6
+	path: Death
+	rarity: 2
+	sprite: 47
+	sum1: 2125
+	summon6: 2125
+
+Necromancer's Lair(834)
+	D: 2
+	deathrange: 2
+	lab: lab
+	level: 3
+	loc: 16398
+	path: Death
+	rarity: 2
+	rit: D
+	ritrng: 2
+	sprite: 51
+
+Oath Stone(835)
+	level: 2
+	loc: 278751
+	path: Death
+	provdef1: 2190
+	rarity: 2
+	sprite: 54
+
+Withered Land(836)
+	D: 1
+	deccscale2: 3
+	level: 1
+	loc: 16607
+	path: Death
+	rarity: 5
+	scale1: Death(max 2)
+	sprite: 50
+
+Hall of the Draugadrott(837)
+	level: 2
+	loc: 223
+	path: Death
+	rarity: 5
+	sprite: 53
+
+Cult of Death(838)
+	deccscale2: 3
+	level: 5
+	loc: 16607
+	path: Death
+	rarity: 5
+	scale1: Death(max 2)
+	sprite: 48
+
+Spirit Pact(839)
+		Unknown Attribute<E700>: 843
+	level: 3
+	loc: 223
+	path: Death
+	provdef1: 674
+	provdef2: 675
+	rarity: 5
+	sprite: 54
+
+Ruins of the Old Empire(840)
+	D: 1
+	level: 0
+	loc: 1247
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Ancient Temple of C'tis(841)
+	D: 1
+	level: 0
+	loc: 1152
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Cave of Dark Rites(842)
+	D: 2
+	level: 2
+	loc: 735
+	path: Death
+	rarity: 1
+	sprite: 54
+
+Temple of Darkness(843)
+	D: 1
+	level: 2
+	loc: 735
+	n_sum1: 2
+	n_sum2: 2
+	path: Death
+	rarity: 1
+	sprite: 53
+	sum1: 675
+	sum2: 676
+	summon2: 675
+
+Inkpot End(844)
+	disease: 5%
+	level: 0
+	loc: 16607
+	path: Death
+	rarity: 1
+	sprite: 50
+	unr: 5
+
+Flesh Eater's Isle(845)
+	level: 2
+	loc: 16607
+	n_sum1: 10
+	path: Death
+	rarity: 1
+	sprite: 55
+	sum1: 198
+	summon10: 198
+
+Tower of Seven Tombs(846)
+	D: 2
+	level: 3
+	loc: 16607
+	n_sum1: 1
+	path: Death
+	rarity: 1
+	sprite: 51
+	sum1: 1981
+	summon1: 1981
+
+Tenebrous Tower(847)
+	D: 1
+	G: 2
+	com1: 3491
+	level: 2
+	loc: 16388
+	path: Death
+	rarity: 1
+	sprite: 51
+
+Tenebrous Cavern(848)
+	D: 1
+	E: 1
+	G: 1
+	com1: 3491
+	level: 2
+	loc: 16388
+	path: Death
+	rarity: 1
+	sprite: 54
+
+Glen of Verdant Greenery(849)
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 0
+	sprite: 57
+
+Forest of Delights(850)
+	N: 2
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 0
+	sprite: 57
+
+Farm of Plenty(851)
+	level: 1
+	loc: 223
+	path: Nature
+	popgrowth: 20
+	rarity: 0
+	sprite: 58
+	sup: 75
+
+Garden of Weeping Roses(852)
+	N: 2
+	level: 2
+	loc: 223
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+Grove of Evergreens(853)
+	N: 1
+	level: 3
+	loc: 223
+	path: Nature
+	rarity: 0
+	sprite: 57
+
+Wild Forest(854)
+	N: 1
+	level: 0
+	loc: 2
+	path: Nature
+	rarity: 0
+	sprite: 57
+
+Bile Marsh(855)
+	level: 1
+	loc: 128
+	mon1: 1840
+	nationalrecruits: 98
+	natmon: 1859
+	path: Nature
+	rarity: 0
+	sprite: 59
+
+Hidden Forest(856)
+	N: 1
+	com1: 154
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Stone Circle(857)
+	N: 1
+	com1: 105
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 0
+	sprite: 58
+
+Woodhenge(858)
+	N: 1
+	com1: 105
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Animist's Hut(859)
+	N: 1
+	com1: 552
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 65
+
+Fields of the Fire Flies(860)
+	F: 1
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Whisperwoods(861)
+	G: 1
+	N: 1
+	com1: 363
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Hidden Valley(862)
+	E: 1
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Forest of a Thousand Streams(863)
+	N: 1
+	W: 1
+	com1: 364
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 57
+
+Endless Forest(864)
+	N: 1
+	S: 1
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 0
+	sprite: 57
+
+Dying Forest(865)
+	D: 1
+	N: 1
+	deccscale2: 3
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 0
+	scale1: Death(max 2)
+	sprite: 58
+
+Straywild Forest(866)
+	G: 1
+	N: 1
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 0
+	sprite: 58
+
+Cottage in the Woods(867)
+	N: 1
+	com1: 1182
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 65
+
+Wormwood Marsh(868)
+	N: 1
+	level: 0
+	loc: 130
+	path: Nature
+	rarity: 1
+	sprite: 59
+
+Hall of Ancient Oaks(869)
+	N: 1
+	ench: 20%
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 61
+
+Flower Swamp(870)
+	N: 1
+	com1: 363
+	level: 1
+	loc: 128
+	path: Nature
+	rarity: 1
+	sprite: 59
+
+Mandrake Gallows(871)
+	D: 1
+	N: 2
+	level: 2
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 61
+
+Jungle Temple(872)
+	E: 1
+	N: 2
+	level: 2
+	loc: 2
+	n_sum1: 2
+	path: Nature
+	rarity: 2
+	sprite: 62
+	sum1: 394
+	summon2: 394
+
+Maze of Thorn Hedges(873)
+	N: 1
+	S: 2
+	level: 3
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Horses Vale(874)
+		Unknown Attribute<E100>: 10
+	com1: 451
+	level: 0
+	loc: 49375
+	mon1: 450
+	path: Nature
+	provdef1: 450
+	rarity: 1
+	sprite: 57
+
+The Cedar Pillars(875)
+	A: 1
+	N: 2
+	ench: 30%
+	level: 1
+	loc: 16607
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+The Mammoth Forest(876)
+	N: 3
+	level: 0
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+The Flowering Forest(877)
+	N: 1
+	com1: 363
+	level: 1
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 57
+	sup: 150
+
+The Cedar Forest(878)
+	N: 2
+	level: 1
+	loc: 49154
+	path: Nature
+	rarity: 1
+	res: 60
+	sprite: 57
+
+Dreamwood Circle(879)
+	G: 1
+	N: 1
+	com1: 338
+	level: 2
+	loc: 16607
+	path: Nature
+	rarity: 1
+	sprite: 65
+
+The Crown Woods(880)
+	N: 1
+	level: 1
+	loc: 16386
+	path: Nature
+	rarity: 1
+	res: 60
+	sprite: 57
+
+Gateward Valley(881)
+	holypow: 10%
+	level: 1
+	loc: 16607
+	mon1: 365
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+The Motheroak(882)
+	N: 2
+	com1: 154
+	level: 1
+	loc: 16607
+	naturerange: 2
+	path: Nature
+	rarity: 1
+	rit: N
+	ritrng: 2
+	sprite: 61
+
+Forest of Avendron(883)
+	E: 2
+	N: 3
+	com1: 154
+	level: 2
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+Animist's Tower(884)
+	N: 2
+	com1: 552
+	level: 2
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 60
+
+Vale of the Silver Cattle(885)
+	incscale2: 3
+	level: 2
+	loc: 278751
+	path: Nature
+	provinc: 100
+	rarity: 1
+	scale1: Growth(max 2)
+	sprite: 58
+	sup: 200
+
+Forest of the Ape King(886)
+	N: 1
+	level: 3
+	loc: 16386
+	path: Nature
+	provinc: 75
+	rarity: 1
+	sprite: 57
+
+The Sacred Glen(887)
+	N: 1
+	holyfire: 20%
+	level: 3
+	loc: 16607
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+The Shrouded Lands(888)
+	G: 2
+	N: 2
+	S: 2
+	incscale2: 3
+	level: 3
+	loc: 16607
+	path: Nature
+	rarity: 1
+	scale1: Growth(max 2)
+	sprite: 65
+	sup: 150
+
+The Land of Pleasures Unattained(889)
+	E: 1
+	G: 1
+	N: 1
+	deccscale2: 0
+	level: 3
+	loc: 278751
+	path: Nature
+	rarity: 2
+	scale1: Turmoil(max 2)
+	sprite: 58
+
+Soul of the Wild(890)
+	N: 5
+	level: 4
+	loc: 16607
+	path: Nature
+	rarity: 2
+	sprite: 58
+	thau: 20%
+
+Wolven Gate(891)
+	N: 1
+	conj: 20%
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Twisting Woods(892)
+	N: 1
+	alter: 20%
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Ancient Forest(893)
+	N: 2
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 57
+
+The Vale of Unicorns(894)
+	G: 1
+	N: 2
+	level: 4
+	loc: 16386
+	natcom: 2128
+	nationalrecruits: 57
+	natmon: 64
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Forest of Splendor(895)
+	G: 1
+	N: 1
+	level: 2
+	loc: 16386
+	path: Nature
+	rarity: 2
+	sprite: 57
+	unr: -5
+
+The Snake Collector(896)
+	D: 1
+	N: 1
+	level: 3
+	loc: 16512
+	path: Nature
+	rarity: 2
+	sprite: 62
+
+Shrine of the Wild(897)
+	N: 3
+	level: 2
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 62
+
+Oak of Ages(898)
+	N: 3
+	ench: 40%
+	level: 3
+	loc: 16607
+	path: Nature
+	rarity: 2
+	sprite: 61
+
+The Valley of Shame(899)
+	N: 1
+	deccscale2: 0
+	level: 1
+	loc: 16607
+	path: Nature
+	rarity: 2
+	scale1: Turmoil(max 2)
+	scale2: Sloth(max 2)
+	sprite: 58
+
+The Previous Forest(900)
+	N: 4
+	level: 4
+	loc: 278536
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Thorn Wood Heights(901)
+	N: 2
+	com1: 1182
+	level: 1
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Poison Glades(902)
+	D: 2
+	N: 1
+	com1: 1182
+	com2: 310
+	level: 1
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 59
+
+Lyfjaberg(903)
+	E: 1
+	N: 1
+	heal: 50%
+	level: 0
+	loc: 16388
+	path: Nature
+	rarity: 5
+	sprite: 58
+
+Enchanted Field(904)
+	N: 1
+	level: 1
+	loc: 262367
+	path: Nature
+	rarity: 0
+	recpoints: 50
+	sprite: 58
+	sup: 75
+
+Oakwood Tower(905)
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 1
+	sprite: 60
+
+Grove of Revelry(906)
+	N: 1
+	com1: 1880
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Tinderwood Forest(907)
+	F: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 57
+
+Mist Forest(908)
+	A: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Flowering Bog(909)
+	N: 1
+	W: 1
+	level: 2
+	loc: 128
+	path: Nature
+	rarity: 1
+	sprite: 59
+
+Evergreen Mountain(910)
+	E: 1
+	N: 1
+	level: 2
+	loc: 4
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Oak of Memories(911)
+	N: 1
+	S: 1
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 61
+
+Maggot Woods(912)
+	D: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 58
+
+Telesterion(913)
+	E: 1
+	N: 1
+	com1: 1875
+	com2: 1876
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 62
+
+Unfound Paths(914)
+	G: 1
+	N: 1
+	level: 3
+	loc: 262146
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Wolf Oak(915)
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 0
+	sprite: 61
+
+Grove of Fertility(916)
+	N: 1
+	level: 1
+	loc: 215
+	path: Nature
+	rarity: 0
+	sprite: 58
+
+Druid's Grave(917)
+	N: 1
+	level: 2
+	loc: 223
+	path: Nature
+	rarity: 0
+	sprite: 61
+
+Lair of Spiders(918)
+	N: 1
+	level: 1
+	loc: 2
+	n_sum1: 6
+	path: Nature
+	rarity: 2
+	sprite: 62
+	sum1: 782
+	summon6: 782
+
+Skin Shifter's Barrow(919)
+	N: 1
+	level: 1
+	loc: 223
+	path: Nature
+	rarity: 2
+	sprite: 65
+
+The Frogmarch(920)
+	N: 1
+	level: 1
+	loc: 16512
+	n_sum1: 6
+	path: Nature
+	rarity: 1
+	sprite: 59
+	sum1: 2222
+	summon6: 2222
+
+Heart of the Forest(921)
+	N: 2
+	level: 3
+	loc: 16386
+	naturerange: 3
+	path: Nature
+	rarity: 2
+	rit: N
+	ritrng: 3
+	sprite: 61
+
+Field of Golden Rye(922)
+	N: 1
+	level: 1
+	loc: 16
+	path: Nature
+	provinc: 30
+	rarity: 1
+	sprite: 58
+
+Withering Woods(923)
+	D: 1
+	N: 1
+	level: 1
+	loc: 2
+	path: Nature
+	rarity: 2
+	sprite: 59
+
+Grove of Hooded Spirits(924)
+	N: 1
+	heal: 3%
+	incscale2: 3
+	level: 3
+	loc: 2
+	path: Nature
+	rarity: 2
+	scale1: Growth(max 2)
+	sprite: 61
+
+Fungus Forest(925)
+	N: 1
+	level: 1
+	loc: 719
+	path: Nature
+	rarity: 1
+	sprite: 63
+
+The Crone(926)
+	curse: 1%
+	level: 2
+	loc: 16607
+	path: Nature
+	rarity: 2
+	reveal: 0
+	sprite: 65
+
+Thorn Maze(927)
+	N: 1
+	level: 2
+	loc: 95
+	naturerange: 2
+	path: Nature
+	rarity: 1
+	rit: N
+	ritrng: 2
+	sprite: 58
+
+Earthroot Grove(928)
+	N: 1
+	level: 1
+	loc: 18
+	naturerange: 2
+	path: Nature
+	rarity: 2
+	rit: N
+	ritrng: 2
+	sprite: 63
+
+Starsong Grove(929)
+	S: 1
+	astralrange: 2
+	level: 3
+	loc: 16386
+	path: Nature
+	rarity: 2
+	rit: S
+	ritrng: 2
+	sprite: 58
+
+Tree of Life(930)
+	heal: 3%
+	level: 2
+	loc: 16599
+	path: Nature
+	rarity: 2
+	sprite: 61
+
+Tree of Knowledge(931)
+	curse: 4%
+	exp: 8
+	level: 2
+	loc: 16607
+	path: Nature
+	rarity: 2
+	sprite: 61
+
+Tower of the Moon(932)
+	level: 2
+	loc: 16607
+	n_sum1: 2
+	path: Nature
+	rarity: 2
+	sprite: 60
+	sum1: 1224
+	summon2: 1224
+
+Vale of Healing Herbs(933)
+	heal: 2%
+	level: 2
+	loc: 199
+	path: Nature
+	rarity: 2
+	sprite: 58
+
+Moonvine Circle(934)
+	N: 1
+	S: 1
+	com1: 3999
+	level: 2
+	loc: 16607
+	path: Nature
+	rarity: 1
+	sprite: 65
+
+Hoburg Holdfast(935)
+	com1: 272
+	level: 0
+	loc: 3088
+	mon1: 271
+	mon2: 273
+	path: Nature
+	provdef1: 273
+	rarity: 2
+	sprite: 56
+
+Hoburg Settlement(936)
+	com1: 1198
+	incscale2: 3
+	level: 0
+	loc: 16
+	mon1: 483
+	path: Nature
+	rarity: 2
+	scale1: Growth(max 2)
+	sprite: 56
+
+Barbarian Warcamp(937)
+	com1: 147
+	com2: 141
+	level: 0
+	loc: 14
+	mon1: 139
+	mon2: 140
+	path: Nature
+	rarity: 5
+	sprite: 56
+
+Ancient Ruin(938)
+	level: 0
+	loc: 223
+	n_sum1: 6
+	path: Nature
+	rarity: 1
+	sprite: 65
+	sum1: 2223
+	summon6: 2223
+
+Dusk Spiral(939)
+	D: 1
+	N: 1
+	com1: 2361
+	level: 1
+	loc: 16386
+	path: Nature
+	rarity: 1
+	sprite: 60
+
+Tower of Thorns(940)
+	N: 2
+	lab: lab
+	level: 3
+	loc: 16386
+	naturerange: 2
+	path: Nature
+	rarity: 2
+	rit: N
+	ritrng: 2
+	sprite: 65
+
+Toad Tribe Settlement(941)
+	com1: 1614
+	level: 0
+	loc: 128
+	mon1: 1613
+	path: Nature
+	provdef1: 1613
+	rarity: 5
+	sprite: 62
+
+The Primal Forest(942)
+	N: 3
+	level: 0
+	loc: 16386
+	n_sum1: 1
+	path: Nature
+	rarity: 5
+	sprite: 58
+	sum1: 932
+	summon1: 932
+
+Grove Unpleasant(943)
+	D: 1
+	N: 1
+	level: 2
+	loc: 223
+	n_sum1: 2
+	n_sum2: 2
+	n_sum3: 2
+	path: Nature
+	rarity: 2
+	sprite: 58
+	sum1: 716
+	sum2: 715
+	sum3: 313
+	summon2: 716
+
+Cursed Land(944)
+	curse: 2%
+	incscale2: 5
+	level: 0
+	loc: 223
+	path: Nature
+	rarity: 5
+	scale1: Magic(max 2)
+	sprite: 59
+
+Ivy Grove(945)
+	N: 1
+	ivylord: 1
+	level: 2
+	loc: 2
+	path: Nature
+	rarity: 1
+	sprite: 59
+
+Hall of the Ivy King(946)
+	N: 2
+	incscale2: 3
+	ivylord: 2
+	level: 3
+	loc: 16386
+	path: Nature
+	rarity: 2
+	scale1: Growth(max 2)
+	sprite: 65
+
+Dancing Lights(947)
+	G: 1
+	level: 0
+	loc: 262367
+	path: Glamour
+	rarity: 0
+	sprite: 68
+
+Mist Shrouded Ruins(948)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 72
+
+Song of Birds(949)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 70
+
+Veiled Valley(950)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 73
+
+Gorge of Echoes(951)
+	G: 1
+	level: 1
+	loc: 262367
+	path: Glamour
+	rarity: 0
+	sprite: 73
+
+Shimmering Waterfall(952)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 68
+
+Fairy Circle(953)
+	G: 1
+	level: 2
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 77
+
+Dreamlight(954)
+	G: 1
+	level: 3
+	loc: 262367
+	path: Glamour
+	rarity: 0
+	sprite: 68
+
+Crystal Garden(955)
+	E: 1
+	G: 1
+	level: 3
+	loc: 262879
+	path: Glamour
+	rarity: 0
+	sprite: 69
+
+Perpetual Rainbow(956)
+	G: 1
+	level: 0
+	loc: 16
+	path: Glamour
+	rarity: 0
+	sprite: 68
+
+Mirage(957)
+	G: 1
+	level: 1
+	loc: 8
+	path: Glamour
+	rarity: 0
+	sprite: 69
+
+Singing Tree(958)
+	G: 2
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 0
+	sprite: 74
+
+Crossroad(959)
+	G: 1
+	level: 0
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 77
+
+Shop of Strange Items(960)
+	G: 1
+	level: 0
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 76
+
+Veiled Willow(961)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 74
+
+Hall of Merriment(962)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 71
+
+House of Otherworld Windows(963)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 76
+
+Circle of Strange Stones(964)
+	G: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 72
+
+Cracked Tower(965)
+	G: 2
+	level: 1
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 71
+
+Inn of Strange Travelers(966)
+	G: 1
+	level: 2
+	loc: 16
+	path: Glamour
+	rarity: 1
+	sprite: 76
+
+Dream Roses(967)
+	G: 2
+	level: 2
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+Mirrorlake(968)
+	G: 1
+	W: 2
+	com1: 341
+	level: 2
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 69
+
+Rune of Images(969)
+	glamourrange: 2
+	level: 2
+	loc: 255
+	path: Glamour
+	rarity: 1
+	rit: G
+	ritrng: 2
+	sprite: 72
+
+Stardust Meadow(970)
+	G: 1
+	S: 1
+	level: 2
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 77
+
+Rainbow Tower(971)
+	G: 1
+	W: 1
+	level: 2
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 75
+
+Singing Stream(972)
+	G: 1
+	W: 1
+	level: 2
+	loc: 735
+	path: Glamour
+	rarity: 1
+	sprite: 69
+
+Caer(973)
+	G: 2
+	fort: 4
+	level: 2
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 75
+
+The Gray Lodge(974)
+	D: 1
+	G: 1
+	com1: 3490
+	level: 2
+	loc: 16385
+	path: Glamour
+	rarity: 1
+	sprite: 71
+
+Twin Spire Tower(975)
+	G: 1
+	S: 1
+	com1: 343
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Rainbow Roses(976)
+	G: 1
+	N: 1
+	W: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 73
+
+The Dream Gate(977)
+	G: 2
+	glamourrange: 3
+	level: 3
+	loc: 214015
+	path: Glamour
+	rarity: 2
+	rit: G
+	ritrng: 3
+	sprite: 67
+
+Ivory Tower(978)
+	G: 3
+	S: 1
+	com1: 3489
+	lab: lab
+	level: 2
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Tower of the Hidden Order(979)
+	G: 3
+	S: 1
+	com1: 3486
+	com2: 3487
+	com3: 3488
+	lab: lab
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Tower of the Hidden Order(980)
+	G: 2
+	S: 2
+	com1: 3486
+	com2: 3487
+	com3: 3488
+	lab: lab
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Tower of the Hidden Order(981)
+	G: 2
+	S: 1
+	com1: 3486
+	com2: 3487
+	com3: 3488
+	lab: lab
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Academy of Magic(982)
+	G: 1
+	com1: 3498
+	com2: 3509
+	lab: lab
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Academy of High Magics(983)
+	A: 1
+	G: 2
+	com1: 3507
+	com2: 3498
+	com3: 3509
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Sprite Woods(984)
+	G: 1
+	N: 1
+	level: 2
+	loc: 2
+	n_sum1: 1
+	path: Glamour
+	rarity: 2
+	sprite: 73
+	sum1: 592
+	summon1: 592
+
+Mirror Wall Palace(985)
+	G: 3
+	com1: 343
+	level: 1
+	loc: 16607
+	path: Glamour
+	rarity: 1
+	sprite: 71
+
+Fernglow Forest(986)
+	G: 1
+	N: 1
+	level: 2
+	loc: 16386
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+Cedar of Seven Songs(987)
+	G: 2
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 1
+	sprite: 74
+
+The Glowing Hill(988)
+	G: 2
+	level: 2
+	loc: 16607
+	mon1: 849
+	path: Glamour
+	rarity: 1
+	sprite: 72
+
+The Crystal Oak(989)
+	E: 1
+	G: 1
+	S: 1
+	level: 2
+	loc: 16896
+	path: Glamour
+	rarity: 2
+	sprite: 74
+
+Dreamscape Downs(990)
+	G: 2
+	deccscale2: 1
+	level: 2
+	loc: 278751
+	path: Glamour
+	rarity: 2
+	scale1: Sloth(max 2)
+	sprite: 77
+	unr: -5
+
+Maze of Undreamt Dreams(991)
+	G: 3
+	level: 2
+	loc: 278751
+	path: Glamour
+	rarity: 2
+	sprite: 72
+
+Castle of the Sleeping Beauty(992)
+	G: 2
+	N: 1
+	deccscale2: 1
+	incscale2: 3
+	level: 2
+	loc: 16386
+	path: Glamour
+	rarity: 2
+	scale1: Growth(max 2)
+	scale2: Sloth(max 2)
+	sprite: 75
+
+Mistwinter(993)
+	A: 1
+	G: 1
+	W: 1
+	deccscale2: 2
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	scale1: Cold(max 2)
+	sprite: 69
+
+Shimmerfall(994)
+	G: 2
+	W: 1
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 68
+
+Dreamtravel Grove(995)
+	G: 1
+	S: 1
+	astralrange: 2
+	level: 2
+	loc: 16386
+	path: Glamour
+	rarity: 2
+	reveal: 3
+	rit: S
+	ritrng: 2
+	sprite: 70
+
+The Good Faery(996)
+	level: 3
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	reveal: 0
+	sprite: 76
+
+The Wormwood Tower(997)
+	D: 1
+	G: 1
+	N: 1
+	com1: 2358
+	level: 3
+	loc: 16386
+	path: Glamour
+	rarity: 1
+	sprite: 75
+
+The Gate of Deeper Slumber(998)
+	G: 2
+	deccscale2: 1
+	level: 1
+	loc: 278751
+	path: Glamour
+	rarity: 2
+	scale1: Sloth(max 2)
+	sprite: 72
+
+Cave of the Sleepers(999)
+	G: 1
+	level: 4
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 74
+
+Glowing Mound(1000)
+	F: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 72
+
+Elusive Mountain(1001)
+	E: 1
+	level: 1
+	loc: 4
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+Bog of Strange Lights(1002)
+	G: 1
+	W: 1
+	level: 1
+	loc: 134
+	path: Glamour
+	rarity: 1
+	sprite: 70
+
+Rainbow Mist(1003)
+	A: 1
+	level: 1
+	loc: 128
+	path: Glamour
+	rarity: 1
+	sprite: 68
+
+Moon Mirror Moor(1004)
+	S: 1
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 1
+	sprite: 77
+
+Shimmering Forest(1005)
+	N: 1
+	level: 1
+	loc: 2
+	path: Glamour
+	rarity: 0
+	sprite: 70
+
+Nightmare Tower(1006)
+	D: 1
+	level: 1
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 75
+
+Invisible Flame(1007)
+	F: 1
+	G: 1
+	level: 2
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 68
+
+Mist Coast(1008)
+	G: 1
+	W: 1
+	level: 2
+	loc: 64
+	path: Glamour
+	rarity: 1
+	sprite: 69
+
+Invisible Tower(1009)
+	E: 1
+	G: 1
+	level: 2
+	loc: 262367
+	path: Glamour
+	rarity: 1
+	sprite: 77
+
+Mountain of Playful Sylphs(1010)
+	A: 1
+	G: 1
+	level: 2
+	loc: 4
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+Slumber Woods(1011)
+	G: 1
+	N: 1
+	level: 2
+	loc: 2
+	path: Glamour
+	rarity: 1
+	sprite: 70
+
+Nightmare Marsh(1012)
+	D: 1
+	G: 1
+	level: 2
+	loc: 128
+	path: Glamour
+	rarity: 1
+	sprite: 70
+
+Leper Dreams(1013)
+	D: 1
+	disease: 2%
+	level: 1
+	loc: 262367
+	path: Glamour
+	rarity: 2
+	sprite: 70
+
+Desert of Dreams(1014)
+	G: 1
+	S: 1
+	level: 2
+	loc: 262152
+	path: Glamour
+	rarity: 1
+	sprite: 68
+
+House of Dreams(1015)
+	G: 1
+	conj: 20%
+	level: 1
+	loc: 262879
+	path: Glamour
+	rarity: 2
+	sprite: 76
+
+Dreams Unleashed(1016)
+	G: 1
+	evo: 20%
+	level: 1
+	loc: 262879
+	path: Glamour
+	rarity: 2
+	sprite: 68
+
+Everchanging Fields(1017)
+	G: 1
+	alter: 20%
+	level: 1
+	loc: 262879
+	path: Glamour
+	rarity: 2
+	sprite: 77
+
+Gossamer Weaver(1018)
+	G: 1
+	const: 20%
+	level: 1
+	loc: 262879
+	path: Glamour
+	rarity: 2
+	sprite: 76
+
+Twisted Mirror(1019)
+	G: 1
+	level: 1
+	loc: 262367
+	path: Glamour
+	rarity: 2
+	sprite: 72
+	thau: 20%
+
+Shrouded Glen(1020)
+	G: 1
+	ench: 20%
+	level: 1
+	loc: 223
+	path: Glamour
+	rarity: 2
+	sprite: 69
+
+Elusive Birdsong(1021)
+	A: 1
+	G: 1
+	level: 2
+	loc: 215
+	path: Glamour
+	rarity: 2
+	sprite: 69
+
+Twin Bottom Lake(1022)
+	G: 1
+	W: 1
+	level: 2
+	loc: 215
+	path: Glamour
+	rarity: 2
+	sprite: 69
+
+The Crystal Citadel(1023)
+	E: 1
+	G: 1
+	com1: 340
+	fort: 29
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+The Inverted Tower(1024)
+	G: 4
+	com1: 341
+	lab: lab
+	level: 3
+	loc: 17119
+	path: Glamour
+	rarity: 1
+	sprite: 71
+
+The Rainbow Shroud(1025)
+	G: 2
+	W: 2
+	holypow: 20%
+	level: 3
+	loc: 16607
+	path: Glamour
+	rarity: 1
+	sprite: 69
+
+Birdsong Tower(1026)
+	glamourrange: 2
+	level: 1
+	loc: 17119
+	path: Glamour
+	rarity: 2
+	reveal: 0
+	rit: G
+	ritrng: 2
+	sprite: 71
+
+Hall of Horrible Memories(1027)
+	G: 1
+	level: 1
+	loc: 278751
+	path: Glamour
+	rarity: 2
+	sprite: 68
+	unr: 5
+
+Dusk Spire(1028)
+	D: 1
+	G: 1
+	ench: 20%
+	level: 2
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 75
+
+Bard's College(1029)
+	G: 2
+	com1: 3694
+	level: 2
+	loc: 16400
+	path: Glamour
+	rarity: 2
+	sprite: 75
+
+Memory Collector(1030)
+	G: 1
+	S: 1
+	level: 2
+	loc: 278751
+	path: Glamour
+	rarity: 2
+	sprite: 76
+
+House of Lies(1031)
+	G: 1
+	blood: 20%
+	level: 3
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 76
+
+Twilight Academy(1032)
+	D: 1
+	G: 1
+	com1: 3683
+	lab: lab
+	level: 3
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+The Crystal Academy(1033)
+	E: 1
+	G: 1
+	com1: 340
+	lab: lab
+	level: 3
+	loc: 17119
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+The Great Mirror of Maaki(1034)
+	G: 1
+	S: 1
+	W: 1
+	allrange: 1
+	level: 3
+	loc: 16607
+	path: Glamour
+	rarity: 2
+	rit: FAWESDNGB
+	ritrng: 1
+	sprite: 72
+
+Palace of Dreams(1035)
+	G: 4
+	S: 1
+	level: 4
+	loc: 278529
+	path: Glamour
+	rarity: 2
+	sprite: 71
+
+Arena(1036)
+	level: 0
+	loc: 223
+	path: Blood
+	provinc: 40
+	rarity: 0
+	sprite: 82
+
+Brigand Lair(1037)
+	level: 1
+	loc: 223
+	mon1: 482
+	path: Blood
+	rarity: 0
+	sprite: 82
+	unr: 5
+
+Academy of War(1038)
+	exp: 4
+	level: 0
+	loc: 223
+	path: Blood
+	rarity: 1
+	sprite: 87
+
+Damned Merchant(1039)
+	B: 1
+	level: 1
+	loc: 223
+	path: Blood
+	rarity: 1
+	sprite: 82
+
+Fields of Blood(1040)
+	D: 1
+	level: 1
+	loc: 1
+	path: Blood
+	rarity: 1
+	sprite: 86
+
+Blood Henge(1041)
+	N: 1
+	com1: 122
+	level: 1
+	loc: 223
+	path: Blood
+	rarity: 2
+	sprite: 86
+
+Ebony Tower(1042)
+	D: 3
+	S: 1
+	com1: 339
+	lab: lab
+	level: 2
+	loc: 223
+	path: Blood
+	rarity: 2
+	sprite: 85
+
+Summoning Circle(1043)
+	blood: 30%
+	level: 3
+	loc: 735
+	path: Blood
+	rarity: 2
+	sprite: 86
+
+Gore Swamps(1044)
+	D: 1
+	N: 1
+	level: 1
+	loc: 16512
+	path: Blood
+	rarity: 1
+	sprite: 84
+
+Mount Chaining(1045)
+	blood: 30%
+	level: 1
+	loc: 16607
+	path: Blood
+	rarity: 1
+	sprite: 83
+
+The Vale of Infinite Horror(1046)
+	deccscale2: 4
+	horror: 1%
+	level: 1
+	loc: 278751
+	path: Blood
+	rarity: 1
+	scale1: Misfortune(max 2)
+	sprite: 83
+	unr: 5
+
+The Blood Keep(1047)
+	B: 1
+	com1: 1389
+	fort: 4
+	level: 1
+	loc: 16388
+	mon1: 1353
+	path: Blood
+	rarity: 1
+	sprite: 85
+
+Devil's Den(1048)
+	level: 2
+	loc: 16607
+	n_sum1: 1
+	path: Blood
+	rarity: 1
+	sprite: 88
+	sum1: 304
+	summon1: 304
+	unr: 15
+
+The Ebony Circle(1049)
+	D: 3
+	S: 1
+	bloodrange: 2
+	com1: 339
+	lab: lab
+	level: 2
+	loc: 16607
+	path: Blood
+	rarity: 2
+	rit: B
+	ritrng: 2
+	sprite: 85
+
+The Demon Gate(1050)
+	level: 3
+	loc: 16607
+	n_sum1: 1
+	path: Blood
+	rarity: 1
+	sprite: 88
+	sum1: 88
+	summon1: 88
+	unr: 10
+
+The Prison of Hearts(1051)
+	level: 3
+	loc: 16607
+	path: Blood
+	provinc: 60
+	rarity: 1
+	sprite: 85
+	unr: 5
+
+The Mountain of Power(1052)
+	B: 3
+	allrange: 2
+	evo: 30%
+	level: 2
+	loc: 16392
+	n_sum1: 3
+	path: Blood
+	rarity: 2
+	rit: FAWESDNGB
+	ritrng: 2
+	sprite: 83
+	sum1: 403
+	summon3: 403
+
+Hall of Flayed Skins(1053)
+	D: 2
+	S: 2
+	horror: 5%
+	level: 4
+	loc: 278751
+	path: Blood
+	rarity: 2
+	sprite: 85
+
+Assassins Guild(1054)
+	com1: 428
+	level: 1
+	loc: 223
+	path: Blood
+	rarity: 2
+	sprite: 85
+
+Haunted Torture Chamber(1055)
+	D: 1
+	curse: 5%
+	level: 2
+	loc: 735
+	path: Blood
+	rarity: 2
+	sprite: 85
+
+The Blood Rock(1056)
+	blood: 30%
+	level: 3
+	loc: 16388
+	path: Blood
+	rarity: 2
+	sprite: 83
+
+Forest of Pain(1057)
+	N: 1
+	horror: 1%
+	level: 2
+	loc: 16386
+	path: Blood
+	rarity: 2
+	sprite: 84
+	unr: 5
+
+Red Forest(1058)
+	F: 1
+	N: 1
+	level: 1
+	loc: 16386
+	path: Blood
+	rarity: 2
+	sprite: 84
+
+Bloodleaf Forest(1059)
+	N: 1
+	level: 1
+	loc: 2
+	path: Blood
+	rarity: 1
+	sprite: 84
+
+Bloodstone Mountain(1060)
+	E: 1
+	level: 1
+	loc: 4
+	path: Blood
+	rarity: 1
+	sprite: 83
+
+Bloodwind Waste(1061)
+	A: 1
+	level: 1
+	loc: 8
+	path: Blood
+	rarity: 1
+	sprite: 86
+
+Bloodsucker Fens(1062)
+	W: 1
+	level: 1
+	loc: 128
+	path: Blood
+	rarity: 1
+	sprite: 84
+
+Bloodmarble Mausoleum(1063)
+	D: 1
+	level: 1
+	loc: 735
+	path: Blood
+	rarity: 1
+	sprite: 87
+
+Bloodsplatter Pattern(1064)
+	S: 1
+	level: 1
+	loc: 735
+	path: Blood
+	rarity: 1
+	sprite: 86
+
+Torture Tower(1065)
+	fort: 2
+	horror: 3%
+	level: 1
+	loc: 262160
+	path: Blood
+	rarity: 1
+	sprite: 85
+
+Bloodshade Glen(1066)
+	N: 1
+	blood: 20%
+	conj: 20%
+	level: 2
+	loc: 16514
+	path: Blood
+	rarity: 2
+	sprite: 84
+
+The Slaughterhouse(1067)
+	level: 2
+	loc: 16607
+	n_sum1: 1
+	n_sum2: 1
+	n_sum3: 1
+	path: Blood
+	rarity: 2
+	sprite: 82
+	sum1: 460
+	sum2: 198
+	sum3: 435
+	summon1: 460
+
+The Lodge(1068)
+	B: 1
+	com1: 428
+	com2: 94
+	com3: 95
+	level: 2
+	loc: 16607
+	path: Blood
+	rarity: 2
+	sprite: 82
+
+Pool of Unhealthy Rites(1069)
+	D: 1
+	W: 1
+	alter: 20%
+	disease: 3%
+	level: 2
+	loc: 735
+	path: Blood
+	rarity: 2
+	sprite: 86
+
+Bloodstone Mirror(1070)
+	level: 2
+	loc: 223
+	path: Blood
+	rarity: 2
+	scry: 1
+	sprite: 86
+	thau: 20%
+
+Palace of Wicked Dreams(1071)
+	B: 1
+	G: 1
+	level: 3
+	loc: 16
+	path: Blood
+	rarity: 2
+	sprite: 85
+
+Tower of the Devil's Bride(1072)
+	level: 1
+	loc: 16607
+	n_sum1: 1
+	n_sum2: 1
+	n_sum3: 1
+	path: Blood
+	rarity: 1
+	sprite: 85
+	sum1: 303
+	sum2: 2286
+	sum3: 2287
+	summon1: 303
+	unr: 5
+
+Slave Market(1073)
+	B: 3
+	level: 0
+	loc: 735
+	path: Blood
+	rarity: 1
+	sprite: 82
+	unr: 2
+
+Forgotten Village(1074)
+	B: 1
+	level: 1
+	loc: 2
+	path: Blood
+	rarity: 0
+	sprite: 82
+
+Sacrificial Grove(1075)
+	blood: 20%
+	level: 1
+	loc: 18
+	path: Blood
+	rarity: 1
+	sprite: 84
+
+Bleeding Tree(1076)
+	N: 1
+	level: 1
+	loc: 2
+	path: Blood
+	rarity: 2
+	sprite: 84
+
+Stained Altar(1077)
+	blood: 20%
+	level: 1
+	loc: 16607
+	n_sum1: 1
+	path: Blood
+	rarity: 2
+	sprite: 86
+	sum1: 1736
+	summon1: 1736
+
+Pentagram(1078)
+	bloodrange: 2
+	level: 2
+	loc: 223
+	path: Blood
+	rarity: 1
+	rit: B
+	ritrng: 2
+	sprite: 86
+
+The First Gate(1079)
+	blood: 10%
+	level: 1
+	loc: 17119
+	path: Blood
+	rarity: 1
+	sprite: 88
+
+The Second Gate(1080)
+	blood: 15%
+	level: 2
+	loc: 17119
+	path: Blood
+	rarity: 1
+	sprite: 88
+
+The Third Gate(1081)
+	blood: 25%
+	level: 4
+	loc: 17119
+	path: Blood
+	rarity: 2
+	sprite: 88
+
+Tower of the Deformer(1082)
+	alter: 20%
+	level: 2
+	loc: 16607
+	n_sum1: 2
+	n_sum2: 2
+	n_sum3: 2
+	path: Blood
+	rarity: 2
+	sprite: 85
+	sum1: 468
+	sum2: 460
+	sum3: 455
+	summon2: 468
+
+House of Disfigurement(1083)
+	alter: 20%
+	level: 2
+	loc: 16607
+	n_sum1: 3
+	path: Blood
+	rarity: 2
+	sprite: 82
+	sum1: 460
+	summon3: 460
+
+Statue of Hideous Visage(1084)
+	horror: 4%
+	level: 1
+	loc: 223
+	path: Blood
+	rarity: 5
+	sprite: 85
+	thau: 20%
+
+Demon Gate(1085)
+	level: 0
+	loc: 223
+	n_sum1: 1
+	path: Blood
+	rarity: 5
+	sprite: 88
+	sum1: 88
+	summon1: 88
+	unr: 10
+
+Cliffside Abattoir(1086)
+	A: 1
+	corpselord: 2
+	level: 1
+	loc: 16388
+	path: Blood
+	rarity: 1
+	sprite: 83
+
+Redcap Feeding Ground(1087)
+	B: 2
+	G: 1
+	level: 1
+	loc: 223
+	path: Blood
+	rarity: 2
+	sprite: 86
+	unr: 5
+
+Ancient Temple(1088)
+	S: 1
+	level: 1
+	loc: 262879
+	path: Holy
+	rarity: 0
+	sprite: 93
+
+Pool of Sanctity(1089)
+	W: 1
+	holyfire: 5%
+	level: 2
+	loc: 735
+	path: Holy
+	rarity: 1
+	sprite: 95
+
+Hidden Monastery(1090)
+	com1: 240
+	level: 3
+	loc: 223
+	path: Holy
+	rarity: 1
+	sprite: 96
+	unr: -5
+
+Monastery of Light(1091)
+	com1: 240
+	com2: 241
+	level: 0
+	loc: 223
+	path: Holy
+	rarity: 2
+	sprite: 96
+	unr: -5
+
+Convent(1092)
+	com1: 2248
+	com2: 2249
+	level: 1
+	loc: 223
+	path: Holy
+	rarity: 1
+	sprite: 96
+	unr: -5
+
+Abbey(1093)
+	com1: 2248
+	com2: 2249
+	com3: 2250
+	level: 1
+	loc: 223
+	path: Holy
+	rarity: 2
+	sprite: 96
+	unr: -5
+
+Temple of Time(1094)
+	S: 2
+	com1: 240
+	com2: 241
+	level: 4
+	loc: 262367
+	path: Holy
+	rarity: 2
+	sprite: 95
+
+The Marble Temple(1095)
+	com1: 241
+	level: 2
+	loc: 16607
+	path: Holy
+	provinc: 75
+	rarity: 1
+	sprite: 91
+	unr: -5
+
+The Empty Grave(1096)
+	D: 1
+	level: 3
+	loc: 279263
+	path: Holy
+	rarity: 1
+	sprite: 97
+	unr: -5
+
+The Forgotten Crypt(1097)
+	E: 1
+	G: 1
+	W: 1
+	level: 3
+	loc: 279263
+	path: Holy
+	rarity: 1
+	sprite: 97
+	unr: -5
+
+The Ward(1098)
+	holyfire: 30%
+	level: 4
+	loc: 16607
+	path: Holy
+	rarity: 2
+	sprite: 95
+	unr: -10
+
+The Records of Mankind(1099)
+	com1: 479
+	level: 3
+	loc: 278751
+	path: Holy
+	rarity: 2
+	reveal: 999
+	sprite: 92
+
+Order of the Secret Light(1100)
+	S: 1
+	com1: 478
+	com2: 23
+	level: 1
+	loc: 17631
+	mon1: 22
+	path: Holy
+	provdef1: 22
+	rarity: 2
+	sprite: 95
+
+Order of the Undying(1101)
+	level: 1
+	loc: 17631
+	n_sum1: 6
+	path: Holy
+	rarity: 2
+	sprite: 96
+	sum1: 189
+	summon6: 189
+
+Shrine of the Outcast(1102)
+	level: 1
+	loc: 735
+	n_sum1: 2
+	n_sum2: 2
+	path: Holy
+	rarity: 1
+	sprite: 93
+	sum1: 456
+	sum2: 459
+	summon2: 456
+
+Temple of the Spider God(1103)
+	level: 1
+	loc: 735
+	n_sum1: 6
+	n_sum2: 10
+	natcom: 890
+	nationalrecruits: 76
+	natmon: 889
+	path: Holy
+	rarity: 2
+	sprite: 94
+	sum1: 782
+	sum2: 2223
+	summon10: 2223
+	summon6: 782
+
+Temple of the Hidden Flame(1104)
+	F: 1
+	level: 2
+	loc: 735
+	n_sum1: 2
+	path: Holy
+	rarity: 2
+	sprite: 93
+	sum1: 527
+	summon2: 527
+
+Temple of Flying Monkeys(1105)
+		Unknown Attribute<1000>: 1
+	level: 1
+	loc: 16607
+	n_sum1: 2
+	path: Holy
+	rarity: 2
+	sprite: 92
+	sum1: 1199
+	summon2: 1199
+
+The Martyr's Grave(1106)
+	domspread: 1
+	level: 1
+	loc: 767
+	path: Holy
+	rarity: 2
+	sprite: 97
+
+Cradle of Faith(1107)
+	domspread: 2
+	level: 1
+	loc: 262911
+	path: Holy
+	rarity: 2
+	sprite: 95
+
+Pillar of Life(1108)
+	holypow: 10%
+	level: 1
+	loc: 17151
+	path: Holy
+	rarity: 2
+	sprite: 95
+
+The Prophet's Sigil(1109)
+	level: 1
+	loc: 262911
+	path: Holy
+	rarity: 2
+	reveal: 5
+	sprite: 95
+
+Oracle's Lair(1110)
+	level: 1
+	loc: 262911
+	path: Holy
+	rarity: 2
+	reveal: 3
+	sprite: 97
+
+Mountain of Revelation(1111)
+	level: 1
+	loc: 4
+	path: Holy
+	rarity: 2
+	reveal: 0
+	scry: 1
+	sprite: 96
+
+Place of Prophecy(1112)
+	level: 1
+	loc: 767
+	path: Holy
+	rarity: 2
+	reveal: 5
+	sprite: 96
+
+Stele of Law(1113)
+	level: 1
+	loc: 255
+	path: Holy
+	rarity: 2
+	sprite: 94
+	unr: -10
+
+Temple of Life and Death(1114)
+		Unknown Attribute<1000>: 1
+	D: 1
+	N: 1
+	level: 1
+	loc: 16607
+	path: Holy
+	rarity: 2
+	sprite: 92
+
+Garden of Longevity(1115)
+	heal: 7%
+	level: 2
+	loc: 16599
+	path: Holy
+	rarity: 2
+	sprite: 96
+
+The Holy Crypt of Anre(1116)
+	A: 1
+	F: 1
+	N: 1
+	level: 0
+	loc: 16607
+	nationalrecruits: 61
+	natmon: 366
+	path: Holy
+	rarity: 5
+	sprite: 97
+	unr: -10
+
+Knightly Order(1117)
+	com1: 23
+	incscale2: 0
+	level: 0
+	loc: 223
+	mon1: 22
+	path: Holy
+	provdef1: 22
+	rarity: 5
+	scale1: Order(max 2)
+	sprite: 99
+
+Gorge of Glowing Fish(1118)
+	F: 1
+	level: 1
+	loc: 32
+	path: Fire
+	rarity: 0
+	sprite: 7
+
+Glowing Sands(1119)
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Sparkling Current(1120)
+	F: 1
+	level: 1
+	loc: 32
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Crust of Molten Sulphur(1121)
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Underwater Volcano(1122)
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 0
+	sprite: 1
+
+Smoldering Starfish Colony(1123)
+	F: 1
+	level: 1
+	loc: 32
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Pond of Lava(1124)
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Steaming Stone(1125)
+	A: 1
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Boiling Current(1126)
+	A: 1
+	F: 1
+	incscale2: 2
+	level: 1
+	loc: 32
+	path: Fire
+	rarity: 1
+	scale1: Heat(max 2)
+	sprite: 5
+
+Fire Rift(1127)
+	F: 2
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 1
+	sprite: 5
+
+Magma River(1128)
+	F: 3
+	level: 1
+	loc: 768
+	path: Fire
+	rarity: 2
+	sprite: 5
+
+Thermal Vent(1129)
+	F: 1
+	level: 1
+	loc: 256
+	path: Fire
+	rarity: 0
+	sprite: 5
+
+Underwater Cave(1130)
+	A: 1
+	level: 1
+	loc: 32
+	path: Air
+	rarity: 1
+	sprite: 16
+
+Imprisoned Zephyr(1131)
+	A: 2
+	level: 3
+	loc: 32
+	path: Air
+	rarity: 2
+	sprite: 16
+
+Pocket of Air(1132)
+	A: 2
+	level: 1
+	loc: 32
+	path: Air
+	rarity: 2
+	sprite: 16
+
+Diamond Corals(1133)
+	A: 2
+	level: 2
+	loc: 32
+	path: Air
+	rarity: 2
+	sprite: 16
+
+Floating Rock(1134)
+	A: 1
+	level: 1
+	loc: 131072
+	path: Air
+	rarity: 0
+	sprite: 12
+
+Bubbling Fissure(1135)
+	A: 1
+	level: 1
+	loc: 32
+	path: Air
+	rarity: 0
+	sprite: 16
+
+Foaming Waves(1136)
+	A: 1
+	level: 1
+	loc: 64
+	path: Air
+	rarity: 1
+	sprite: 16
+
+Island of Floating Stone(1137)
+	A: 1
+	E: 1
+	level: 1
+	loc: 131072
+	path: Air
+	rarity: 1
+	sprite: 9
+
+Scoriatic Cliffs(1138)
+	A: 1
+	level: 1
+	loc: 256
+	path: Air
+	rarity: 2
+	sprite: 16
+
+Coral Reef(1139)
+	W: 1
+	level: 0
+	loc: 131072
+	path: Water
+	rarity: 0
+	res: 40
+	sprite: 27
+
+Clam Field(1140)
+	S: 1
+	level: 1
+	loc: 32
+	path: Water
+	provinc: 50
+	rarity: 0
+	sprite: 27
+
+Coral Statue(1141)
+	W: 1
+	level: 1
+	loc: 32
+	path: Water
+	rarity: 1
+	sprite: 27
+
+Sunken Island(1142)
+	E: 2
+	W: 2
+	level: 2
+	loc: 32
+	path: Water
+	rarity: 2
+	sprite: 26
+
+Man'o'War Breeding Ground(1143)
+	W: 2
+	level: 2
+	loc: 32
+	path: Water
+	rarity: 2
+	sprite: 27
+
+Sunken Tower(1144)
+	W: 1
+	level: 2
+	loc: 32
+	path: Water
+	rarity: 1
+	sprite: 22
+
+Troll Pit(1145)
+	level: 2
+	loc: 32
+	mon1: 564
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Shrine of the Shark Lords(1146)
+	level: 0
+	loc: 32
+	mon1: 545
+	path: Water
+	rarity: 2
+	sprite: 24
+
+Tower of Pearls(1147)
+	S: 2
+	W: 1
+	com1: 103
+	level: 3
+	loc: 32
+	mon1: 545
+	path: Water
+	rarity: 2
+	sprite: 24
+
+Isle of Ice(1148)
+	W: 3
+	level: 1
+	loc: 16416
+	path: Water
+	rarity: 1
+	sprite: 26
+
+Academy Underneath(1149)
+	W: 2
+	com1: 103
+	com2: 529
+	fort: 6
+	lab: lab
+	level: 1
+	loc: 16416
+	mon1: 577
+	path: Water
+	rarity: 1
+	rit: W
+	ritrng: 1
+	sprite: 24
+	waterrange: 1
+
+The Hippocampoi Fields(1150)
+	N: 1
+	W: 1
+	level: 2
+	loc: 16416
+	n_sum1: 2
+	path: Water
+	rarity: 2
+	sprite: 19
+	sum1: 1058
+	summon2: 1058
+
+Sentient Current(1151)
+	W: 1
+	conj: 20%
+	level: 2
+	loc: 32
+	path: Water
+	rarity: 2
+	sprite: 27
+
+Kraken Pit(1152)
+	level: 2
+	loc: 256
+	n_sum1: 1
+	path: Water
+	rarity: 2
+	sprite: 25
+	sum1: 438
+	summon1: 438
+
+Cold Currents(1153)
+	W: 1
+	level: 0
+	loc: 256
+	path: Water
+	rarity: 0
+	sprite: 27
+
+Depths Unnamed(1154)
+	W: 2
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 0
+	sprite: 27
+
+Whispering Waters(1155)
+	W: 1
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 1
+	sprite: 19
+
+Glowing Depths(1156)
+	F: 1
+	W: 1
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Falling Depths(1157)
+	W: 2
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 1
+	sprite: 27
+
+Dark Waters(1158)
+	D: 1
+	W: 1
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 1
+	sprite: 27
+
+The Darkness(1159)
+	E: 1
+	W: 1
+	level: 2
+	loc: 16640
+	path: Water
+	rarity: 2
+	sprite: 25
+	thau: 20%
+
+The Gate in the Deep(1160)
+	W: 2
+	conj: 20%
+	level: 2
+	loc: 16640
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Cavern of Underwater Ice(1161)
+	W: 1
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 0
+	sprite: 25
+
+Charmed Current(1162)
+	W: 1
+	level: 1
+	loc: 32
+	path: Water
+	rarity: 0
+	sprite: 25
+
+Sweet Water Current(1163)
+	W: 1
+	level: 1
+	loc: 32
+	path: Water
+	rarity: 0
+	sprite: 25
+
+Frozen Deeps(1164)
+	W: 1
+	deccscale2: 2
+	level: 1
+	loc: 256
+	path: Water
+	rarity: 0
+	scale1: Cold(max 2)
+	sprite: 25
+
+Tears of the Ancients(1165)
+	S: 1
+	W: 1
+	level: 2
+	loc: 256
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Ridge of Ice(1166)
+	W: 1
+	level: 1
+	loc: 288
+	path: Water
+	rarity: 0
+	sprite: 25
+
+Fathoms Deep(1167)
+	W: 1
+	incscale2: 5
+	level: 1
+	loc: 16640
+	path: Water
+	rarity: 0
+	scale1: Magic(max 2)
+	sprite: 25
+
+Maelstrom(1168)
+	W: 2
+	level: 1
+	loc: 32
+	path: Water
+	rarity: 1
+	sprite: 25
+
+The Sunken Observatory(1169)
+	S: 1
+	W: 2
+	level: 3
+	loc: 16672
+	path: Water
+	rarity: 2
+	sprite: 18
+
+Underwater Cliff(1170)
+	E: 1
+	level: 1
+	loc: 288
+	path: Earth
+	rarity: 0
+	sprite: 40
+
+Moving Sand Banks(1171)
+	E: 1
+	level: 1
+	loc: 32
+	path: Earth
+	rarity: 0
+	sprite: 39
+
+Basalt Statue(1172)
+	E: 2
+	level: 2
+	loc: 288
+	path: Earth
+	rarity: 1
+	sprite: 40
+
+Isle of the Sea Fathers(1173)
+	W: 2
+	com1: 529
+	level: 2
+	loc: 147456
+	path: Earth
+	rarity: 1
+	sprite: 36
+
+Basalt Halls(1174)
+	E: 3
+	level: 2
+	loc: 256
+	path: Earth
+	rarity: 2
+	sprite: 40
+
+City of Stones(1175)
+	E: 4
+	level: 2
+	loc: 16640
+	path: Earth
+	rarity: 1
+	sprite: 40
+
+Caves in the Deep(1176)
+	E: 1
+	level: 0
+	loc: 256
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Copper Clams(1177)
+	E: 1
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 1
+	sprite: 39
+
+Mineral Fingers(1178)
+	E: 2
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 1
+	sprite: 31
+
+Plateau of Shards(1179)
+	E: 2
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 1
+	sprite: 39
+
+Long Lost Circle(1180)
+	E: 1
+	S: 1
+	level: 2
+	loc: 256
+	path: Earth
+	rarity: 2
+	sprite: 28
+
+The Basalt Forge(1181)
+	E: 1
+	const: 20%
+	level: 2
+	loc: 16640
+	path: Earth
+	rarity: 2
+	sprite: 28
+
+Rock Crab Colony(1182)
+	E: 1
+	level: 1
+	loc: 32
+	path: Earth
+	rarity: 0
+	sprite: 39
+
+Underwater Stalagmite(1183)
+	E: 1
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 0
+	sprite: 40
+
+Ridge of Volcanic Glass(1184)
+	E: 1
+	level: 1
+	loc: 256
+	path: Earth
+	provinc: 50
+	rarity: 0
+	sprite: 40
+
+Meteorite Rock(1185)
+	E: 1
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 0
+	sprite: 40
+
+Basalt Plateau(1186)
+	E: 1
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 0
+	sprite: 40
+
+Mountain Underneath(1187)
+	E: 1
+	bringres: 50
+	level: 1
+	loc: 256
+	path: Earth
+	rarity: 1
+	sprite: 40
+
+Fossilized Conch(1188)
+	E: 1
+	level: 1
+	loc: 32
+	path: Earth
+	rarity: 1
+	sprite: 39
+
+Forgotten Crevasse(1189)
+	E: 1
+	level: 2
+	loc: 256
+	path: Earth
+	rarity: 1
+	sprite: 39
+
+Glowing Kelp Forest(1190)
+	N: 1
+	level: 0
+	loc: 65536
+	path: Nature
+	rarity: 0
+	sprite: 67
+
+Kelp Fortress(1191)
+	N: 1
+	fort: 6
+	level: 1
+	loc: 131072
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Amber Beach Island(1192)
+	E: 1
+	N: 1
+	level: 1
+	loc: 131072
+	path: Nature
+	provinc: 75
+	rarity: 2
+	sprite: 64
+
+Floating Forest(1193)
+	N: 2
+	level: 1
+	loc: 131072
+	path: Nature
+	rarity: 2
+	sprite: 67
+
+Kelp Grove(1194)
+	N: 1
+	level: 2
+	loc: 131072
+	path: Nature
+	rarity: 0
+	sprite: 67
+
+Coral Garden(1195)
+	N: 1
+	level: 1
+	loc: 32
+	path: Nature
+	rarity: 1
+	sprite: 66
+
+Sea Oak(1196)
+	A: 1
+	N: 2
+	level: 2
+	loc: 32
+	path: Nature
+	rarity: 1
+	sprite: 66
+
+The Amber Halls(1197)
+	F: 1
+	N: 2
+	com1: 575
+	com2: 576
+	level: 2
+	loc: 16416
+	mon1: 573
+	path: Nature
+	rarity: 2
+	sprite: 67
+
+The Forest Beneath the Waves(1198)
+	N: 2
+	level: 2
+	loc: 16416
+	n_sum1: 3
+	path: Nature
+	rarity: 2
+	sprite: 67
+	sum1: 1062
+	summon3: 1062
+
+Kelp Sea(1199)
+	N: 2
+	W: 1
+	level: 0
+	loc: 65536
+	n_sum1: 1
+	path: Nature
+	rarity: 2
+	sprite: 67
+	sum1: 1062
+	summon1: 1062
+
+Forest of Amber Kelp(1200)
+	F: 1
+	N: 1
+	W: 1
+	com1: 575
+	level: 2
+	loc: 81920
+	path: Nature
+	rarity: 2
+	sprite: 67
+
+Fields of Glowing Algae(1201)
+	N: 1
+	level: 1
+	loc: 32
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Giant Anemone(1202)
+	N: 1
+	level: 1
+	loc: 32
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Ridge of Empty Shells(1203)
+	N: 1
+	level: 1
+	loc: 256
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Wall of Living Kelp(1204)
+	N: 1
+	level: 1
+	loc: 65536
+	path: Nature
+	rarity: 0
+	sprite: 67
+
+Monstrous Conch(1205)
+	N: 1
+	level: 1
+	loc: 32
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Living Sediment(1206)
+	N: 1
+	level: 1
+	loc: 32
+	path: Nature
+	rarity: 0
+	sprite: 66
+
+Lair of the Eel-King(1207)
+	N: 1
+	level: 1
+	loc: 256
+	path: Nature
+	rarity: 1
+	sprite: 67
+
+Breeding Ground of Eels(1208)
+	N: 1
+	level: 1
+	loc: 256
+	path: Nature
+	rarity: 1
+	sprite: 66
+
+Sunken Galley(1209)
+	D: 1
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 0
+	sprite: 56
+
+Reef of Sunken Ships(1210)
+	D: 2
+	level: 1
+	loc: 131072
+	path: Death
+	rarity: 1
+	sprite: 56
+
+Dying Ground of the Whales(1211)
+	D: 1
+	N: 1
+	W: 2
+	level: 2
+	loc: 16416
+	path: Death
+	rarity: 1
+	sprite: 56
+
+Isle of Death(1212)
+	D: 3
+	level: 1
+	loc: 16416
+	path: Death
+	rarity: 1
+	sprite: 55
+
+Dark Depths(1213)
+	D: 1
+	W: 1
+	level: 1
+	loc: 256
+	path: Death
+	rarity: 1
+	sprite: 54
+
+Ghoul Fish Cave(1214)
+	D: 1
+	W: 1
+	level: 1
+	loc: 256
+	path: Death
+	rarity: 1
+	sprite: 54
+
+The Wasted Sea(1215)
+	D: 2
+	level: 0
+	loc: 16640
+	n_sum1: 9
+	path: Death
+	rarity: 1
+	sprite: 56
+	sum1: 318
+	summon9: 318
+
+The Sea of Dead Memories(1216)
+	D: 1
+	G: 1
+	W: 1
+	level: 1
+	loc: 16640
+	n_sum1: 2
+	path: Death
+	rarity: 1
+	sprite: 56
+	sum1: 676
+	summon2: 676
+
+Black Sands(1217)
+	D: 1
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 0
+	sprite: 49
+
+Basalt Ruins(1218)
+	D: 1
+	level: 1
+	loc: 256
+	path: Death
+	rarity: 0
+	sprite: 51
+
+Submerged Catacombs(1219)
+	D: 1
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 0
+	sprite: 54
+
+Stale Current(1220)
+	D: 1
+	deccscale2: 3
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 0
+	scale1: Death(max 2)
+	sprite: 54
+
+Black Coral Reef(1221)
+	D: 1
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 0
+	sprite: 56
+
+Field of Undead Clams(1222)
+	D: 1
+	level: 1
+	loc: 32
+	path: Death
+	rarity: 1
+	sprite: 56
+
+Halls of the Drowned(1223)
+	D: 1
+	level: 1
+	loc: 16416
+	n_sum1: 3
+	n_sum2: 3
+	path: Death
+	rarity: 1
+	sprite: 47
+	sum1: 619
+	sum2: 618
+	summon3: 619
+
+Sunken Ship of Dread(1224)
+	D: 1
+	level: 2
+	loc: 17440
+	n_sum1: 9
+	path: Death
+	rarity: 2
+	sprite: 56
+	sum1: 2241
+	summon9: 2241
+
+Pearl Stairway(1225)
+	S: 1
+	level: 1
+	loc: 32
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Arcane Gateway(1226)
+	S: 1
+	conj: 20%
+	level: 3
+	loc: 288
+	path: Astral
+	rarity: 2
+	sprite: 45
+
+The Water Solstice(1227)
+	S: 2
+	W: 4
+	ench: 40%
+	level: 2
+	loc: 16416
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Basalt Pillars(1228)
+	S: 1
+	level: 1
+	loc: 256
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Labyrinth of the Deeps(1229)
+	S: 3
+	level: 2
+	loc: 256
+	path: Astral
+	rarity: 2
+	sprite: 42
+
+Gorge of Mystery(1230)
+	S: 1
+	alter: 20%
+	level: 2
+	loc: 256
+	path: Astral
+	rarity: 2
+	sprite: 47
+
+The Crater(1231)
+	S: 2
+	com1: 445
+	level: 3
+	loc: 16640
+	mon1: 331
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+The Last Void(1232)
+	S: 2
+	incscale2: 5
+	level: 3
+	loc: 16640
+	path: Astral
+	rarity: 2
+	scale1: Magic(max 2)
+	sprite: 42
+	thau: 30%
+
+The Iron Caverns(1233)
+	E: 1
+	S: 1
+	W: 1
+	level: 2
+	loc: 17152
+	path: Astral
+	rarity: 1
+	sprite: 47
+
+Submerged Labyrinth(1234)
+	S: 1
+	level: 1
+	loc: 32
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Displaced Tunnel(1235)
+	S: 1
+	level: 1
+	loc: 256
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Arcane Vent(1236)
+	S: 1
+	level: 1
+	loc: 256
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Shimmering Conches(1237)
+	S: 1
+	level: 1
+	loc: 32
+	path: Astral
+	rarity: 0
+	sprite: 41
+
+Pearl Farm(1238)
+	S: 1
+	level: 1
+	loc: 32
+	path: Astral
+	rarity: 0
+	sprite: 41
+
+Eye Pebble Plain(1239)
+	S: 1
+	level: 1
+	loc: 32
+	path: Astral
+	rarity: 1
+	sprite: 41
+
+Abyss to the Beyond(1240)
+	S: 2
+	level: 2
+	loc: 256
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Blasphemous Presence(1241)
+	S: 1
+	level: 1
+	loc: 256
+	path: Astral
+	rarity: 1
+	sprite: 42
+
+Enchanted Current(1242)
+	S: 2
+	incscale2: 5
+	level: 1
+	loc: 16416
+	path: Astral
+	rarity: 1
+	scale1: Magic(max 2)
+	sprite: 42
+
+Shimmerfish Reef(1243)
+	G: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 0
+	sprite: 80
+
+Dream Kelp(1244)
+	G: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 0
+	sprite: 81
+
+Singing Sands(1245)
+	E: 1
+	G: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 1
+	sprite: 68
+
+Lingering Corpusants(1246)
+	G: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 1
+	sprite: 68
+
+Slumbering Seaweeds(1247)
+	G: 1
+	N: 1
+	level: 2
+	loc: 32
+	path: Glamour
+	rarity: 1
+	sprite: 81
+
+Witchfire Fog(1248)
+	A: 1
+	G: 1
+	level: 2
+	loc: 32
+	path: Glamour
+	rarity: 0
+	sprite: 68
+
+Drowned Dreams(1249)
+	D: 1
+	G: 1
+	level: 2
+	loc: 32
+	path: Glamour
+	rarity: 2
+	sprite: 68
+
+Isle of the Unaging(1250)
+	G: 1
+	W: 1
+	level: 2
+	loc: 16416
+	path: Glamour
+	rarity: 2
+	sprite: 68
+
+Siren Cliffs(1251)
+	G: 1
+	W: 1
+	com1: 1054
+	level: 2
+	loc: 16416
+	path: Glamour
+	rarity: 2
+	sprite: 80
+
+Faces Beneath the Waves(1252)
+	G: 1
+	S: 1
+	horror: 1%
+	level: 2
+	loc: 32
+	path: Glamour
+	rarity: 2
+	sprite: 68
+
+Whale Song Forest(1253)
+	G: 1
+	N: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 1
+	sprite: 81
+
+Pearl Sphere(1254)
+	G: 1
+	S: 1
+	level: 1
+	loc: 32
+	path: Glamour
+	rarity: 1
+	scry: 1
+	sprite: 81
+
+Dreamlands(1255)
+	G: 3
+	deccscale2: 1
+	level: 3
+	loc: 16416
+	path: Glamour
+	rarity: 2
+	scale1: Sloth(max 2)
+	sprite: 80
+
+Ancient Temple of the Deeps(1256)
+	S: 1
+	W: 1
+	level: 1
+	loc: 288
+	path: Holy
+	rarity: 0
+	sprite: 95
+
+Knightly Order of the Deep(1257)
+	com1: 406
+	incscale2: 0
+	level: 0
+	loc: 32
+	mon1: 1060
+	path: Holy
+	provdef1: 1060
+	rarity: 5
+	scale1: Order(max 2)
+	sprite: 95
+
+Shambler Reef(1258)
+	com1: 207
+	level: 0
+	loc: 64
+	mon1: 206
+	path: Water
+	rarity: 0
+	sprite: 19
+
+Navigators Guild(1259)
+	W: 2
+	com1: 869
+	level: 0
+	loc: 64
+	path: Water
+	rarity: 2
+	sprite: 24
+
+Wailwind Shores(1260)
+	A: 1
+	G: 1
+	level: 1
+	loc: 64
+	path: Air
+	rarity: 1
+	sprite: 12
+
+Rain Forest(1261)
+	incscale2: 2
+	level: 0
+	loc: 2
+	path: Nature
+	rarity: 5
+	scale1: Heat(max 2)
+	scale2: Growth(max 2)
+	sprite: 57
+
+Tundra(1262)
+	deccscale2: 2
+	level: 0
+	loc: 8
+	path: Water
+	rarity: 5
+	scale1: Cold(max 2)
+	sprite: 18
+
+Desert(1263)
+	deccscale2: 3
+	incscale2: 2
+	level: 0
+	loc: 8
+	path: Fire
+	rarity: 5
+	scale1: Heat(max 2)
+	scale2: Death(max 2)
+	sprite: 2
+
+Oasis(1264)
+	W: 1
+	level: 1
+	loc: 8
+	path: Water
+	rarity: 0
+	sprite: 18
+	sup: 75
+
+Great Oasis(1265)
+	N: 1
+	W: 1
+	level: 1
+	loc: 8
+	path: Water
+	rarity: 2
+	sprite: 18
+	sup: 125
+
+Date Oasis(1266)
+	N: 1
+	level: 1
+	loc: 8
+	path: Nature
+	provinc: 40
+	rarity: 1
+	recpoints: 50
+	sprite: 56
+	sup: 75
+
+City of Dates(1267)
+	N: 1
+	W: 1
+	fort: 1
+	level: 0
+	loc: 16392
+	path: Nature
+	provinc: 75
+	rarity: 2
+	recpoints: 100
+	sprite: 56
+	sup: 250
+
+Oasis of Verdant Greenery(1268)
+	N: 2
+	W: 1
+	level: 3
+	loc: 16392
+	path: Nature
+	rarity: 2
+	sprite: 56
+	sup: 150
+
+Chitterpalm Oasis(1269)
+	W: 1
+	level: 1
+	loc: 8
+	mon1: 1116
+	path: Water
+	rarity: 0
+	sprite: 18
+	sup: 75
+
+Cavern of Flames(1270)
+	F: 1
+	level: 0
+	loc: 512
+	path: Fire
+	rarity: 1
+	sprite: 7
+
+Underground Lake(1271)
+	W: 1
+	level: 0
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Air Shaft(1272)
+	A: 1
+	level: 0
+	loc: 512
+	path: Air
+	rarity: 1
+	sprite: 16
+
+Basalt Wall(1273)
+	E: 1
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+Painted Cavern(1274)
+	S: 1
+	level: 0
+	loc: 512
+	path: Astral
+	rarity: 1
+	sprite: 47
+
+Bone Filled Cave(1275)
+	D: 1
+	level: 0
+	loc: 512
+	path: Death
+	rarity: 1
+	sprite: 54
+
+Mushroom Forest(1276)
+	N: 1
+	level: 0
+	loc: 512
+	path: Nature
+	rarity: 1
+	sprite: 63
+
+Cave of Glowing Mushrooms(1277)
+	G: 1
+	level: 0
+	loc: 512
+	path: Glamour
+	rarity: 1
+	sprite: 74
+
+Trapped Lights(1278)
+	F: 1
+	level: 1
+	loc: 512
+	path: Fire
+	rarity: 0
+	sprite: 7
+
+Dripping Stones(1279)
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 0
+	sprite: 25
+
+Trapped Wind(1280)
+	A: 1
+	level: 1
+	loc: 512
+	path: Air
+	rarity: 0
+	sprite: 16
+
+Mineral Deposit(1281)
+	E: 1
+	level: 1
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Spiral Shaft(1282)
+	S: 1
+	level: 1
+	loc: 512
+	path: Astral
+	rarity: 0
+	sprite: 47
+
+Cavern Tomb(1283)
+	D: 1
+	level: 1
+	loc: 512
+	path: Death
+	rarity: 0
+	sprite: 54
+
+Moss Covered Cavern(1284)
+	N: 1
+	level: 1
+	loc: 512
+	path: Nature
+	rarity: 0
+	sprite: 63
+
+Cavern of Dreams(1285)
+	G: 1
+	level: 1
+	loc: 512
+	path: Glamour
+	rarity: 0
+	sprite: 74
+
+Cavern of Rubies(1286)
+	E: 1
+	F: 1
+	bringgold: 150
+	level: 1
+	loc: 512
+	path: Fire
+	rarity: 2
+	sprite: 7
+
+Cavern of Magma(1287)
+	E: 1
+	F: 1
+	incscale2: 2
+	level: 1
+	loc: 512
+	path: Fire
+	rarity: 1
+	scale1: Heat(max 2)
+	sprite: 7
+
+Magma Halls(1288)
+	E: 1
+	F: 2
+	level: 2
+	loc: 512
+	n_sum1: 1
+	path: Fire
+	rarity: 2
+	sprite: 7
+	sum1: 640
+	summon1: 640
+
+Dripping Caverns(1289)
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Mud Caverns(1290)
+	E: 1
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Ice Caverns(1291)
+	W: 1
+	deccscale2: 2
+	level: 0
+	loc: 512
+	path: Water
+	rarity: 2
+	scale1: Cold(max 2)
+	sprite: 25
+
+Stalagmite Cavern(1292)
+	E: 1
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Mist Caverns(1293)
+	A: 1
+	W: 1
+	level: 1
+	loc: 512
+	path: Water
+	rarity: 1
+	sprite: 25
+
+Gold Deposit(1294)
+	bringgold: 100
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Silver Deposit(1295)
+	bringgold: 60
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Copper Deposit(1296)
+	bringgold: 30
+	bringres: 30
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Iron Deposit(1297)
+	bringres: 60
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Hidden Gold Deposit(1298)
+	bringgold: 150
+	level: 1
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Hidden Gem Deposits(1299)
+	bringgold: 125
+	level: 1
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Mammoth Cave(1300)
+	E: 2
+	level: 0
+	loc: 512
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Earth Blood Vein(1301)
+	E: 2
+	level: 2
+	loc: 512
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+Crystal Cavern(1302)
+	E: 1
+	G: 1
+	bringgold: 40
+	level: 1
+	loc: 512
+	path: Earth
+	rarity: 0
+	sprite: 35
+
+Crystal Forest(1303)
+	E: 1
+	G: 1
+	S: 1
+	level: 2
+	loc: 512
+	path: Earth
+	rarity: 1
+	sprite: 34
+
+Glittering Cavern(1304)
+	E: 1
+	G: 1
+	bringgold: 125
+	level: 2
+	loc: 512
+	path: Earth
+	rarity: 1
+	sprite: 35
+
+Buried Temple(1305)
+	S: 1
+	level: 2
+	loc: 512
+	path: Earth
+	rarity: 2
+	sprite: 38
+
+Gemwall Cavern(1306)
+	E: 2
+	bringgold: 150
+	level: 3
+	loc: 512
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Troglodyte Cave(1307)
+	E: 1
+	level: 3
+	loc: 512
+	mon1: 447
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+The Storm Underneath(1308)
+	A: 3
+	level: 3
+	loc: 16896
+	path: Air
+	rarity: 2
+	sprite: 16
+
+Ancient Tomb(1309)
+	D: 1
+	level: 1
+	loc: 512
+	path: Death
+	rarity: 1
+	sprite: 53
+
+Opulent Tomb(1310)
+	D: 2
+	level: 2
+	loc: 512
+	path: Death
+	rarity: 2
+	sprite: 53
+
+Umbral Cave(1311)
+	D: 1
+	level: 3
+	loc: 512
+	path: Death
+	rarity: 2
+	sprite: 54
+
+Caveman Cavern(1312)
+	level: 1
+	loc: 512
+	mon1: 1615
+	path: Nature
+	rarity: 1
+	sprite: 63
+	sup: 40
+
+Cavern of Ancient Mushrooms(1313)
+	E: 1
+	N: 1
+	level: 0
+	loc: 512
+	path: Nature
+	rarity: 0
+	sprite: 63
+
+Gemsparkle Gorge(1314)
+	G: 1
+	level: 1
+	loc: 512
+	path: Glamour
+	rarity: 1
+	sprite: 74
+
+Gorge of Silent Songs(1315)
+	G: 2
+	level: 2
+	loc: 512
+	path: Glamour
+	rarity: 2
+	sprite: 73
+
+Hidden Halls of Crystal(1316)
+	E: 1
+	G: 2
+	S: 1
+	level: 2
+	loc: 512
+	path: Glamour
+	rarity: 2
+	sprite: 73
+
+The Howling Abyss(1317)
+	D: 2
+	G: 2
+	level: 2
+	loc: 16896
+	path: Glamour
+	rarity: 1
+	sprite: 73
+
+Nest of Bats(1318)
+	D: 1
+	level: 1
+	loc: 512
+	n_sum1: 2
+	path: Blood
+	rarity: 2
+	sprite: 88
+	sum1: 1357
+	summon2: 1357
+
+The Lesser Abyss(1319)
+	level: 1
+	loc: 16896
+	n_sum1: 1
+	path: Blood
+	rarity: 2
+	sprite: 88
+	sum1: 88
+	summon1: 88
+	unr: 10
+
+Splattermaid Gorge(1320)
+	A: 1
+	level: 2
+	loc: 16896
+	n_sum1: 4
+	path: Blood
+	rarity: 2
+	sprite: 88
+	sum1: 1357
+	summon4: 1357
+
+Tomb of Seven Oracles(1321)
+	D: 2
+	E: 1
+	level: 3
+	loc: 16896
+	n_sum1: 1
+	path: Death
+	rarity: 2
+	sprite: 53
+	sum1: 1501
+	summon1: 1501
+
+Infinite Cavern(1322)
+	E: 2
+	conj: 20%
+	level: 3
+	loc: 16896
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+Riddle Dark(1323)
+	D: 2
+	E: 2
+	level: 3
+	loc: 16896
+	path: Earth
+	rarity: 2
+	sprite: 35
+
+The Umbral Conclave(1324)
+	D: 3
+	conj: 20%
+	level: 3
+	loc: 16896
+	path: Death
+	rarity: 2
+	sprite: 54
+
+Subterranean City(1325)
+	level: 0
+	loc: 17920
+	path: Earth
+	provinc: 50
+	rarity: 2
+	res: 30
+	sprite: 35
+
+The Silent Sea(1326)
+	W: 3
+	level: 2
+	loc: 16896
+	path: Water
+	rarity: 2
+	sprite: 25
+
+The Olm Cavern(1327)
+	E: 1
+	N: 1
+	W: 1
+	level: 2
+	loc: 16896
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Halls of Stalagmitic Splendor(1328)
+	E: 1
+	W: 2
+	level: 2
+	loc: 512
+	path: Water
+	rarity: 2
+	sprite: 25
+
+Halls of Imprisoned Sunlight(1329)
+	F: 3
+	S: 1
+	level: 3
+	loc: 16896
+	path: Fire
+	rarity: 2
+	sprite: 7
+
+Undermirks(1330)
+	D: 1
+	N: 2
+	level: 2
+	loc: 16896
+	path: Nature
+	rarity: 2
+	sprite: 63
+
+Nexus(1331)
+		Unknown Attribute<8B02>: 2
+		Unknown Attribute<8C02>: 1
+		Unknown Attribute<8D02>: 1
+	S: 4
+	alter: 20%
+	level: 0
+	loc: 214015
+	path: Astral
+	rarity: 5
+	sprite: 42
+
+The Throne of the Second Age(1332)
+	domspread: 2
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	str: 1
+	throne: 1
+	throneclustering: 3
+
+The Throne of War(1333)
+	att: 1
+	domspread: 1
+	level: 0
+	loc: 214015
+	mor: 1
+	path: Holy
+	pdconscript: 5
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Night(1334)
+	darkvision: 50
+	domspread: 1
+	evil: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Beasts(1335)
+	N: 2
+	aawe: 1
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Throne of Thorns(1336)
+	N: 2
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	poisonres: 10
+	rarity: 11
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Throne of Flames(1337)
+	F: 1
+	domspread: 1
+	fireres: 5
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Ice(1338)
+	W: 1
+	coldres: 5
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Storms(1339)
+	A: 1
+	domspread: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	shockres: 5
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Throne of Might(1340)
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	str: 2
+	throne: 1
+
+The Throne of the Stars(1341)
+	S: 2
+	astralrange: 2
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	rit: S
+	ritrng: 2
+	sprite: 95
+	throne: 1
+	throneclustering: 4
+
+The Throne of Stability(1342)
+	domspread: 1
+	level: 0
+	loc: 214015
+	mr: 1
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of the Deeps(1343)
+	darkvision: 50
+	domspread: 1
+	level: 0
+	loc: 16640
+	n_sum1: 1
+	path: Holy
+	rarity: 11
+	sprite: 95
+	sum1: 438
+	summon1: 438
+	throne: 1
+
+The Throne of Pearls(1344)
+	S: 3
+	com1: 2805
+	domspread: 1
+	level: 0
+	loc: 16640
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Bones(1345)
+	domspread: 1
+	evil: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+	undying: 3
+
+The High Throne(1346)
+	domspread: 3
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Throne of Zeal(1347)
+	domspread: 2
+	level: 0
+	loc: 214015
+	mor: 2
+	path: Holy
+	pdconscript: 10
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Brass Throne(1348)
+	E: 1
+	F: 1
+	domspread: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	provinc: 100
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Coral Throne(1349)
+	N: 1
+	W: 1
+	domspread: 1
+	level: 0
+	loc: 16640
+	mon1: 577
+	path: Holy
+	provinc: 100
+	rarity: 11
+	res: 75
+	sprite: 95
+	throne: 1
+
+The Throne of Pestilence(1350)
+	D: 3
+	death: 1
+	deccscale2: 3
+	domspread: 1
+	evil: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 11
+	scale1: Death(max 2)
+	sprite: 95
+	throne: 1
+
+The Lower Throne(1351)
+	B: 5
+	domspread: 1
+	evil: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Mirror Throne(1352)
+	G: 3
+	domspread: 1
+	glamourrange: 1
+	level: 0
+	loc: 17119
+	path: Holy
+	rarity: 11
+	rit: G
+	ritrng: 1
+	sprite: 95
+	throne: 1
+
+The Throne of Twilight(1353)
+	G: 2
+	def: 1
+	domspread: 1
+	evil: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	sprite: 95
+	throne: 1
+
+The Rainbow Throne(1354)
+	G: 1
+	W: 1
+	domspread: 1
+	gold: 100
+	incscale2: 4
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	scale1: Luck(max 2)
+	sprite: 95
+	throne: 1
+
+The Throne of Spring(1355)
+	A: 1
+	com1: 2543
+	death: -1
+	domspread: 1
+	incscale2: 3
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	scale1: Growth(max 2)
+	sprite: 95
+	throne: 1
+	throneclustering: 1
+
+The Throne of Summer(1356)
+	F: 1
+	cold: -1
+	com1: 2544
+	domspread: 1
+	incscale2: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	scale1: Heat(max 2)
+	sprite: 95
+	throne: 1
+	throneclustering: 1
+
+The Throne of Autumn(1357)
+	E: 1
+	com1: 2545
+	death: 1
+	deccscale2: 3
+	domspread: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	scale1: Death(max 2)
+	sprite: 95
+	throne: 1
+	throneclustering: 1
+
+The Throne of Winter(1358)
+	W: 1
+	cold: 1
+	com1: 2546
+	deccscale2: 2
+	domspread: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 11
+	scale1: Cold(max 2)
+	sprite: 95
+	throne: 1
+	throneclustering: 1
+
+The Throne of the First Age(1359)
+	domspread: 3
+	incscale2: 5
+	level: 0
+	loc: 214015
+	mr: 1
+	path: Holy
+	rarity: 12
+	scale1: Magic(max 2)
+	sprite: 95
+	throne: 1
+	throneclustering: 3
+
+The Throne of Law(1360)
+	domspread: 1
+	incscale2: 0
+	level: 0
+	loc: 214015
+	path: Holy
+	pdconscript: 10
+	rarity: 12
+	scale1: Order(max 2)
+	sprite: 95
+	throne: 1
+	turmoil: -1
+
+The Throne of Gaia(1361)
+	N: 2
+	death: -2
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Crystal Throne(1362)
+	E: 1
+	G: 1
+	com1: 340
+	domspread: 2
+	level: 0
+	loc: 17119
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Iron Throne(1363)
+	com1: 477
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	res: 200
+	sprite: 95
+	throne: 1
+
+The Silver Throne(1364)
+	com1: 100
+	domspread: 2
+	gold: 200
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Golden Throne(1365)
+	com1: 101
+	domspread: 2
+	gold: 400
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Throne of Bureaucracy(1366)
+	domconflict: 1
+	domspread: 5
+	gold: -200
+	level: 0
+	loc: 214015
+	path: Holy
+	pdconscript: 10
+	rarity: 12
+	sprite: 95
+	throne: 1
+	turmoil: -1
+
+The Throne of Knowledge(1367)
+	com1: 479
+	com2: 478
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Throne of Life(1368)
+	N: 3
+	death: -1
+	domspread: 2
+	incscale2: 3
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	scale1: Growth(max 2)
+	sprite: 95
+	throne: 1
+
+The Throne of Death(1369)
+	D: 5
+	death: 1
+	deccscale2: 3
+	domspread: 2
+	evil: 1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	scale1: Death(max 2)
+	sprite: 95
+	throne: 1
+
+The Throne of Fortune(1370)
+	G: 2
+	domspread: 2
+	incscale2: 4
+	level: 0
+	loc: 214015
+	misfortune: -1
+	path: Holy
+	rarity: 12
+	scale1: Luck(max 2)
+	sprite: 95
+	throne: 1
+
+The Throne of Misfortune(1371)
+	S: 4
+	deccscale2: 4
+	domspread: 2
+	level: 0
+	loc: 214015
+	misfortune: 1
+	path: Holy
+	rarity: 12
+	scale1: Misfortune(max 2)
+	sprite: 95
+	throne: 1
+
+The Throne of Chains(1372)
+		Unknown Attribute<FA03>: 25
+		Unknown Attribute<FB03>: 15
+	B: 4
+	domspread: 3
+	evil: 1
+	level: 0
+	loc: 16607
+	misfortune: 1
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+	turmoil: -1
+	unr: -5
+
+The Inner Throne(1373)
+	B: 3
+	E: 1
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+	turmoil: -1
+
+The Outer Throne(1374)
+	S: 3
+	domspread: 2
+	drain: -1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Throne of the Moon(1375)
+		Unknown Attribute<F803>: 3
+	S: 1
+	W: 1
+	death: -1
+	domspread: 2
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+	throneclustering: 4
+
+The Throne of Dreams(1376)
+		Unknown Attribute<6900>: 1
+	G: 3
+	S: 1
+	domspread: 2
+	drain: -1
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	sloth: 1
+	sprite: 95
+	throne: 1
+
+The Throne of the Churning Ocean(1377)
+	A: 1
+	W: 3
+	conj: 20%
+	deccscale2: 0
+	domspread: 2
+	level: 0
+	loc: 16416
+	path: Holy
+	rarity: 12
+	scale1: Turmoil(max 2)
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Throne of the Artificer(1378)
+		Unknown Attribute<9102>: 1
+	E: 1
+	F: 2
+	const: 20%
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	sprite: 95
+	throne: 1
+
+The Throne of Fire(1379)
+	F: 1
+	att: 3
+	com1: 99
+	domspread: 2
+	firerange: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	rit: F
+	ritrng: 1
+	sprite: 95
+	throne: 1
+	throneclustering: 2
+	wilddefenders: 1
+
+The Throne of Earth(1380)
+	E: 1
+	com1: 411
+	domspread: 2
+	earthrange: 1
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	reinvigoration: 1
+	rit: E
+	ritrng: 1
+	sprite: 95
+	throne: 1
+	throneclustering: 2
+	wilddefenders: 1
+
+The Throne of Water(1381)
+	W: 1
+	com1: 103
+	def: 3
+	domspread: 2
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 12
+	rit: W
+	ritrng: 1
+	sprite: 95
+	throne: 1
+	throneclustering: 2
+	waterrange: 1
+	wilddefenders: 1
+
+The Throne of Air(1382)
+		Unknown Attribute<F403>: 40
+	A: 1
+	airrange: 1
+	com1: 93
+	domspread: 2
+	level: 0
+	loc: 16607
+	path: Holy
+	rarity: 12
+	rit: A
+	ritrng: 1
+	sprite: 95
+	throne: 1
+	throneclustering: 2
+	wilddefenders: 1
+
+The Throne of Splendour(1383)
+		Unknown Attribute<F603>: 1
+	domspread: 3
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	sprite: 95
+	throne: 1
+
+The Throne of the Pantokrator(1384)
+	callgodbonus: 2
+	domconflict: 2
+	domspread: 7
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	sprite: 95
+	throne: 1
+
+The Throne of Abundance(1385)
+	A: 1
+	D: 1
+	E: 1
+	F: 1
+	G: 1
+	N: 1
+	S: 1
+	W: 1
+	domspread: 3
+	gold: 500
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	sloth: 2
+	sprite: 95
+	throne: 1
+
+The Throne of Eternal Suffering(1386)
+	domspread: 3
+	evil: 1
+	level: 0
+	loc: 214015
+	misfortune: 1
+	path: Holy
+	rarity: 13
+	sloth: -1
+	sprite: 95
+	throne: 1
+	turmoil: -1
+
+The Throne of the Sun(1387)
+	F: 5
+	cold: -1
+	death: -1
+	domspread: 5
+	fireres: 5
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	sprite: 95
+	throne: 1
+	throneclustering: 4
+	turmoil: -1
+
+The Throne of Sorcery(1388)
+	D: 1
+	G: 1
+	N: 1
+	S: 1
+	domspread: 3
+	incscale2: 5
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	rit: SDNGB
+	ritrng: 2
+	scale1: Magic(max 2)
+	sorceryrange: 2
+	sprite: 95
+	thau: 30%
+	throne: 1
+
+The Throne of Elements(1389)
+	A: 1
+	E: 1
+	F: 1
+	W: 1
+	domspread: 3
+	elementrange: 2
+	evo: 30%
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	rit: FAWE
+	ritrng: 2
+	sprite: 95
+	throne: 1
+	wilddefenders: 1
+
+The Shattered Throne(1390)
+	B: 4
+	S: 2
+	blood: 30%
+	curse: 1%
+	deccscale2: 4
+	domspread: 3
+	evil: 1
+	horror: 5%
+	incscale2: 5
+	level: 0
+	loc: 214015
+	misfortune: 1
+	path: Holy
+	rarity: 13
+	scale1: Magic(max 2)
+	scale2: Misfortune(max 2)
+	sprite: 95
+	throne: 1
+	unr: 10
+
+The Throne of Creation(1391)
+		Unknown Attribute<9102>: 1
+	conj: 30%
+	const: 20%
+	deccscale2: 0
+	domspread: 3
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	res: 150
+	rituallevelmodifier: 1
+	scale1: Turmoil(max 2)
+	sprite: 95
+	throne: 1
+	turmoil: 3
+
+The Throne of Destiny(1392)
+	domspread: 3
+	level: 0
+	loc: 214015
+	misfortune: -2
+	path: Holy
+	rarity: 13
+	sprite: 95
+	throne: 1
+	turmoil: -1
+
+The Throne of Power(1393)
+	S: 6
+	allrange: 2
+	domspread: 3
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	reinvigoration: 2
+	rit: FAWESDNGB
+	ritrng: 2
+	sprite: 95
+	throne: 1
+
+The Throne of Time(1394)
+	S: 5
+	agingpercent: 100
+	domspread: 3
+	drain: -1
+	incscale3: 5
+	level: 0
+	loc: 214015
+	path: Holy
+	rarity: 13
+	recpointpercent: 100
+	recpointpercentcmd: 100
+	scale1: Magic(max 3)
+	sprite: 95
+	throne: 1
+	unaging: 75
+
