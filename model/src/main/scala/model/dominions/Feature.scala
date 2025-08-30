@@ -1252,3 +1252,20 @@ enum Feature(
   case TheThroneOfDestiny extends Feature(FeatureName("The Throne of Destiny"), FeatureId(1392), FeatureRarity(13), FeaturePath("Holy"), IsThrone(true))
   case TheThroneOfPower extends Feature(FeatureName("The Throne of Power"), FeatureId(1393), FeatureRarity(13), FeaturePath("Holy"), IsThrone(true))
   case TheThroneOfTime extends Feature(FeatureName("The Throne of Time"), FeatureId(1394), FeatureRarity(13), FeaturePath("Holy"), IsThrone(true))
+
+object Feature:
+  private val levelOneRarity = FeatureRarity(11)
+  private val levelTwoRarity = FeatureRarity(12)
+  private val levelThreeRarity = FeatureRarity(13)
+
+  lazy val thrones: List[Feature] =
+    Feature.values.toList.filter(_.throne.value)
+
+  lazy val levelOneThrones: List[Feature] =
+    thrones.filter(_.rarity == levelOneRarity)
+
+  lazy val levelTwoThrones: List[Feature] =
+    thrones.filter(_.rarity == levelTwoRarity)
+
+  lazy val levelThreeThrones: List[Feature] =
+    thrones.filter(_.rarity == levelThreeRarity)
