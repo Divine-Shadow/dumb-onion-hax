@@ -7,6 +7,7 @@ import fs2.io.file.{Files, Path}
 import cats.effect.Sync
 import model.map.{MapDirective, SetLand, Feature, FeatureId, ThroneFeatureConfig}
 import scala.annotation.tailrec
+import model.dominions.{Feature as DomFeature}
 
 trait ThroneFeatureService[Sequencer[_]]:
   def apply[ErrorChannel[_]](
@@ -24,11 +25,13 @@ class ThroneFeatureServiceImpl[Sequencer[_]: Sync](
 ) extends ThroneFeatureService[Sequencer]:
   protected val sequencer = summon[Sync[Sequencer]]
 
+  private val throneIds: Set[Int] = DomFeature.thrones.map(_.id.value).toSet
+
   private def stripThroneFeatures(passThrough: Vector[MapDirective]): Vector[MapDirective] =
     @tailrec
     def loop(remaining: List[MapDirective], acc: Vector[MapDirective]): Vector[MapDirective] =
       remaining match
-        case SetLand(_) :: Feature(id) :: tail if id.value >= 5000 =>
+        case SetLand(_) :: Feature(id) :: tail if throneIds.contains(id.value) =>
           loop(tail, acc)
         case head :: tail =>
           loop(tail, acc :+ head)
