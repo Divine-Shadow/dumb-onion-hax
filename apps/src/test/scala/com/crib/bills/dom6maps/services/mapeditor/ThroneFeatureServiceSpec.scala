@@ -40,8 +40,10 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
       dir <- IO(Files.createTempDirectory("thrones"))
       in = dir.resolve("in.map")
       out = dir.resolve("out.map")
-      _ <- IO(Files.write(in,
-        """#dom2title test
+      _ <- IO(
+        Files.write(
+          in,
+          """#dom2title test
 #mapsize 1280 800
 #pb 0 0 1 1
 #pb 256 0 1 2
@@ -52,10 +54,13 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
 #terrain 3 0
 #terrain 4 0
 #setland 1
+#feature 100
 #feature 1332
 #setland 2
 #feature 1383
-""".getBytes(StandardCharsets.UTF_8)))
+""".getBytes(StandardCharsets.UTF_8)
+        )
+      )
       resultEC <- service.apply[EC](Path.fromNioPath(in), config, Path.fromNioPath(out))
       _ <- IO.fromEither(resultEC)
       directives <- MapFileParser.parseFile[IO](Path.fromNioPath(out)).compile.toVector
@@ -76,7 +81,7 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
       mask2.hasFlag(TerrainFlag.Throne),
       mask3.hasFlag(TerrainFlag.Throne),
       mask4.hasFlag(TerrainFlag.Throne),
-      f1.isEmpty,
+      f1 == Vector(FeatureId(100)),
       f2 == Vector(FeatureId(1332)),
       f3 == Vector(FeatureId(1359)),
       f4 == Vector(FeatureId(1359))
