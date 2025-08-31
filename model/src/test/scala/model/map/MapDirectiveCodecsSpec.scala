@@ -13,6 +13,7 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       size = MapSize.from(5).toOption,
       adjacency = Vector(
         (ProvinceId(3), ProvinceId(4)),
+        (ProvinceId(5), ProvinceId(6)),
         (ProvinceId(5), ProvinceId(6))
       ),
       borders = Vector(Border(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)),
@@ -39,6 +40,7 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
       Feature(FeatureId(9)),
       Gate(ProvinceId(1), ProvinceId(2)),
       Neighbour(ProvinceId(3), ProvinceId(4)),
+      Neighbour(ProvinceId(5), ProvinceId(6)),
       NeighbourSpec(ProvinceId(5), ProvinceId(6), BorderFlag.MountainPass)
     )
 
