@@ -21,41 +21,62 @@ trait ThronePlacementService[Sequencer[_]]:
 class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementService[Sequencer]:
   protected val sequencer = summon[Sync[Sequencer]]
 
-  private def featureIdFor(level: ThroneLevel): Sequencer[Option[FeatureId]] =
+  private def featureIdFor(
+      level: ThroneLevel,
+      used: Set[FeatureId]
+  ): Sequencer[Option[FeatureId]] =
     val thrones = level.value match
       case 1 => DomFeature.levelOneThrones
       case 2 => DomFeature.levelTwoThrones
       case 3 => DomFeature.levelThreeThrones
       case _ => Nil
-    if thrones.isEmpty then None.pure[Sequencer]
+    val remaining = thrones.filterNot(t => used.contains(FeatureId(t.id.value)))
+    if remaining.isEmpty then None.pure[Sequencer]
     else
       sequencer.delay {
-        val idx = scala.util.Random.nextInt(thrones.size)
-        Some(FeatureId(thrones(idx).id.value))
+        val idx = scala.util.Random.nextInt(remaining.size)
+        Some(FeatureId(remaining(idx).id.value))
       }
 
   override def update(state: MapState, thrones: Vector[ThronePlacement]): Sequencer[MapState] =
     for
       resolved <- thrones
-        .traverse { tp =>
-          state.provinceLocations.provinceIdAt(tp.location) match
-            case Some(id) =>
-              tp.id match
-                case Some(fid) => Some((id, fid)).pure[Sequencer]
-                case None =>
-                  tp.level match
-                    case Some(level) =>
-                      featureIdFor(level).map(_.map(fid => (id, fid)))
-                    case None =>
-                      sequencer
-                        .delay(println(s"Missing throne level or id at location: ${tp.location}"))
-                        .as(None)
-            case None =>
-              sequencer
-                .delay(println(s"Unresolved throne location: ${tp.location}"))
-                .as(None)
+        .foldM((Vector.empty[(ProvinceId, FeatureId)], Set.empty[FeatureId])) {
+          case ((acc, used), tp) =>
+            state.provinceLocations.provinceIdAt(tp.location) match
+              case Some(id) =>
+                tp.id match
+                  case Some(fid) =>
+                    ((acc :+ (id, fid), used + fid)).pure[Sequencer]
+                  case None =>
+                    tp.level match
+                      case Some(level) =>
+                        featureIdFor(level, used).flatMap {
+                          case Some(fid) =>
+                            ((acc :+ (id, fid), used + fid)).pure[Sequencer]
+                          case None =>
+                            sequencer
+                              .delay(
+                                println(
+                                  s"No remaining thrones for level ${level.value} at location: ${tp.location}"
+                                )
+                              )
+                              .as((acc, used))
+                        }
+                      case None =>
+                        sequencer
+                          .delay(
+                            println(
+                              s"Missing throne level or id at location: ${tp.location}"
+                            )
+                          )
+                          .as((acc, used))
+              case None =>
+                sequencer
+                  .delay(println(s"Unresolved throne location: ${tp.location}"))
+                  .as((acc, used))
         }
-        .map(_.flatten)
+        .map(_._1)
       throneSet = resolved.map(_._1).toSet
       updatedTerrains = state.terrains.map {
         case t @ Terrain(province, mask) =>
