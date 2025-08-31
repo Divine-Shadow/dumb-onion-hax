@@ -54,6 +54,30 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
     )
   }
 
+  test("random thrones are unique") {
+    val service = new ThronePlacementServiceImpl[IO]
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(1) -> ProvinceLocation(XCell(0), YCell(0)),
+        ProvinceId(2) -> ProvinceLocation(XCell(1), YCell(0))
+      )
+    )
+    val state = MapState.empty.copy(provinceLocations = locations)
+    val placements = Vector(
+      ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1)),
+      ThronePlacement(ProvinceLocation(XCell(1), YCell(0)), ThroneLevel(1))
+    )
+    for
+      res <- service.update(state, placements)
+      ids = res.features.map(_.id.value)
+      throneIds = DomFeature.levelOneThrones.map(_.id.value).toSet
+    yield expect.all(
+      res.features.size == 2,
+      ids.forall(throneIds.contains),
+      ids.distinct.size == ids.size
+    )
+  }
+
   test("explicit feature id is applied") {
     val service = new ThronePlacementServiceImpl[IO]
     val locations = ProvinceLocations.fromProvinceIdMap(
