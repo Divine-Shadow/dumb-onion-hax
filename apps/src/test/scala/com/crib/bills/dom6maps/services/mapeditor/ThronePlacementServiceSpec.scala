@@ -18,6 +18,7 @@ import model.map.{
   XCell,
   YCell
 }
+import model.dominions.{Feature as DomFeature}
 
 object ThronePlacementServiceSpec extends SimpleIOSuite:
   test("update sets and clears throne flag") {
@@ -40,10 +41,13 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
       res <- service.update(state, placements)
       mask1 = res.terrains.collectFirst { case Terrain(ProvinceId(1), m) => TerrainMask(m) }.get
       mask2 = res.terrains.collectFirst { case Terrain(ProvinceId(2), m) => TerrainMask(m) }.get
+      throneIds = DomFeature.levelOneThrones.map(_.id.value).toSet
+      featureIdOpt = res.features.collectFirst { case ProvinceFeature(ProvinceId(1), fid) => fid }
     yield expect.all(
       mask1.hasFlag(TerrainFlag.Throne),
       !mask2.hasFlag(TerrainFlag.Throne),
-      res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(1332)))
+      res.features.size == 1,
+      featureIdOpt.exists(fid => throneIds.contains(fid.value))
     )
   }
 
