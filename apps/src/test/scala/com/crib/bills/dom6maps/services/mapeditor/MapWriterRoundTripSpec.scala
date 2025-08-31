@@ -25,6 +25,12 @@ object MapWriterRoundTripSpec extends SimpleIOSuite:
   private def adjacencyDirectives(ds: Vector[MapDirective]) =
     ds.collect { case n: Neighbour => n; case s: NeighbourSpec => s }
 
+  private def neighbourPairs(ds: Vector[MapDirective]) =
+    ds.collect { case Neighbour(a, b) => (a, b) }
+
+  private def neighbourSpecPairs(ds: Vector[MapDirective]) =
+    ds.collect { case NeighbourSpec(a, b, _) => (a, b) }
+
   test("round-trip MapWriter with plain neighbours") {
     val writer = new MapWriterImpl[IO]
     for
@@ -50,16 +56,22 @@ object MapWriterRoundTripSpec extends SimpleIOSuite:
     for
       state <- MapState.fromDirectives(MapFileParser.parseFile[IO](Path("data/test-map.map")))
       severed = severHorizontally(state)
+      specialPairs = severed.borders.map(b => (b.a, b.b))
       encoded = Encoder[MapState].encode(severed)
       expectedState <- MapState.fromDirectives(Stream.emits(encoded).covary[IO])
-      expectedAdj = adjacencyDirectives(encoded)
+      encodedNeighbourPairs = neighbourPairs(encoded)
+      encodedNeighbourSpecPairs = neighbourSpecPairs(encoded)
       tmp <- IO(Files.createTempFile("mapwriter", ".map")).map(Path.fromNioPath)
       _ <- writer.write[EC](severed, tmp).flatMap(IO.fromEither)
       parsed <- MapFileParser.parseFile[IO](tmp).compile.toVector
       roundTripped <- MapState.fromDirectives(MapFileParser.parseFile[IO](tmp))
-      actualAdj = adjacencyDirectives(parsed)
+      parsedNeighbourPairs = neighbourPairs(parsed)
+      parsedNeighbourSpecPairs = neighbourSpecPairs(parsed)
     yield expect.all(
-      actualAdj == expectedAdj,
+      specialPairs.forall(encodedNeighbourPairs.contains),
+      specialPairs.forall(encodedNeighbourSpecPairs.contains),
+      specialPairs.forall(parsedNeighbourPairs.contains),
+      specialPairs.forall(parsedNeighbourSpecPairs.contains),
       roundTripped.adjacency == expectedState.adjacency,
       roundTripped.borders == expectedState.borders
     )
