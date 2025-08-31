@@ -65,10 +65,14 @@ class ThronePlacementServiceImpl[Sequencer[_]: Sync] extends ThronePlacementServ
             else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
           t.copy(mask = updated.value)
       }
-      features = resolved.map { case (province, fid) =>
+      existingFeatures = state.features.filterNot(pf => throneSet.contains(pf.province))
+      newFeatures = resolved.map { case (province, fid) =>
         ProvinceFeature(province, fid)
       }
-      updatedState = state.copy(terrains = updatedTerrains, features = features)
+      updatedState = state.copy(
+        terrains = updatedTerrains,
+        features = existingFeatures ++ newFeatures
+      )
       _ <- sequencer.delay(println(s"Placing ${resolved.size} thrones"))
     yield updatedState
 
