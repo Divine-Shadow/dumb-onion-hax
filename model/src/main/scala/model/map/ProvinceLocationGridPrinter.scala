@@ -8,16 +8,13 @@ import fs2.io.file.{Files, Path}
 import model.Printer
 
 object ProvinceLocationGridPrinter:
-  def print[F[_]](path: Path, printer: Printer[F])(using Concurrent[F], Files[F]): F[Unit] =
-    val concurrent = summon[Concurrent[F]]
-    val sync       = concurrent.asInstanceOf[Sync[F]]
-    MapState
-      .fromDirectives(MapFileParser.parseFile[F](path)(using sync, summon[Files[F]]))
-      .flatMap { state =>
-        state.size match
-          case Some(size) => render(size, state.provinceLocations, printer)
-          case None       => concurrent.unit
-      }
+  def print[F[_]](path: Path, printer: Printer[F])(using concurrent: Concurrent[F], sync: Sync[F], files: Files[F]): F[Unit] =
+    given cats.Applicative[F] = sync
+    concurrent.flatMap(MapState.fromDirectives(MapFileParser.parseFile[F](path))) { state =>
+      state.size match
+        case Some(size) => render(size, state.provinceLocations, printer)
+        case None       => concurrent.unit
+    }
 
   def render[F[_]: Applicative](size: MapSize, locations: ProvinceLocations, printer: Printer[F]): F[Unit] =
     val side = size.value
