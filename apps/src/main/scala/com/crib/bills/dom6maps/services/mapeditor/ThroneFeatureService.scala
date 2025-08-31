@@ -5,6 +5,7 @@ import cats.{Applicative, MonadError, Traverse}
 import cats.syntax.all.*
 import fs2.io.file.{Files, Path}
 import cats.effect.Sync
+import model.ProvinceId
 import model.map.{MapDirective, SetLand, Feature, FeatureId, ThroneFeatureConfig}
 import scala.annotation.tailrec
 import model.dominions.{Feature as DomFeature}
@@ -29,14 +30,20 @@ class ThroneFeatureServiceImpl[Sequencer[_]: Sync](
 
   private def stripThroneFeatures(passThrough: Vector[MapDirective]): Vector[MapDirective] =
     @tailrec
-    def loop(remaining: List[MapDirective], acc: Vector[MapDirective]): Vector[MapDirective] =
+    def loop(
+        remaining: List[MapDirective],
+        currentProvince: Option[ProvinceId],
+        acc: Vector[MapDirective]
+    ): Vector[MapDirective] =
       remaining match
-        case SetLand(_) :: Feature(id) :: tail if throneIds.contains(id.value) =>
-          loop(tail, acc)
+        case SetLand(province) :: tail =>
+          loop(tail, Some(province), acc :+ SetLand(province))
+        case Feature(id) :: tail if currentProvince.nonEmpty && throneIds.contains(id.value) =>
+          loop(tail, currentProvince, acc)
         case head :: tail =>
-          loop(tail, acc :+ head)
+          loop(tail, currentProvince, acc :+ head)
         case Nil => acc
-    loop(passThrough.toList, Vector.empty)
+    loop(passThrough.toList, None, Vector.empty)
 
   override def apply[ErrorChannel[_]](
       map: Path,
