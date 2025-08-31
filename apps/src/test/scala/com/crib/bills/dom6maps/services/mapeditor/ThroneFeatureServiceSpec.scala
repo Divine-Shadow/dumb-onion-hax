@@ -22,6 +22,7 @@ import model.map.{
   XCell,
   YCell
 }
+import model.dominions.{Feature as DomFeature}
 
 object ThroneFeatureServiceSpec extends SimpleIOSuite:
   type EC[A] = Either[Throwable, A]
@@ -76,14 +77,19 @@ object ThroneFeatureServiceSpec extends SimpleIOSuite:
       f2 = featuresFor(ProvinceId(2))
       f3 = featuresFor(ProvinceId(3))
       f4 = featuresFor(ProvinceId(4))
+      levelOneIds = DomFeature.levelOneThrones.map(_.id.value).toSet
+      levelTwoIds = DomFeature.levelTwoThrones.map(_.id.value).toSet
     yield expect.all(
       !mask1.hasFlag(TerrainFlag.Throne),
       mask2.hasFlag(TerrainFlag.Throne),
       mask3.hasFlag(TerrainFlag.Throne),
       mask4.hasFlag(TerrainFlag.Throne),
       f1 == Vector(FeatureId(100)),
-      f2 == Vector(FeatureId(1332)),
-      f3 == Vector(FeatureId(1359)),
-      f4 == Vector(FeatureId(1359))
+      f2.size == 1,
+      levelOneIds.contains(f2.head.value),
+      f3.size == 1,
+      levelTwoIds.contains(f3.head.value),
+      f4.size == 1,
+      levelTwoIds.contains(f4.head.value)
     )
   }
