@@ -1,0 +1,133 @@
+-- Map
+#dom2title test
+#imagefile test.tga
+#mapsize 2048 1280
+#pb 0 0 1 1
+#pb 256 0 1 2
+#pb 512 0 1 3
+#pb 768 0 1 4
+#pb 1024 0 1 5
+#pb 1280 0 1 6
+#pb 1536 0 1 7
+#pb 1792 0 1 8
+#pb 0 160 1 9
+#pb 256 160 1 10
+#pb 512 160 1 11
+#pb 768 160 1 12
+#pb 1024 160 1 13
+#pb 1280 160 1 14
+#pb 1536 160 1 15
+#pb 1792 160 1 16
+#pb 0 320 1 17
+#pb 256 320 1 18
+#pb 512 320 1 19
+#pb 768 320 1 20
+#pb 1024 320 1 21
+#pb 1280 320 1 22
+#pb 1536 320 1 23
+#pb 1792 320 1 24
+#pb 0 480 1 25
+#pb 256 480 1 26
+#pb 512 480 1 27
+#pb 768 480 1 28
+#pb 1024 480 1 29
+#pb 1280 480 1 30
+#pb 1536 480 1 31
+#pb 1792 480 1 32
+#pb 0 640 1 33
+#pb 256 640 1 34
+#pb 512 640 1 35
+#pb 768 640 1 36
+#pb 1024 640 1 37
+#pb 1280 640 1 38
+#pb 1536 640 1 39
+#pb 1792 640 1 40
+#pb 0 800 1 41
+#pb 256 800 1 42
+#pb 512 800 1 43
+#pb 768 800 1 44
+#pb 1024 800 1 45
+#pb 1280 800 1 46
+#pb 1536 800 1 47
+#pb 1792 800 1 48
+#pb 0 960 1 49
+#pb 256 960 1 50
+#pb 512 960 1 51
+#pb 768 960 1 52
+#pb 1024 960 1 53
+#pb 1280 960 1 54
+#pb 1536 960 1 55
+#pb 1792 960 1 56
+#pb 0 1120 1 57
+#pb 256 1120 1 58
+#pb 512 1120 1 59
+#pb 768 1120 1 60
+#pb 1024 1120 1 61
+#pb 1280 1120 1 62
+#pb 1536 1120 1 63
+#pb 1792 1120 1 64
+#wraparound
+#terrain 1 0
+#terrain 2 0
+#terrain 3 0
+#terrain 4 0
+#terrain 5 0
+#terrain 6 0
+#terrain 7 0
+#terrain 8 0
+#terrain 9 0
+#terrain 10 0
+#terrain 11 0
+#terrain 12 0
+#terrain 13 0
+#terrain 14 0
+#terrain 15 0
+#terrain 16 0
+#terrain 17 0
+#terrain 18 0
+#terrain 19 0
+#terrain 20 0
+#terrain 21 0
+#terrain 22 0
+#terrain 23 0
+#terrain 24 0
+#terrain 25 0
+#terrain 26 0
+#terrain 27 0
+#terrain 28 0
+#terrain 29 0
+#terrain 30 0
+#terrain 31 0
+#terrain 32 0
+#terrain 33 0
+#terrain 34 0
+#terrain 35 0
+#terrain 36 0
+#terrain 37 0
+#terrain 38 0
+#terrain 39 0
+#terrain 40 0
+#terrain 41 0
+#terrain 42 0
+#terrain 43 0
+#terrain 44 0
+#terrain 45 0
+#terrain 46 0
+#terrain 47 0
+#terrain 48 0
+#terrain 49 0
+#terrain 50 0
+#terrain 51 0
+#terrain 52 0
+#terrain 53 0
+#terrain 54 0
+#terrain 55 0
+#terrain 56 0
+#terrain 57 0
+#terrain 58 0
+#terrain 59 0
+#terrain 60 0
+#terrain 61 0
+#terrain 62 0
+#terrain 63 0
+#terrain 64 0
