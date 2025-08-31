@@ -34,6 +34,7 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
         Terrain(ProvinceId(1), 0),
         Terrain(ProvinceId(2), TerrainFlag.Throne.mask)
       ),
+      features = Vector(ProvinceFeature(ProvinceId(2), FeatureId(200))),
       provinceLocations = locations
     )
     val placements = Vector(ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1)))
@@ -43,11 +44,13 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
       mask2 = res.terrains.collectFirst { case Terrain(ProvinceId(2), m) => TerrainMask(m) }.get
       throneIds = DomFeature.levelOneThrones.map(_.id.value).toSet
       featureIdOpt = res.features.collectFirst { case ProvinceFeature(ProvinceId(1), fid) => fid }
+      feature2 = res.features.collectFirst { case ProvinceFeature(ProvinceId(2), fid) => fid }
     yield expect.all(
       mask1.hasFlag(TerrainFlag.Throne),
       !mask2.hasFlag(TerrainFlag.Throne),
-      res.features.size == 1,
-      featureIdOpt.exists(fid => throneIds.contains(fid.value))
+      res.features.size == 2,
+      featureIdOpt.exists(fid => throneIds.contains(fid.value)),
+      feature2.contains(FeatureId(200))
     )
   }
 
