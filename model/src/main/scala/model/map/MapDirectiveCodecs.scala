@@ -81,10 +81,9 @@ object MapDirectiveCodecs:
       val terrains = value.terrains.flatMap(Encoder[Terrain].encode)
       val features = value.features.flatMap(Encoder[ProvinceFeature].encode)
       val gates = value.gates.flatMap(Encoder[Gate].encode)
-      val borderPairs = value.borders.map(b => (b.a, b.b)).toSet
-      val adjacency = value.adjacency
-        .filterNot(borderPairs.contains)
-        .flatMap(Encoder[(ProvinceId, ProvinceId)].encode)
+      val adjacencyPairs =
+        (value.adjacency ++ value.borders.map(b => (b.a, b.b))).distinct
+      val adjacency = adjacencyPairs.flatMap(Encoder[(ProvinceId, ProvinceId)].encode)
       val borders = value.borders.flatMap(Encoder[Border].encode)
       size ++ wrap ++ title ++ description ++ players ++ starts ++ terrains ++ features ++ gates ++ adjacency ++ borders
 
