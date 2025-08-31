@@ -1,7 +1,5 @@
 # AGENTS.md
 
-Here's a precise and clear articulation of your concept that captures the structure and intent you've described:
-
 
 ## Architecture and Development Guide
 
@@ -43,7 +41,7 @@ Many projects have living progress documents associated with them. The workflow 
 Therefore, it's important to ensure that each agent session ends with leaving a clear blueprint that, once addressed by the architects, provides a clear path forward for the next agent round.
 
 ## Testing
-- Run unit tests for the feature/fix. Example command: `sbt "project apps" "testOnly com.crib.bills.ouroboros.apps.services.document.compatibility.*"`
+- Run unit tests for the feature/fix. Example command: `sbt "project apps" "testOnly com.crib.bills.com.crib.bills.dom6maps.model.map.*"`
 - If there are no tests yet for the feature/fix, run `sbt compile`.
 
 ## Before commit
