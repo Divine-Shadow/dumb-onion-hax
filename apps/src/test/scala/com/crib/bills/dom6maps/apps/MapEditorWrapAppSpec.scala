@@ -58,7 +58,8 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 
   test("creates sample config when missing") {
     for
-      configFile <- IO(JPath.of("map-editor-wrap.conf"))
+      configFile <- IO(JFiles.createTempFile("map-editor-wrap-test", ".conf"))
+      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
       _ <- IO(JFiles.deleteIfExists(configFile))
       res <- MapEditorWrapApp
         .runWith(
@@ -77,6 +78,8 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 
   test("copies latest editor and severs map to hwrap") {
     for
+      _ <- IO(JFiles.deleteIfExists(JPath.of("throne-override.conf")))
+      _ <- IO(sys.props.update("dom6.ignoreOverrides", "true"))
       rootDir <- IO(JFiles.createTempDirectory("root-editor"))
       older <- IO(JFiles.createDirectory(rootDir.resolve("older")))
       newer <- IO(JFiles.createDirectory(rootDir.resolve("newer")))
@@ -88,7 +91,8 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
       _ <- IO(JFiles.write(newer.resolve("image.tga"), Array[Byte](1, 2, 3)))
       _ <- IO(JFiles.setLastModifiedTime(newer, FileTime.fromMillis(2000)))
       destRoot <- IO(JFiles.createTempDirectory("dest-editor"))
-      configFile = JPath.of("map-editor-wrap.conf")
+      configFile <- IO(JFiles.createTempFile("map-editor-wrap-test", ".conf"))
+      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
       _ <- IO(JFiles.writeString(configFile, s"""source="${rootDir.toString}"
 dest="${destRoot.toString}"
 """))
@@ -128,12 +132,15 @@ dest="${destRoot.toString}"
 
   test("severs cave map when selected") {
     for
+      _ <- IO(JFiles.deleteIfExists(JPath.of("throne-override.conf")))
+      _ <- IO(sys.props.update("dom6.ignoreOverrides", "true"))
       rootDir <- IO(JFiles.createTempDirectory("root-editor-cave"))
       newer <- IO(JFiles.createDirectory(rootDir.resolve("newer")))
       _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map.map")))
       _ <- IO(JFiles.copy(Path("data/five-by-twelve.map").toNioPath, newer.resolve("map_plane2.map")))
       destRoot <- IO(JFiles.createTempDirectory("dest-editor-cave"))
-      configFile = JPath.of("map-editor-wrap.conf")
+      configFile <- IO(JFiles.createTempFile("map-editor-wrap-test", ".conf"))
+      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
       _ <- IO(
         JFiles.writeString(
           configFile,
@@ -179,7 +186,8 @@ dest="${destRoot.toString}"
       _ <- IO(JFiles.writeString(newer.resolve("map.map"), mapContent))
       _ <- IO(JFiles.writeString(newer.resolve("map_plane2.map"), mapContent))
       destRoot <- IO(JFiles.createTempDirectory("dest-editor-duel"))
-      configFile = JPath.of("map-editor-wrap.conf")
+      configFile <- IO(JFiles.createTempFile("map-editor-wrap-test", ".conf"))
+      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
       _ <- IO(JFiles.writeString(configFile, s"""source="${rootDir.toString}"\ndest="${destRoot.toString}"\n"""))
       dueler = new GroundSurfaceDuelPipeImpl[IO](
         new MapSizeValidatorImpl[IO],

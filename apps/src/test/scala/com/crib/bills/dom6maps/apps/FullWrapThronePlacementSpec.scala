@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 import cats.{MonadError, Traverse}
 import fs2.io.file.Path
-import model.map.{MapFileParser, MapState, FeatureId}
+import model.map.{MapFileParser, MapState, FeatureId, SetLand, Feature}
 import services.mapeditor.{
   GroundSurfaceDuelPipe,
   ThronePlacementServiceImpl,
@@ -51,17 +51,19 @@ object FullWrapThronePlacementSpec extends SimpleIOSuite:
         { x = 6, y = 6, level = 2 },
 
         { x = 3, y = 0, level = 1 },
-        { x = 9, y = 0, level = 1 },
+        { x = 7, y = 0, level = 1 },
         { x = 3, y = 6, level = 1 },
-        { x = 9, y = 6, level = 1 },
+        { x = 7, y = 6, level = 1 },
 
         { x = 0, y = 3, level = 1 },
         { x = 6, y = 3, level = 1 },
-        { x = 0, y = 9, level = 1 },
-        { x = 6, y = 9, id = 1338 }
+        { x = 0, y = 7, level = 1 },
+        { x = 6, y = 7, id = 1338 }
       ]
       """.stripMargin
     for
+      _ <- IO(sys.props.update("dom6.ignoreOverrides", "false"))
+      _ <- IO(sys.props.update("dom6.skipAssetCopy", "true"))
       rootDir <- IO(JFiles.createTempDirectory("wrap-src"))
       latest <- IO(JFiles.createDirectory(rootDir.resolve("latest")))
       _ <- IO(JFiles.copy(Path("data/eight-by-eight.map").toNioPath, latest.resolve("map.map")))
@@ -76,8 +78,10 @@ object FullWrapThronePlacementSpec extends SimpleIOSuite:
              |""".stripMargin
         )
       )
-      overridesFile = JPath.of("throne-override.conf")
+      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
+      overridesFile <- IO(JFiles.createTempFile("throne-override", ".conf"))
       _ <- IO(JFiles.writeString(overridesFile, overrides))
+      _ <- IO(sys.props.update("dom6.overridesPath", overridesFile.toString))
       _ <- MapEditorWrapApp
         .runWith(
           new MapLayerLoaderImpl[IO],
@@ -86,11 +90,22 @@ object FullWrapThronePlacementSpec extends SimpleIOSuite:
           new StubGroundSurfaceDuelPipe,
           new ThronePlacementServiceImpl[IO]
         )
-        .guarantee(IO(JFiles.deleteIfExists(configFile)) *> IO(JFiles.deleteIfExists(overridesFile)))
+        .guarantee(
+          IO(JFiles.deleteIfExists(configFile)) *>
+            IO(JFiles.deleteIfExists(overridesFile)) *>
+            IO(sys.props.remove("dom6.overridesPath")) *>
+            IO(sys.props.remove("dom6.skipAssetCopy")).void
+        )
       destDir = Path.fromNioPath(destRoot.resolve("latest"))
       mapPath = destDir / "map.map"
       directives <- MapFileParser.parseFile[IO](mapPath).compile.toVector
       state <- MapState.fromDirectives(fs2.Stream.emits(directives).covary[IO])
-      features = state.features
-    yield expect.all(features.length == 12, features.exists(_.id == FeatureId(1338)))
+      // Reconstruct province features from pass-through directives
+      reconstructed =
+        directives.foldLeft((Option.empty[model.ProvinceId], Vector.empty[(model.ProvinceId, FeatureId)])) {
+          case ((current, acc), SetLand(p))   => (Some(p), acc)
+          case ((Some(p), acc), Feature(fid)) => (Some(p), acc :+ (p -> fid))
+          case ((c, acc), _)                  => (c, acc)
+        }._2
+    yield expect.all(reconstructed.length == 12, reconstructed.exists(_._2 == FeatureId(1338)))
   }

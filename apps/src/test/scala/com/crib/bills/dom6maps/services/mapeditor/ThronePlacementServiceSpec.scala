@@ -100,3 +100,19 @@ object ThronePlacementServiceSpec extends SimpleIOSuite:
     yield expect(res.features == Vector(ProvinceFeature(ProvinceId(1), FeatureId(1358))))
   }
 
+  test("out-of-bounds placements return Left error") {
+    val service = new ThronePlacementServiceImpl[IO]
+    val locations = ProvinceLocations.fromProvinceIdMap(
+      Map(
+        ProvinceId(1) -> ProvinceLocation(XCell(0), YCell(0))
+      )
+    )
+    val state = MapState.empty.copy(provinceLocations = locations)
+    val placements = Vector(
+      // Out of bounds relative to known locations (only 0,0 known)
+      ThronePlacement(ProvinceLocation(XCell(9), YCell(0)), ThroneLevel(1))
+    )
+    for
+      resEC <- service.update[ErrorOr](state, placements)
+    yield expect(resEC.isLeft)
+  }

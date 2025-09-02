@@ -48,13 +48,23 @@ class MapWrapWorkflowImpl(
           layerEC <- loader.load[ErrorOr](bytes)
           layer <- IO.fromEither(layerEC)
           overridesEC <- IO {
-            val path = NioPath.of("throne-override.conf")
-            if JFiles.exists(path) then
-              ConfigSource
-                .file(path)
-                .load[ThroneConfiguration]
-                .leftMap(f => RuntimeException(f.toString))
-            else Right(ThroneConfiguration(Vector.empty))
+            val ignore = sys.props.get("dom6.ignoreOverrides").contains("true")
+            if ignore then Right(ThroneConfiguration(Vector.empty))
+            else
+              sys.props.get("dom6.overridesPath") match
+                case Some(p) if JFiles.exists(NioPath.of(p)) =>
+                  ConfigSource
+                    .file(p)
+                    .load[ThroneConfiguration]
+                    .leftMap(f => RuntimeException(f.toString))
+                case _ =>
+                  val path = NioPath.of("throne-override.conf")
+                  if JFiles.exists(path) then
+                    ConfigSource
+                      .file(path)
+                      .load[ThroneConfiguration]
+                      .leftMap(f => RuntimeException(f.toString))
+                  else Right(ThroneConfiguration(Vector.empty))
           }
           overrides <- IO.fromEither(overridesEC)
           settingsEC <- chooser.chooseSettings[ErrorOr](

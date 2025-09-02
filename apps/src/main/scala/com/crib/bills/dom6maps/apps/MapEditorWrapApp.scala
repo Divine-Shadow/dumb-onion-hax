@@ -31,7 +31,8 @@ import pureconfig.*
 import java.nio.file.{Files as JFiles, Path as NioPath}
 
 object MapEditorWrapApp extends IOApp:
-  private val configFileName = "map-editor-wrap.conf"
+  private def configPath: NioPath =
+    sys.props.get("dom6.configPath").map(NioPath.of(_)).getOrElse(NioPath.of("map-editor-wrap.conf"))
   private val sampleConfig =
     """source="/path/to/mapnuke/output"
 dest="/path/to/dominions/maps"
@@ -67,13 +68,13 @@ dest="/path/to/dominions/maps"
       )
     val action =
       for
-        exists <- IO(JFiles.exists(NioPath.of(configFileName)))
+        exists <- IO(JFiles.exists(configPath))
         _ <-
           if exists then IO.unit
           else
-            IO(JFiles.writeString(NioPath.of(configFileName), sampleConfig)) *>
-              IO.raiseError(new RuntimeException(s"$configFileName created; please edit and rerun"))
-        cfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
+            IO(JFiles.writeString(configPath, sampleConfig)) *>
+              IO.raiseError(new RuntimeException(s"${configPath.getFileName.toString} created; please edit and rerun"))
+        cfg <- IO(ConfigSource.file(configPath).loadOrThrow[PathsConfig])
         res <- workflow.run(cfg)
         _ <- IO.fromEither(res)
       yield ExitCode.Success
