@@ -74,7 +74,8 @@ dest="/path/to/dominions/maps"
             IO(JFiles.writeString(NioPath.of(configFileName), sampleConfig)) *>
               IO.raiseError(new RuntimeException(s"$configFileName created; please edit and rerun"))
         cfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
-        _ <- workflow.run(cfg)
+        res <- workflow.run(cfg)
+        _ <- IO.fromEither(res)
       yield ExitCode.Success
     action
 

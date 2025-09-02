@@ -8,3 +8,5 @@ hs_err_pid*
 
 *.jar
 *.conf
+data/live-games/*
+data/generated-maps/

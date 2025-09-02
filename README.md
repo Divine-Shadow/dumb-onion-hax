@@ -12,6 +12,13 @@ The short term goal of this project is to be able to parse map files and then ed
 - Place thrones in specific locations
 - Make all tiles have 'high magic sites'
 
+## Headless CLI
+
+- Config: edit `map-editor-wrap.conf` to point `source` to `./data/live-games` and `dest` to `./data/generated-maps` (created if missing).
+- Optional: add throne placements to `throne-override.conf` (see `throne-override.conf` for format).
+- Run: `sbt "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
+- Wrap options (optional): pass JVM props `-Ddom6.wrap.main=hwrap|vwrap|full|none|duel` and `-Ddom6.wrap.cave=hwrap|vwrap|full|none`.
+
 ## License
 
 ![License: Polyform Noncommercial](https://img.shields.io/badge/license-Polyform%20Noncommercial-blue)

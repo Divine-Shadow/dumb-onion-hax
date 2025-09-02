@@ -36,7 +36,7 @@ class GroundSurfaceDuelPipeImpl[Sequencer[_]: Sync](
     for
       _ <- sequencer.delay(println("Running GroundSurfaceDuelPipe"))
       validated <- sizeValidator.validate[ErrorChannel](surface, cave)
-      result <- validated.traverse { case (size, surfaceState, caveState) =>
+      result <- validated.flatTraverse { case (size, surfaceState, caveState) =>
         val (gates, thrones) = planner.plan(size, config)
         val center = CenterProvince.of(size)
         val spawnSurface = PlayerSpawn(surfaceNation.value, center)
@@ -44,10 +44,13 @@ class GroundSurfaceDuelPipeImpl[Sequencer[_]: Sync](
         def transform(state: MapState, spawn: PlayerSpawn) =
           for
             gated   <- gateService.update(state, gates)
-            throned <- throneService.update(gated, thrones)
-            spawned <- spawnService.update(throned, Vector(spawn))
-          yield WrapSeverService.severHorizontally(WrapSeverService.severVertically(spawned))
-        (transform(surfaceState, spawnSurface), transform(caveState, spawnCave)).tupled
+            thronedEC <- throneService.update[ErrorChannel](gated, thrones)
+            spawnedEC <- thronedEC.traverse(throned => spawnService.update(throned, Vector(spawn)))
+          yield spawnedEC.map(s => WrapSeverService.severHorizontally(WrapSeverService.severVertically(s)))
+        for
+          surfEC <- transform(surfaceState, spawnSurface)
+          caveEC <- transform(caveState, spawnCave)
+        yield (surfEC, caveEC).tupled
       }
     yield result
 

@@ -55,15 +55,15 @@ class ThroneFeatureServiceImpl[Sequencer[_]: Sync](
     val placements = config.placements
     for
       layerEC <- loader.load[ErrorChannel](map)
-      result <- layerEC.traverse { layer =>
+      result <- layerEC.flatTraverse { layer =>
         for
-          updated <- throneService.update(layer.state, placements)
+          updatedEC <- throneService.update[ErrorChannel](layer.state, placements)
           directives <- layer.passThrough.compile.toVector
           filtered = stripThroneFeatures(directives)
-          _ <- writer.write[ErrorChannel](updated, filtered, output)
-        yield ()
+          writtenEC <- updatedEC.traverse(updated => writer.write[ErrorChannel](updated, filtered, output))
+        yield writtenEC
       }
-    yield result
+    yield result.flatMap(identity)
 
 class ThroneFeatureServiceStub[Sequencer[_]: Applicative] extends ThroneFeatureService[Sequencer]:
   override def apply[ErrorChannel[_]](

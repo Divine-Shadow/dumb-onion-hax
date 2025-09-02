@@ -38,14 +38,14 @@ class MapModificationServiceImpl[Sequencer[_]: Async](
         for
           surfaceEC <- loader.load[ErrorChannel](surface)(using files, errorChannel)
           caveEC    <- loader.load[ErrorChannel](cave)(using files, errorChannel)
-          transformedSurface <- surfaceEC.traverse { layer =>
+          transformedSurface <- surfaceEC.flatTraverse { layer =>
             for
-              gated   <- gateService.update(layer.state, gates)
-              throned <- throneService.update(gated, thrones)
-            yield layer.copy(state = throned)
+              gated     <- gateService.update(layer.state, gates)
+              thronedEC <- throneService.update[ErrorChannel](gated, thrones)
+            yield thronedEC.map(st => layer.copy(state = st))
           }
-          transformedCave <- caveEC.traverse { layer =>
-            gateService.update(layer.state, gates).map(st => layer.copy(state = st))
+          transformedCave <- caveEC.flatTraverse { layer =>
+            gateService.update(layer.state, gates).map(st => layer.copy(state = st)).map(_.pure[ErrorChannel])
           }
           _ <- transformedSurface.flatTraverse { layer =>
             writer.write[ErrorChannel](layer, surfaceOut)(using files, errorChannel)

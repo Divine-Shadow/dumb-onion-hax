@@ -43,7 +43,11 @@ class MapEditorCopierImpl[Sequencer[_]: Async: Files] extends MapEditorCopier[Se
             val target = dest / rel.toString
             if isDir then Files[Sequencer].createDirectories(target)
             else if maybeMain.contains(p) || maybeCave.contains(p) then Async[Sequencer].unit
-            else Files[Sequencer].createDirectories(target.parent.getOrElse(dest)) >> Files[Sequencer].copy(p, target)
+            else
+              val parent = target.parent.getOrElse(dest)
+              Files[Sequencer].createDirectories(parent) >>
+                Files[Sequencer].deleteIfExists(target) >>
+                Files[Sequencer].copy(p, target)
           }
       result <- maybeMain match
         case Some(mapPath) =>
