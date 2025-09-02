@@ -10,6 +10,7 @@ import java.nio.file.Files
 import java.nio.charset.StandardCharsets
 
 object MapEditorCopierSpec extends SimpleIOSuite:
+  override def maxParallelism = 1
   type EC[A] = Either[Throwable, A]
 
   test("copies assets while extracting map files") {

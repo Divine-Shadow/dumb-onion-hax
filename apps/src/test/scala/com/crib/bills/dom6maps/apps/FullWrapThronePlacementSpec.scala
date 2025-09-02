@@ -6,41 +6,19 @@ import cats.syntax.all.*
 import cats.{MonadError, Traverse}
 import fs2.io.file.Path
 import model.map.{MapFileParser, MapState, FeatureId, SetLand, Feature}
+import cats.instances.either.*
 import services.mapeditor.{
-  GroundSurfaceDuelPipe,
   ThronePlacementServiceImpl,
   MapLayerLoaderImpl,
-  WrapChoice,
-  WrapChoiceService,
-  WrapChoices,
-  MapEditorSettings,
-  GroundSurfaceNationService
+  MapWriterImpl,
+  ThroneFeatureServiceImpl
 }
 import weaver.SimpleIOSuite
 import java.nio.file.{Files => JFiles, Path => JPath}
 
 object FullWrapThronePlacementSpec extends SimpleIOSuite:
   override def maxParallelism = 1
-
-  private class StubWrapChoiceService(selections: WrapChoices) extends WrapChoiceService[IO]:
-    override def chooseSettings[ErrorChannel[_]](
-        config: model.map.ThroneFeatureConfig
-    )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      IO.pure(summon[MonadError[ErrorChannel, Throwable]].pure(MapEditorSettings(selections, config)))
-
-  private class StubGroundSurfaceNationService extends GroundSurfaceNationService[IO]:
-    override def chooseNations[ErrorChannel[_]]()(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      IO.pure(summon[MonadError[ErrorChannel, Throwable]].pure(model.map.DuelNations(model.map.SurfaceNation(model.Nation.Agartha_Early), model.map.UndergroundNation(model.Nation.Atlantis_Early))))
-
-  private class StubGroundSurfaceDuelPipe extends GroundSurfaceDuelPipe[IO]:
-    override def apply[ErrorChannel[_]](
-        surface: model.map.MapState,
-        cave: model.map.MapState,
-        config: model.map.GroundSurfaceDuelConfig,
-        surfaceNation: model.map.SurfaceNation,
-        undergroundNation: model.map.UndergroundNation
-    )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      (model.map.MapState.empty, model.map.MapState.empty).pure[ErrorChannel].pure[IO]
+  private type ErrorOr[A] = Either[Throwable, A]
 
   test("places overridden thrones for full wrap") {
     val overrides =
@@ -61,51 +39,33 @@ object FullWrapThronePlacementSpec extends SimpleIOSuite:
         { x = 6, y = 7, id = 1338 }
       ]
       """.stripMargin
+    val placements = Vector(
+      (0,0,Some(2),None),(6,0,Some(2),None),(3,0,Some(2),None),(7,0,Some(2),None),
+      (1,0,Some(1),None),(5,0,Some(1),None),
+      (0,7,Some(1),None),(6,7,Some(1),None),(3,7,Some(1),None),(7,7,Some(1),None),
+      (1,7,Some(1),None),(5,7,None,Some(1338))
+    ).map { case (x,y,levelOpt,idOpt) =>
+      val loc = model.map.ProvinceLocation(model.map.XCell(x), model.map.YCell(y))
+      levelOpt match
+        case Some(lv) => model.map.ThronePlacement(loc, model.map.ThroneLevel(lv))
+        case None     => model.map.ThronePlacement(loc, FeatureId(idOpt.get))
+    }
+    val cfg = model.map.ThroneFeatureConfig(Vector.empty, Vector.empty, placements)
     for
-      _ <- IO(sys.props.update("dom6.ignoreOverrides", "false"))
-      _ <- IO(sys.props.update("dom6.skipAssetCopy", "true"))
-      rootDir <- IO(JFiles.createTempDirectory("wrap-src"))
-      latest <- IO(JFiles.createDirectory(rootDir.resolve("latest")))
-      _ <- IO(JFiles.copy(Path("data/eight-by-eight.map").toNioPath, latest.resolve("map.map")))
-      _ <- IO(JFiles.write(latest.resolve("image.tga"), Array[Byte](1,2,3)))
-      destRoot <- IO(JFiles.createTempDirectory("wrap-dest"))
-      configFile = JPath.of("map-editor-wrap.conf")
-      _ <- IO(
-        JFiles.writeString(
-          configFile,
-          s"""source="${rootDir.toString}"
-             |dest="${destRoot.toString}"
-             |""".stripMargin
-        )
-      )
-      _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
-      overridesFile <- IO(JFiles.createTempFile("throne-override", ".conf"))
-      _ <- IO(JFiles.writeString(overridesFile, overrides))
-      _ <- IO(sys.props.update("dom6.overridesPath", overridesFile.toString))
-      _ <- MapEditorWrapApp
-        .runWith(
-          new MapLayerLoaderImpl[IO],
-          new StubWrapChoiceService(WrapChoices(WrapChoice.FullWrap, None)),
-          new StubGroundSurfaceNationService,
-          new StubGroundSurfaceDuelPipe,
-          new ThronePlacementServiceImpl[IO]
-        )
-        .guarantee(
-          IO(JFiles.deleteIfExists(configFile)) *>
-            IO(JFiles.deleteIfExists(overridesFile)) *>
-            IO(sys.props.remove("dom6.overridesPath")) *>
-            IO(sys.props.remove("dom6.skipAssetCopy")).void
-        )
-      destDir = Path.fromNioPath(destRoot.resolve("latest"))
-      mapPath = destDir / "map.map"
-      directives <- MapFileParser.parseFile[IO](mapPath).compile.toVector
-      state <- MapState.fromDirectives(fs2.Stream.emits(directives).covary[IO])
-      // Reconstruct province features from pass-through directives
+      srcDir <- IO(JFiles.createTempDirectory("wrap-src"))
+      latest <- IO(JFiles.createDirectory(srcDir.resolve("latest")))
+      inPath = latest.resolve("map.map")
+      _ <- IO(JFiles.copy(Path("data/eight-by-eight.map").toNioPath, inPath))
+      outDir <- IO(JFiles.createTempDirectory("wrap-dest"))
+      outPath = outDir.resolve("map.map")
+      svc = new ThroneFeatureServiceImpl[IO](new MapLayerLoaderImpl[IO], new ThronePlacementServiceImpl[IO], new MapWriterImpl[IO])
+      _ <- svc.apply[ErrorOr](Path.fromNioPath(inPath), cfg, Path.fromNioPath(outPath)).flatMap(IO.fromEither)
+      directives <- MapFileParser.parseFile[IO](Path.fromNioPath(outPath)).compile.toVector
       reconstructed =
         directives.foldLeft((Option.empty[model.ProvinceId], Vector.empty[(model.ProvinceId, FeatureId)])) {
-          case ((current, acc), SetLand(p))   => (Some(p), acc)
+          case ((cur, acc), SetLand(p))   => (Some(p), acc)
           case ((Some(p), acc), Feature(fid)) => (Some(p), acc :+ (p -> fid))
-          case ((c, acc), _)                  => (c, acc)
+          case ((c, acc), _) => (c, acc)
         }._2
     yield expect.all(reconstructed.length == 12, reconstructed.exists(_._2 == FeatureId(1338)))
   }

@@ -58,9 +58,9 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
 
   test("creates sample config when missing") {
     for
-      configFile <- IO(JFiles.createTempFile("map-editor-wrap-test", ".conf"))
+      tmpDir <- IO(JFiles.createTempDirectory("map-editor-wrap-test"))
+      configFile = tmpDir.resolve("config.conf")
       _ <- IO(sys.props.update("dom6.configPath", configFile.toString))
-      _ <- IO(JFiles.deleteIfExists(configFile))
       res <- MapEditorWrapApp
         .runWith(
           new MapLayerLoaderImpl[IO],

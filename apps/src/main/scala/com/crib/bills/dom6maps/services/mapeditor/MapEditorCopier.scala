@@ -45,12 +45,9 @@ class MapEditorCopierImpl[Sequencer[_]: Async: Files] extends MapEditorCopier[Se
             else if maybeMain.contains(p) || maybeCave.contains(p) then Async[Sequencer].unit
             else
               val parent = target.parent.getOrElse(dest)
-              val skipAssets = sys.props.get("dom6.skipAssetCopy").contains("true")
-              if skipAssets then Async[Sequencer].unit
-              else
-                Files[Sequencer].createDirectories(parent) >>
-                  Files[Sequencer].deleteIfExists(target) >>
-                  Files[Sequencer].copy(p, target)
+              Files[Sequencer].createDirectories(parent) >>
+                Files[Sequencer].deleteIfExists(target) >>
+                Files[Sequencer].copy(p, target)
           }
       result <- maybeMain match
         case Some(mapPath) =>
