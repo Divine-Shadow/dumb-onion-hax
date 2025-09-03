@@ -16,6 +16,7 @@ The short term goal of this project is to be able to parse map files and then ed
 
 - Config: edit `map-editor-wrap.conf` to point `source` to `./data/live-games` and `dest` to `./data/generated-maps` (created if missing).
 - Optional: add throne placements to `throne-override.conf` (see `throne-override.conf` for format).
+  - You can also point to a custom overrides file with `-Ddom6.overridesPath=/absolute/or/relative/path/to/overrides.conf`. Set `-Ddom6.ignoreOverrides=true` to skip applying overrides.
 - Run: `sbt "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
 - Wrap options (optional): pass JVM props `-Ddom6.wrap.main=hwrap|vwrap|full|none|duel` and `-Ddom6.wrap.cave=hwrap|vwrap|full|none`.
 
