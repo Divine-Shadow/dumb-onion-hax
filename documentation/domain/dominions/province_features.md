@@ -13,6 +13,11 @@ Province features are assigned by pairing a province selection with a feature id
 
 `#setland` selects the province to modify without removing its existing units. `#feature` then adds a feature such as a throne or unique site to that province. For example, `#setland 120` followed by `#feature 1358` adds the *Throne of Winter* to province 120.
 
+## Throne Defenders
+
+Placing a throne with `#feature` only adds the site. Standard throne defenders are not created. The manual notes that changing province properties does not alter independent defenders and that any desired defenders must be assigned manually using [Commander Commands](manual/update/sections/6_map_file_commands/6.8_commander_commands.md) after selecting the province with `#land` or `#setland` ([Province Commands](manual/archive/sections/6_map_file_commands/6.7_province_commands.md)).
+
+
 ## Context
 
 The current map model captures terrain, adjacency, and special links but lacks a way to store feature overrides. Without this, user supplied features cannot be represented or written back to a map file. Feature directives also do not round-trip through the parser and renderer, leaving `#setland` and `#feature` lines as pass-through text.

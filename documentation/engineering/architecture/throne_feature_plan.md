@@ -39,6 +39,9 @@ This plan describes how to apply throne placements to a map layer using existing
 ## Implementation
 - `ThroneFeatureService` orchestrates the above workflow by loading the map layer, applying throne placements, and writing the result.
 
+## Defender Considerations
+Specific thrones applied through `#feature` do not automatically receive their standard defenders. Populate guardians manually after selecting the province. See [Province Feature Commands](../../domain/dominions/province_features.md#throne-defenders) for details.
+
 ## Alignment with Codebase Principles
 - **Capability Traits** – The plan leans on `ThronePlacementService` and `MapLayerLoader`, respecting the contract/implementation split.
 - **Domain-Driven Types** – `ProvinceId`, `ThroneLevel`, and `ThronePlacement` avoid primitives while modeling the domain clearly.
