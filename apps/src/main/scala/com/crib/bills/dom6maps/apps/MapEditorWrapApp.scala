@@ -28,11 +28,15 @@ import services.mapeditor.{
 }
 import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
+import apps.util.PathUtils
 import java.nio.file.{Files as JFiles, Path as NioPath}
 
 object MapEditorWrapApp extends IOApp:
   private def configPath: NioPath =
-    sys.props.get("dom6.configPath").map(NioPath.of(_)).getOrElse(NioPath.of("map-editor-wrap.conf"))
+    sys.props
+      .get("dom6.configPath")
+      .map(p => PathUtils.normalizeForWSL(NioPath.of(p)))
+      .getOrElse(NioPath.of("map-editor-wrap.conf"))
   private val sampleConfig =
     """source="/path/to/mapnuke/output"
 dest="/path/to/dominions/maps"
@@ -74,7 +78,8 @@ dest="/path/to/dominions/maps"
           else
             IO(JFiles.writeString(configPath, sampleConfig)) *>
               IO.raiseError(new RuntimeException(s"${configPath.getFileName.toString} created; please edit and rerun"))
-        cfg <- IO(ConfigSource.file(configPath).loadOrThrow[PathsConfig])
+        rawCfg <- IO(ConfigSource.file(configPath).loadOrThrow[PathsConfig])
+        cfg = PathsConfig(PathUtils.normalizeForWSL(rawCfg.source), PathUtils.normalizeForWSL(rawCfg.dest))
         res <- workflow.run(cfg)
         _ <- IO.fromEither(res)
       yield ExitCode.Success

@@ -8,6 +8,7 @@ import pureconfig.*
 import java.nio.file.{Files as JFiles, Path as NioPath}
 
 import services.mapeditor.*
+import apps.util.PathUtils
 import services.update.GithubReleaseCheckerImpl
 
 /**
@@ -68,7 +69,8 @@ dest="./data/generated-maps"
           if exists then IO.unit
           else IO(JFiles.writeString(NioPath.of(configFileName), sampleConfig)) *>
             IO.raiseError(new RuntimeException(s"$configFileName created; please edit and rerun"))
-        cfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
+        rawCfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
+        cfg = PathsConfig(PathUtils.normalizeForWSL(rawCfg.source), PathUtils.normalizeForWSL(rawCfg.dest))
         res <- workflow.run(cfg)
         _   <- IO.fromEither(res)
       yield ExitCode.Success

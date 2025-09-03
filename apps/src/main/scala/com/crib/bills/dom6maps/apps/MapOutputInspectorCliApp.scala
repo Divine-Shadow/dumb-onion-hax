@@ -6,6 +6,7 @@ import cats.syntax.all.*
 import cats.instances.either.*
 import fs2.io.file.{Files, Path}
 import pureconfig.*
+import apps.util.PathUtils
 
 import services.mapeditor.*
 import services.mapeditor.ThroneConfiguration
@@ -24,7 +25,8 @@ object MapOutputInspectorCliApp extends IOApp:
     val loader  = new MapLayerLoaderImpl[IO]
     val finder  = new LatestEditorFinderImpl[IO]
 
-    val cfg     = ConfigSource.file("map-editor-wrap.conf").loadOrThrow[PathsConfig]
+    val rawCfg  = ConfigSource.file("map-editor-wrap.conf").loadOrThrow[PathsConfig]
+    val cfg     = PathsConfig(PathUtils.normalizeForWSL(rawCfg.source), PathUtils.normalizeForWSL(rawCfg.dest))
     val dest    = Path.fromNioPath(cfg.dest)
     val srcRoot = Path.fromNioPath(cfg.source)
     val throneIds = DomFeature.thrones.map(_.id.value).toSet

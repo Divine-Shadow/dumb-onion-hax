@@ -9,6 +9,7 @@ import model.map.{GroundSurfaceDuelConfig, ThroneFeatureConfig}
 import model.version.{UpdateStatus, Version}
 import apps.services.update.Service as GithubReleaseChecker
 import pureconfig.*
+import apps.util.PathUtils
 import java.nio.file.{Files as JFiles, Path as NioPath}
 
 trait MapWrapWorkflow:
@@ -37,8 +38,11 @@ class MapWrapWorkflowImpl(
       if ignore then Right(ThroneConfiguration(Vector.empty))
       else
         sys.props.get("dom6.overridesPath") match
-          case Some(p) if JFiles.exists(NioPath.of(p)) =>
-            ConfigSource.file(p).load[ThroneConfiguration].leftMap(f => RuntimeException(f.toString))
+          case Some(p) =>
+            val np = PathUtils.normalizeForWSL(NioPath.of(p))
+            if JFiles.exists(np) then
+              ConfigSource.file(np).load[ThroneConfiguration].leftMap(f => RuntimeException(f.toString))
+            else Right(ThroneConfiguration(Vector.empty))
           case _ =>
             val path = NioPath.of("throne-override.conf")
             if JFiles.exists(path) then ConfigSource.file(path).load[ThroneConfiguration].leftMap(f => RuntimeException(f.toString))
