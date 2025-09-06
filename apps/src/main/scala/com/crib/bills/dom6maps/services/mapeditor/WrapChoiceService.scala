@@ -103,7 +103,10 @@ Fixed: $fixedSummary"""
                   .leftMap(f => RuntimeException(f.toString))
                   .map(cfg => MapEditorSettings(wraps, config.copy(randomLevelOne = Vector.empty, randomLevelTwo = Vector.empty, fixed = cfg.overrides)))
                   .fold(errorChannel.raiseError, errorChannel.pure)
-              else sequencer.pure(errorChannel.pure(MapEditorSettings(wraps, config)))
+              else
+                // Do not apply any preloaded throne overrides unless explicitly enabled.
+                // This ensures stale/out-of-bounds configs do not trigger validation when unchecked.
+                sequencer.pure(errorChannel.pure(MapEditorSettings(wraps, config.copy(fixed = Vector.empty))))
             else
               sequencer.pure(errorChannel.raiseError[MapEditorSettings](RuntimeException("Selection cancelled")))
         yield settings
