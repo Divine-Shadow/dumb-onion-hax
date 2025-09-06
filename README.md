@@ -21,6 +21,20 @@ The short term goal of this project is to be able to parse map files and then ed
 - Wrap options (optional): pass JVM props `-Ddom6.wrap.main=hwrap|vwrap|full|none|duel` and `-Ddom6.wrap.cave=hwrap|vwrap|full|none`.
  - WSL support: if you run under WSL, Windows-style paths like `C:\Users\...` in `map-editor-wrap.conf` and `-Ddom6.overridesPath=...` are automatically converted to `/mnt/c/...`.
 
+## Dev Kit (Docker)
+
+Use the shared Dev Kit to run this project in an isolated container with proxy/DNS defaults.
+
+- Start: `scripts/devkit -p dumb-onion-hax up`
+- Shell: `scripts/devkit -p dumb-onion-hax exec 1 bash`
+- Warm caches: `scripts/devkit -p dumb-onion-hax warm`
+- Compile: `scripts/devkit -p dumb-onion-hax maintain`
+- tmux (2 agents): `scripts/devkit -p dumb-onion-hax tmux-shells 2`
+
+Notes
+- Run these from the monorepo root (where `scripts/devkit` lives).
+- DNS allowlist is enabled by default; add domains with `scripts/devkit allow <domain>` then `scripts/devkit restart`.
+
 ## License
 
 ![License: Polyform Noncommercial](https://img.shields.io/badge/license-Polyform%20Noncommercial-blue)
