@@ -24,7 +24,7 @@ class MapSizeValidatorImpl[Sequencer[_]: Sync] extends MapSizeValidator[Sequence
     val result = (surface.size, cave.size) match
       case (Some(surf), Some(caveSize)) =>
         if surf.value != caveSize.value then
-          Left(IllegalArgumentException("Map dimensions must be equal, square, and odd"))
+          Left(IllegalArgumentException("Map dimensions must be equal"))
         else Right((surf, surface, cave))
       case _ => Left(IllegalArgumentException("Map size directive missing"))
     val ec = result match

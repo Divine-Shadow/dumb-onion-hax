@@ -35,7 +35,9 @@ object WrapSeverService:
   def severVertically(state: MapState): MapState =
     state.size match
       case Some(sz) =>
-        val height = MapHeight(sz.value)
+        // Calculate actual map height from province locations
+        val maxY = state.provinceLocations.indexByProvinceId.values.map(_.y.value).maxOption.getOrElse(0)
+        val height = MapHeight(maxY + 1)
         val shouldSever = state.wrap == WrapState.FullWrap || state.wrap == WrapState.VerticalWrap
         val newAdj =
           if shouldSever then
@@ -56,7 +58,9 @@ object WrapSeverService:
   def severHorizontally(state: MapState): MapState =
     state.size match
       case Some(sz) =>
-        val width      = MapWidth(sz.value)
+        // Calculate actual map width from province locations
+        val maxX = state.provinceLocations.indexByProvinceId.values.map(_.x.value).maxOption.getOrElse(0)
+        val width = MapWidth(maxX + 1)
         val newAdj     = state.adjacency.filterNot((a, b) => isLeftRight(a, b, state.provinceLocations, width))
         val newBorders = state.borders.filterNot(b => isLeftRight(b.a, b.b, state.provinceLocations, width))
         val newWrap = state.wrap match

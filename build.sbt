@@ -29,6 +29,15 @@ lazy val apps = (project in file("apps"))
     name := "apps",
     libraryDependencies ++= Dependencies.tests.map(_ % Test) ++ Dependencies.apps,
     commonSettings,
+    // Run the app in a forked JVM so we can pass proper JVM options
+    Compile / run / fork := true,
+    // Allow JVM options to be provided via env var or system property without
+    // confusing sbt's command parser (e.g., APP_JAVA_OPTS="-Xms4G -Xmx4G")
+    Compile / run / javaOptions ++= {
+      val fromEnv  = sys.env.get("APP_JAVA_OPTS").toSeq.flatMap(_.split("\\s+").filter(_.nonEmpty))
+      val fromProp = sys.props.get("app.java.opts").toSeq.flatMap(_.split("\\s+").filter(_.nonEmpty))
+      fromEnv ++ fromProp
+    },
     assembly / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
     Compile / mainClass := Some("com.crib.bills.dom6maps.apps.MapEditorWrapApp"),
     assembly / assemblyJarName := "dumb-onion-hax.jar"

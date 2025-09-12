@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sbt:*)",
+      "Bash(echo $APP_JAVA_OPTS)",
+      "Bash(env)",
+      "Bash(java:*)",
+      "Bash(bash scripts/run-app:*)",
+      "Bash(dirname:*)",
+      "Bash(mv:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(echo:*)",
+      "Bash(echo \"ROOT_DIR: ''$ROOT_DIR''\")",
+      "Bash(rmdir:*)",
+      "Read(//home/bayesartre/.local/bin/**)",
+      "Bash(unset SBT_OPTS)",
+      "Read(//home/bayesartre/.sbt/1.0/**)",
+      "Bash(source ~/.bashrc)",
+      "Read(//mnt/c/Users/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

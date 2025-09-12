@@ -115,6 +115,11 @@ object MapFileParser:
       Nation.byId.get(n).map(SpecStart(_, ProvinceId(p)))
     }
 
+  private def startP[$: P]: P[Option[MapDirective]] =
+    P("#start" ~ ws ~ int).map { prov =>
+      Some(com.crib.bills.dom6maps.model.map.Start(ProvinceId(prov)))
+    }
+
   private def pbP[$: P]: P[Option[MapDirective]] =
     P("#pb" ~ ws ~ int ~ ws ~ int ~ ws ~ int ~ ws ~ int).map {
       case (x, y, len, p) => Some(Pb(x, y, len, ProvinceId(p)))
@@ -183,6 +188,7 @@ object MapFileParser:
       featuresP |
       allowedPlayerP |
       specStartP |
+      startP |
       pbP |
       terrainP |
       landnameP |
@@ -199,4 +205,3 @@ object MapFileParser:
     fastparse.parse(line, p => directive(using p)) match
       case Parsed.Success(Some(value), _) => Sync[F].pure(value)
       case _                              => Sync[F].raiseError(UnmappedLine(line))
-

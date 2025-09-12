@@ -35,9 +35,20 @@ class MapEditorCopierImpl[Sequencer[_]: Async: Files] extends MapEditorCopier[Se
       info <- entries.traverse(p => Files[Sequencer].isDirectory(p).map(b => (p, b)))
       maybeMain =
         info.collectFirst {
-          case (p, false) if p.toString.endsWith(".map") && !p.toString.endsWith("_plane2.map") => p
+          case (p, false)
+              if {
+                val lower = p.fileName.toString.toLowerCase
+                lower.endsWith(".map") && !lower.endsWith("_plane2.map")
+              } => p
         }
-      maybeCave = info.collectFirst { case (p, false) if p.toString.endsWith("_plane2.map") => p }
+      maybeCave =
+        info.collectFirst {
+          case (p, false)
+              if {
+                val lower = p.fileName.toString.toLowerCase
+                lower.endsWith("_plane2.map")
+              } => p
+        }
       _ <- info.traverse_ { case (p, isDir) =>
             val rel = source.relativize(p)
             val target = dest / rel.toString

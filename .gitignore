@@ -10,3 +10,5 @@ hs_err_pid*
 *.conf
 data/live-games/*
 data/generated-maps/
+
+/.devhome/

@@ -23,6 +23,19 @@ import services.update.GithubReleaseCheckerImpl
  */
 object MapEditorWrapCliApp extends IOApp:
   private val configFileName = "map-editor-wrap.conf"
+  private def resolveConfigPath(): NioPath =
+    sys.props
+      .get("dom6.configPath")
+      .map(p => NioPath.of(p))
+      .orElse {
+        val cwd = NioPath.of(configFileName)
+        if (JFiles.exists(cwd)) Some(cwd) else None
+      }
+      .orElse {
+        val parent = NioPath.of("..", configFileName).normalize()
+        if (JFiles.exists(parent)) Some(parent) else None
+      }
+      .getOrElse(NioPath.of(configFileName))
   private val sampleConfig =
     """source="./data/live-games"
 dest="./data/generated-maps"
@@ -62,14 +75,15 @@ dest="./data/generated-maps"
       currentVersion
     )
 
+    val path   = resolveConfigPath()
     val action =
       for
-        exists <- IO(JFiles.exists(NioPath.of(configFileName)))
+        exists <- IO(JFiles.exists(path))
         _ <-
           if exists then IO.unit
           else IO(JFiles.writeString(NioPath.of(configFileName), sampleConfig)) *>
             IO.raiseError(new RuntimeException(s"$configFileName created; please edit and rerun"))
-        rawCfg <- IO(ConfigSource.file(configFileName).loadOrThrow[PathsConfig])
+        rawCfg <- IO(ConfigSource.file(path).loadOrThrow[PathsConfig])
         cfg = PathsConfig(PathUtils.normalizeForWSL(rawCfg.source), PathUtils.normalizeForWSL(rawCfg.dest))
         res <- workflow.run(cfg)
         _   <- IO.fromEither(res)

@@ -98,7 +98,80 @@ object MapDirectiveCodecs:
       case SetLand(_) | Feature(_)                                     => true
       case _                                                           => true
 
+  // Header-like pass-through directives that should appear before state-owned output
+  // to match game loader expectations and typical map file conventions.
+  private def isHeader(directive: MapDirective): Boolean =
+    directive match
+      case Comment(_)        => true
+      case ImageFile(_)       => true
+      case WinterImageFile(_) => true
+      case DomVersion(_)      => true
+      case PlaneName(_)       => true
+      case MapTextColor(_)    => true
+      case MapDomColor(_,_,_,_) => true
+      case SailDist(_)        => true
+      case Features(_)        => true
+      case MapNoHide          => true
+      case NoDeepCaves        => true
+      case NoDeepChoice       => true
+      case _                  => false
+
   def merge(state: MapState, passThrough: Vector[MapDirective]): Vector[MapDirective] =
     val (pt, nonPt) = passThrough.partition(isPassThrough)
     require(nonPt.isEmpty, "passThrough contains state-owned directives")
-    Encoder[MapState].encode(state) ++ pt
+
+    val stateAll = Encoder[MapState].encode(state)
+
+    // Extract state-owned header directives so we can place them early
+    def removeFirst(vec: Vector[MapDirective])(pred: MapDirective => Boolean): (Vector[MapDirective], Option[MapDirective]) =
+      val idx = vec.indexWhere(pred)
+      if idx >= 0 then (vec.patch(idx, Nil, 1), Some(vec(idx))) else (vec, None)
+
+    val (s1, title) = removeFirst(stateAll) { case Dom2Title(_) => true; case _ => false }
+    val (s2, mapSize) = removeFirst(s1) { case MapSizePixels(_, _) => true; case _ => false }
+    val (s3, wrap) = removeFirst(s2) {
+      case WrapAround | HWrapAround | VWrapAround | NoWrapAround => true
+      case _                                                     => false
+    }
+    val (stateBody, description) = removeFirst(s3) { case Description(_) => true; case _ => false }
+
+    // Partition pass-through headers by specific kinds so we can order them
+    def takePT[A](pred: MapDirective => Boolean) = pt.filter(pred)
+    def dropPT[A](pred: MapDirective => Boolean) = pt.filterNot(pred)
+
+    val imageFiles       = takePT { case ImageFile(_) => true; case _ => false }
+    val winterImageFiles = takePT { case WinterImageFile(_) => true; case _ => false }
+    val textCols         = takePT { case MapTextColor(_) => true; case _ => false }
+    val domCols          = takePT { case MapDomColor(_,_,_,_) => true; case _ => false }
+    val domVersions      = takePT { case DomVersion(_) => true; case _ => false }
+    val mapNoHide        = takePT { case MapNoHide => true; case _ => false }
+    val noDeepCaves      = takePT { case NoDeepCaves => true; case _ => false }
+    val noDeepChoice     = takePT { case NoDeepChoice => true; case _ => false }
+    val planeNames       = takePT { case PlaneName(_) => true; case _ => false }
+    val sailDist         = takePT { case SailDist(_) => true; case _ => false }
+    val features         = takePT { case Features(_) => true; case _ => false }
+    val comments         = takePT { case Comment(_) => true; case _ => false }
+
+    val headerSelected =
+      comments ++
+      title.toVector ++
+      imageFiles ++
+      winterImageFiles ++
+      mapSize.toVector ++
+      wrap.toVector ++
+      textCols ++
+      domCols ++
+      domVersions ++
+      description.toVector ++
+      mapNoHide ++
+      noDeepCaves ++
+      noDeepChoice ++
+      planeNames ++
+      sailDist ++
+      features
+
+    // Remove all header-selected pass-through from pt
+    val headerSet = headerSelected.toSet
+    val remainingPT = pt.filterNot(headerSet.contains)
+
+    headerSelected ++ stateBody ++ remainingPT

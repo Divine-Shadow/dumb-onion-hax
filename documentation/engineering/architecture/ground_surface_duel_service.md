@@ -5,7 +5,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 ## Requirements
 - Accept two `MapState` values representing the surface and cave layers.
 - Accept `SurfaceNation` and `UndergroundNation` values identifying each player.
-- Map dimensions must be square, share the same size, and use an odd side length.
+- Map dimensions must be square and share the same size.
 - Remove all existing gates, thrones, `allowedplayer`, and `specstart` entries before applying new placements.
 - Place gates at the midpoint of each edge on both layers and link matching provinces across layers.
 - Place thrones at all four corners on both layers.
@@ -13,7 +13,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 - Apply vertical and horizontal severing so the resulting maps have no wrap.
 
 ## Domain Types
-- `MapSize`: value class wrapping an odd `Int` side length with constructor validation.
+- `MapSize`: value class wrapping a positive `Int` side length with constructor validation.
 - `EdgeMidpoints`: pure function computing midpoint province identifiers for a given `MapSize`.
 - `CornerLocations`: pure function returning the four corner coordinates.
 - `CenterProvince`: pure function returning the central province identifier.
@@ -24,7 +24,7 @@ The Ground-Surface Duel service composes map modification capabilities to genera
 ## Capability Sketches
 1. **MapSizeValidator**
    - Computes map dimensions from `MapState` values.
-   - Ensures both layers are equal, square, and odd-sized.
+   - Ensures both layers are equal and square.
 2. **PlacementPlanner**
    - Uses `MapSize` to derive:
      - `Vector[GateSpec]` linking surface and cave midpoints.

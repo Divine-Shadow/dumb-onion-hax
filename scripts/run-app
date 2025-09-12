@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Simple runner for the main app. Defaults to the CLI main.
+#
+# Usage examples:
+#   bash scripts/run-app
+#   bash scripts/run-app --jvm-opts "-Xms4G -Xmx4G"
+#   bash scripts/run-app --main app
+#   bash scripts/run-app -- --flag1 value1
+#
+# Options:
+#   --main cli|app|<FQCN>   Select main (default: cli)
+#   --jvm-opts "..."        JVM options for the forked app JVM (APP_JAVA_OPTS)
+#   --                      Separator; everything after is passed as program args
+
+ROOT_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+cd "$ROOT_DIR"
+
+CLI_MAIN="com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"
+APP_MAIN="com.crib.bills.dom6maps.apps.MapEditorWrapApp"
+
+SELECTED_MAIN="cli"
+INLINE_JVM_OPTS=""
+PROGRAM_ARGS=()
+
+usage() {
+  echo "Usage: bash scripts/run-app [--main cli|app|<FQCN>] [--jvm-opts \"-Xms4G -Xmx4G\"] [--] [args...]" >&2
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --main)
+      [[ $# -ge 2 ]] || { echo "--main requires a value" >&2; usage; exit 1; }
+      SELECTED_MAIN="$2"; shift 2 ;;
+    --jvm-opts)
+      [[ $# -ge 2 ]] || { echo "--jvm-opts requires a value" >&2; usage; exit 1; }
+      INLINE_JVM_OPTS="$2"; shift 2 ;;
+    --)
+      shift
+      PROGRAM_ARGS=("$@")
+      break ;;
+    -h|--help)
+      usage; exit 0 ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage; exit 1 ;;
+  esac
+done
+
+case "$SELECTED_MAIN" in
+  cli) MAIN_CLASS="$CLI_MAIN" ;;
+  app) MAIN_CLASS="$APP_MAIN" ;;
+  *)   MAIN_CLASS="$SELECTED_MAIN" ;;
+esac
+
+# Export JVM opts for the forked run configured in build.sbt
+if [[ -n "$INLINE_JVM_OPTS" ]]; then
+  if [[ -n "${APP_JAVA_OPTS:-}" ]]; then
+    export APP_JAVA_OPTS="$INLINE_JVM_OPTS $APP_JAVA_OPTS"
+  else
+    export APP_JAVA_OPTS="$INLINE_JVM_OPTS"
+  fi
+fi
+
+# Join program args for sbt runMain. Handle spaces via quoting.
+join_args_for_sbt() {
+  local out=""
+  for a in "$@"; do
+    case "$a" in
+      *[\ \"\']*)
+        # Escape existing double quotes
+        local esc=${a//\"/\\\"}
+        out+=" \"$esc\"" ;;
+      *)
+        out+=" $a" ;;
+    esac
+  done
+  echo "$out"
+}
+
+ARGS_JOINED=$(join_args_for_sbt "${PROGRAM_ARGS[@]}" )
+
+exec sbt "project apps" "runMain ${MAIN_CLASS}${ARGS_JOINED}"
+

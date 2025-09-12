@@ -15,11 +15,23 @@ The short term goal of this project is to be able to parse map files and then ed
 ## Headless CLI
 
 - Config: edit `map-editor-wrap.conf` to point `source` to `./data/live-games` and `dest` to `./data/generated-maps` (created if missing).
+  - Lookup order: `-Ddom6.configPath=/path/to/file` if set; otherwise `./map-editor-wrap.conf`; otherwise `../map-editor-wrap.conf`.
+  - If no file is found, a sample is written to `./map-editor-wrap.conf` and the app exits.
 - Optional: add throne placements to `throne-override.conf` (see `throne-override.conf` for format).
   - You can also point to a custom overrides file with `-Ddom6.overridesPath=/absolute/or/relative/path/to/overrides.conf`. Set `-Ddom6.ignoreOverrides=true` to skip applying overrides.
-- Run: `sbt "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
-- Wrap options (optional): pass JVM props `-Ddom6.wrap.main=hwrap|vwrap|full|none|duel` and `-Ddom6.wrap.cave=hwrap|vwrap|full|none`.
- - WSL support: if you run under WSL, Windows-style paths like `C:\Users\...` in `map-editor-wrap.conf` and `-Ddom6.overridesPath=...` are automatically converted to `/mnt/c/...`.
+ - Run (script): `bash scripts/run-app` (see options below)
+ - Run (direct): `sbt "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
+ - JVM memory (optional):
+   - Preferred: set `APP_JAVA_OPTS` for the app's forked JVM, e.g. `APP_JAVA_OPTS="-Xms4G -Xmx4G" sbt "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
+   - Or pass to sbt/JVM: `sbt -J-Xms4G -J-Xmx4G "project apps" "runMain com.crib.bills.dom6maps.apps.MapEditorWrapCliApp"`
+   - Avoid placing raw flags after tasks (e.g., `... run -Xms4G`)—sbt will treat them as commands and error.
+ - Wrap options (optional): pass JVM props `-Ddom6.wrap.main=hwrap|vwrap|full|none|duel` and `-Ddom6.wrap.cave=hwrap|vwrap|full|none`.
+  - WSL support: if you run under WSL, Windows-style paths like `C:\Users\...` in `map-editor-wrap.conf` and `-Ddom6.overridesPath=...` are automatically converted to `/mnt/c/...`.
+
+Script options
+- `--main cli|app|<FQCN>`: choose entrypoint (default `cli`).
+- `--jvm-opts "-Xms4G -Xmx4G"`: JVM opts for the forked app JVM.
+- `--` then args: pass program args to the main class.
 
 ## Dev Kit (Docker)
 

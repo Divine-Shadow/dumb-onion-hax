@@ -33,10 +33,20 @@ import java.nio.file.{Files as JFiles, Path as NioPath}
 
 object MapEditorWrapApp extends IOApp:
   private def configPath: NioPath =
+    val fileName = "map-editor-wrap.conf"
     sys.props
       .get("dom6.configPath")
       .map(p => PathUtils.normalizeForWSL(NioPath.of(p)))
-      .getOrElse(NioPath.of("map-editor-wrap.conf"))
+      .orElse {
+        val cwd = NioPath.of(fileName)
+        if (JFiles.exists(cwd)) Some(cwd) else None
+      }
+      .orElse {
+        // When running via sbt subproject, working dir is often ./apps; check parent
+        val parent = NioPath.of("..", fileName).normalize()
+        if (JFiles.exists(parent)) Some(parent) else None
+      }
+      .getOrElse(NioPath.of(fileName))
   private val sampleConfig =
     """source="/path/to/mapnuke/output"
 dest="/path/to/dominions/maps"

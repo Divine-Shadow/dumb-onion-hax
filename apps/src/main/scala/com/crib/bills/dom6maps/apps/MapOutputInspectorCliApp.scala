@@ -25,7 +25,22 @@ object MapOutputInspectorCliApp extends IOApp:
     val loader  = new MapLayerLoaderImpl[IO]
     val finder  = new LatestEditorFinderImpl[IO]
 
-    val rawCfg  = ConfigSource.file("map-editor-wrap.conf").loadOrThrow[PathsConfig]
+    def resolveConfigPath(): java.nio.file.Path =
+      val name = "map-editor-wrap.conf"
+      sys.props
+        .get("dom6.configPath")
+        .map(p => java.nio.file.Path.of(p))
+        .orElse {
+          val cwd = java.nio.file.Path.of(name)
+          if (java.nio.file.Files.exists(cwd)) Some(cwd) else None
+        }
+        .orElse {
+          val parent = java.nio.file.Path.of("..", name).normalize()
+          if (java.nio.file.Files.exists(parent)) Some(parent) else None
+        }
+        .getOrElse(java.nio.file.Path.of(name))
+
+    val rawCfg  = ConfigSource.file(resolveConfigPath()).loadOrThrow[PathsConfig]
     val cfg     = PathsConfig(PathUtils.normalizeForWSL(rawCfg.source), PathUtils.normalizeForWSL(rawCfg.dest))
     val dest    = Path.fromNioPath(cfg.dest)
     val srcRoot = Path.fromNioPath(cfg.source)
