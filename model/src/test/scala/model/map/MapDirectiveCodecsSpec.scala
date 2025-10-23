@@ -53,3 +53,28 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
     val expected = Vector(NoWrapAround) ++ pass
     IO.pure(expect(MapDirectiveCodecs.merge(state, pass) == expected))
   }
+
+  test("encodes allowed players and spec starts in ascending nation id order") {
+    val state = MapState.empty.copy(
+      allowedPlayers = Vector(
+        AllowedPlayer(Nation.Helheim_Early),
+        AllowedPlayer(Nation.Atlantis_Early),
+        AllowedPlayer(Nation.Marverni_Early)
+      ),
+      startingPositions = Vector(
+        SpecStart(Nation.Helheim_Early, ProvinceId(3)),
+        SpecStart(Nation.Atlantis_Early, ProvinceId(1)),
+        SpecStart(Nation.Marverni_Early, ProvinceId(2))
+      )
+    )
+
+    val directives = Encoder[MapState].encode(state)
+
+    val allowedIds = directives.collect { case AllowedPlayer(nation) => nation.id }
+    val specStartIds = directives.collect { case SpecStart(nation, _) => nation.id }
+
+    IO.pure(
+      expect(allowedIds == allowedIds.sorted) &&
+        expect(specStartIds == specStartIds.sorted)
+    )
+  }

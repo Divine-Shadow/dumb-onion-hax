@@ -76,8 +76,14 @@ object MapDirectiveCodecs:
       val wrap = Encoder[WrapState].encode(value.wrap)
       val title = value.title.toVector.flatMap(Encoder[MapTitle].encode)
       val description = value.description.toVector.flatMap(Encoder[MapDescription].encode)
-      val players = value.allowedPlayers.flatMap(Encoder[AllowedPlayer].encode)
-      val starts = value.startingPositions.flatMap(Encoder[SpecStart].encode)
+      val players =
+        value.allowedPlayers
+          .sortBy(_.nation.id)
+          .flatMap(Encoder[AllowedPlayer].encode)
+      val starts =
+        value.startingPositions
+          .sortBy(_.nation.id)
+          .flatMap(Encoder[SpecStart].encode)
       val terrains = value.terrains.flatMap(Encoder[Terrain].encode)
       val features = value.features.flatMap(Encoder[ProvinceFeature].encode)
       val gates = value.gates.flatMap(Encoder[Gate].encode)

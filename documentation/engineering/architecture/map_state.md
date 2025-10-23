@@ -17,3 +17,5 @@ The companion object provides `fromDirectives` which folds a stream of `MapDirec
 derives the location indexes via `ProvinceLocationService`.
 
 `MapDirectiveCodecs` supplies the inverse operation by encoding `MapState` and its components back into canonical `MapDirective` values.
+
+When encoding, player directives are normalised: `#allowedplayer` entries are emitted with nation identifiers in ascending order, and matching `#specstart` directives follow the same ordering. This keeps the rendered map files compatible with game parsers that require sorted nation identifiers for these directives.

@@ -5,7 +5,7 @@ import sbtassembly.AssemblyPlugin.autoImport._
 val idePackagePrefix = settingKey[Option[String]]("IDE package prefix")
 
 ThisBuild / scalaVersion := "3.7.1"
-ThisBuild / version := "1.1"
+ThisBuild / version := "1.1.1"
 ThisBuild / organization := "com.crib.bills"
 ThisBuild / organizationName := "Bill's Crib"
 Global / excludeLintKeys := Set(idePackagePrefix)
