@@ -1,10 +1,11 @@
 package com.crib.bills.dom6maps
 package apps.services.mapeditor
 
-import javax.swing.{ButtonGroup, JPanel, JRadioButton}
+import javax.swing.{BoxLayout, ButtonGroup, JPanel, JRadioButton}
 import java.awt.event.ActionListener
 
 final class WrapChoicePanel(default: WrapChoice, allowGroundSurfaceDuel: Boolean = false) extends JPanel:
+  setLayout(new BoxLayout(this, BoxLayout.Y_AXIS))
   private val h = new JRadioButton("hwrap")
   private val v = new JRadioButton("vwrap")
   private val f = new JRadioButton("full-wrap")

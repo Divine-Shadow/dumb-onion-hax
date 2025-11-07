@@ -41,7 +41,7 @@ object MapEditorWrapCliApp extends IOApp:
 dest="./data/generated-maps"
 """
 
-  private val currentVersion = Version("1.2")
+  private val currentVersion = Version("1.3")
 
   def run(args: List[String]): IO[ExitCode] =
     val finder    = new LatestEditorFinderImpl[IO]

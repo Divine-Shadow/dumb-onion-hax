@@ -52,7 +52,7 @@ object MapEditorWrapApp extends IOApp:
 dest="/path/to/dominions/maps"
 """
 
-  private val currentVersion = Version("1.2")
+  private val currentVersion = Version("1.3")
 
   def runWith(
       loader: MapLayerLoader[IO],

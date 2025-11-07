@@ -4,7 +4,8 @@ package apps.services.mapeditor
 import cats.{MonadError, Traverse}
 import cats.effect.Sync
 import cats.syntax.all.*
-import javax.swing.{BoxLayout, JCheckBox, JLabel, JOptionPane, JPanel}
+import java.awt.Component
+import javax.swing.{BorderFactory, Box, BoxLayout, JCheckBox, JComponent, JOptionPane, JPanel, JTextArea}
 import java.nio.file.{Files as JFiles, Path as NioPath}
 import pureconfig.*
 import model.map.ThroneFeatureConfig
@@ -13,7 +14,8 @@ trait WrapChoiceService[Sequencer[_]]:
   protected def wrapChoiceService: WrapChoiceService[Sequencer] = this
 
   def chooseSettings[ErrorChannel[_]](
-      config: ThroneFeatureConfig
+      config: ThroneFeatureConfig,
+      caveAvailability: CaveLayerAvailability
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapEditorSettings]]
@@ -22,8 +24,20 @@ class WrapChoiceServiceImpl[Sequencer[_]](using Sync[Sequencer])
     extends WrapChoiceService[Sequencer]:
   protected val sequencer = summon[Sync[Sequencer]]
 
+  private def sectionPanel(title: String, components: Seq[JComponent]): JPanel =
+    val wrapper = new JPanel()
+    wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS))
+    wrapper.setBorder(BorderFactory.createTitledBorder(title))
+    components.zipWithIndex.foreach { case (component, idx) =>
+      component.setAlignmentX(Component.LEFT_ALIGNMENT)
+      wrapper.add(component)
+      if idx < components.size - 1 then wrapper.add(Box.createVerticalStrut(4))
+    }
+    wrapper
+
   override def chooseSettings[ErrorChannel[_]](
-      config: ThroneFeatureConfig
+      config: ThroneFeatureConfig,
+      caveAvailability: CaveLayerAvailability
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapEditorSettings]] =
@@ -47,8 +61,17 @@ class WrapChoiceServiceImpl[Sequencer[_]](using Sync[Sequencer])
 Random L2: ${config.randomLevelTwo.map(l => s"(${l.x.value},${l.y.value})").mkString(",")}
 Fixed: $fixedSummary"""
           }
-          throneLabel <- sequencer.delay(new JLabel(throneSummary))
+          throneSummaryArea <- sequencer.delay {
+            val area = new JTextArea(throneSummary, 3, 30)
+            area.setLineWrap(true)
+            area.setWrapStyleWord(true)
+            area.setOpaque(false)
+            area.setEditable(false)
+            area.setFocusable(false)
+            area
+          }
           throneBox <- sequencer.delay(new JCheckBox("Override Thrones"))
+          magicSitesPanel <- sequencer.delay(new MagicSiteSelectionPanel(caveAvailability))
           panel <- sequencer.delay {
             def updateCave(): Unit =
               val duel = mainPanel.choice == WrapChoice.GroundSurfaceDuel
@@ -58,11 +81,15 @@ Fixed: $fixedSummary"""
             mainPanel.onChange(updateCave())
             val p = new JPanel()
             p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS))
-            p.add(mainPanel)
-            p.add(caveBox)
-            p.add(cavePanel)
-            p.add(throneLabel)
-            p.add(throneBox)
+            val surfaceSection = sectionPanel("Surface wrap", Seq(mainPanel))
+            val caveSection = sectionPanel("Cave layer options", Seq(caveBox, cavePanel))
+            val throneSection = sectionPanel("Throne configuration", Seq(throneSummaryArea, throneBox))
+            magicSitesPanel.setAlignmentX(Component.LEFT_ALIGNMENT)
+            Seq(surfaceSection, caveSection, throneSection, magicSitesPanel).foreach { section =>
+              p.add(section)
+              p.add(Box.createVerticalStrut(12))
+            }
+            if p.getComponentCount > 0 then p.remove(p.getComponentCount - 1)
             updateCave()
             p
           }
@@ -88,25 +115,34 @@ Fixed: $fixedSummary"""
                   exists <- sequencer.delay(JFiles.exists(path))
                   _ <-
                     if exists then sequencer.unit
-                    else sequencer.delay(
-                      JFiles.writeString(
-                        path,
-                        """overrides = [
+                    else
+                      sequencer
+                        .delay(
+                          JFiles.writeString(
+                            path,
+                            """overrides = [
   { x = 0, y = 0, level = 3 },
   { x = 4, y = 2, level = 1 }
 ]
 """
-                      )
-                    ).void
+                          )
+                        )
+                        .void
                   loaded <- sequencer.delay(ConfigSource.file(path).load[ThroneConfiguration])
                 yield loaded
                   .leftMap(f => RuntimeException(f.toString))
-                  .map(cfg => MapEditorSettings(wraps, config.copy(randomLevelOne = Vector.empty, randomLevelTwo = Vector.empty, fixed = cfg.overrides)))
+                  .map(cfg =>
+                    MapEditorSettings(
+                      wraps,
+                      config.copy(randomLevelOne = Vector.empty, randomLevelTwo = Vector.empty, fixed = cfg.overrides),
+                      magicSitesPanel.selection
+                    )
+                  )
                   .fold(errorChannel.raiseError, errorChannel.pure)
               else
                 // Do not apply any preloaded throne overrides unless explicitly enabled.
                 // This ensures stale/out-of-bounds configs do not trigger validation when unchecked.
-                sequencer.pure(errorChannel.pure(MapEditorSettings(wraps, config.copy(fixed = Vector.empty))))
+                sequencer.pure(errorChannel.pure(MapEditorSettings(wraps, config.copy(fixed = Vector.empty), magicSitesPanel.selection)))
             else
               sequencer.pure(errorChannel.raiseError[MapEditorSettings](RuntimeException("Selection cancelled")))
         yield settings
