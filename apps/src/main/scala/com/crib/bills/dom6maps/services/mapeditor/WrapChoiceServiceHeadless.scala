@@ -32,7 +32,8 @@ class WrapChoiceServiceHeadlessImpl[Sequencer[_]](using Sync[Sequencer])
       case _        => None
 
   override def chooseSettings[ErrorChannel[_]](
-      config: ThroneFeatureConfig
+      config: ThroneFeatureConfig,
+      caveAvailability: CaveLayerAvailability
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapEditorSettings]] =
@@ -44,5 +45,4 @@ class WrapChoiceServiceHeadlessImpl[Sequencer[_]](using Sync[Sequencer])
       wraps =
         if main == WrapChoice.GroundSurfaceDuel then WrapChoices(main, None)
         else WrapChoices(main, cave)
-    yield errorChannel.pure(MapEditorSettings(wraps, config))
-
+    yield errorChannel.pure(MapEditorSettings(wraps, config, MagicSiteSelection.Disabled))

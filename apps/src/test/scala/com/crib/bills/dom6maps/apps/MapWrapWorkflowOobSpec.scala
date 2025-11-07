@@ -21,8 +21,14 @@ object MapWrapWorkflowOobSpec extends SimpleIOSuite:
       IO.pure(summon[cats.MonadError[ErrorChannel, Throwable]].pure(UpdateStatus.CurrentVersionIsLatest))
 
   private class StubChooser extends WrapChoiceService[IO]:
-    override def chooseSettings[ErrorChannel[_]](config: model.map.ThroneFeatureConfig)(using cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]) =
-      IO.pure(summon[cats.MonadError[ErrorChannel, Throwable]].pure(MapEditorSettings(WrapChoices(WrapChoice.FullWrap, None), config)))
+    override def chooseSettings[ErrorChannel[_]](
+        config: model.map.ThroneFeatureConfig,
+        caveAvailability: CaveLayerAvailability
+    )(using cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]) =
+      IO.pure(
+        summon[cats.MonadError[ErrorChannel, Throwable]]
+          .pure(MapEditorSettings(WrapChoices(WrapChoice.FullWrap, None), config, MagicSiteSelection.Disabled))
+      )
 
   private class StubNations extends GroundSurfaceNationService[IO]:
     override def chooseNations[ErrorChannel[_]]()(using cats.MonadError[ErrorChannel, Throwable] & cats.Traverse[ErrorChannel]) =

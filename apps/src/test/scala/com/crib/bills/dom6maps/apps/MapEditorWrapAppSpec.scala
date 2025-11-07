@@ -24,8 +24,10 @@ import services.mapeditor.{
   WrapChoice,
   WrapChoiceService,
   WrapChoices,
+  CaveLayerAvailability,
   MapLayerLoaderImpl,
-  MapEditorSettings
+  MapEditorSettings,
+  MagicSiteSelection
 }
 import services.mapeditor.WrapSeverService.isTopBottom
 import weaver.SimpleIOSuite
@@ -36,9 +38,10 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
   override def maxParallelism = 1
   private class StubWrapChoiceService(selections: WrapChoices) extends WrapChoiceService[IO]:
     override def chooseSettings[ErrorChannel[_]](
-        config: model.map.ThroneFeatureConfig
+        config: model.map.ThroneFeatureConfig,
+        caveAvailability: CaveLayerAvailability
     )(using errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]) =
-      IO.pure(errorChannel.pure(MapEditorSettings(selections, config)))
+      IO.pure(errorChannel.pure(MapEditorSettings(selections, config, MagicSiteSelection.Disabled)))
 
   private class StubGroundSurfaceNationService(surface: model.Nation, underground: model.Nation)
       extends GroundSurfaceNationService[IO]:

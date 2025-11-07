@@ -5,5 +5,6 @@ import model.map.ThroneFeatureConfig
 
 final case class MapEditorSettings(
     wraps: WrapChoices,
-    thrones: ThroneFeatureConfig
+    thrones: ThroneFeatureConfig,
+    magicSites: MagicSiteSelection = MagicSiteSelection.Disabled
 )

@@ -56,10 +56,13 @@ class MapWrapWorkflowImpl(
         latest <- EitherT(finder.mostRecentFolder[ErrorOr](srcRoot))
         targetDir = destRoot / latest.fileName.toString
         copied <- EitherT(copier.copyWithoutMaps[ErrorOr](latest, targetDir))
+        caveAvailability = CaveLayerAvailability.fromOption(copied.cave)
         (bytes, outPath) = copied.main
         layer <- EitherT(loader.load[ErrorOr](bytes))
         overrides <- EitherT(loadOverrides)
-        settings <- EitherT(chooser.chooseSettings[ErrorOr](ThroneFeatureConfig(Vector.empty, Vector.empty, overrides.overrides)))
+        settings <- EitherT(
+          chooser.chooseSettings[ErrorOr](ThroneFeatureConfig(Vector.empty, Vector.empty, overrides.overrides), caveAvailability)
+        )
         updatedState <- EitherT(throneService.update[ErrorOr](layer.state, settings.thrones.placements))
         baseLayer = layer.copy(state = updatedState)
         _ <- settings.wraps.main match {
