@@ -49,7 +49,8 @@ object MapWrapWorkflowOobSpec extends SimpleIOSuite:
     val nations   = new StubNations
     val dueler    = new StubDuel
     val thrones   = new ThronePlacementServiceImpl[IO]
-    val workflow  = new MapWrapWorkflowImpl(finder, copier, writer, loader, converter, checker, chooser, nations, dueler, thrones, Version("test"))
+    val magicSites = new MagicSiteFlagServiceImpl
+    val workflow  = new MapWrapWorkflowImpl(finder, copier, writer, loader, converter, checker, chooser, nations, dueler, thrones, magicSites, Version("test"))
 
     val overrides = """overrides = [ { x = 9, y = 0, level = 1 } ]"""
 

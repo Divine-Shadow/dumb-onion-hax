@@ -24,7 +24,8 @@ import services.mapeditor.{
   GroundSurfaceDuelPipe,
   MapLayerLoaderImpl,
   MapLayerLoader,
-  ThronePlacementService
+  ThronePlacementService,
+  MagicSiteFlagServiceImpl
 }
 import services.update.GithubReleaseCheckerImpl
 import pureconfig.*
@@ -66,6 +67,7 @@ dest="/path/to/dominions/maps"
     val writer = new MapWriterImpl[IO]
     val converter = new WrapConversionServiceImpl[IO]
     val checker = new GithubReleaseCheckerImpl[IO]
+    val magicSites = new MagicSiteFlagServiceImpl
     val workflow =
       new MapWrapWorkflowImpl(
         finder,
@@ -78,6 +80,7 @@ dest="/path/to/dominions/maps"
         nationChooser,
         dueler,
         throneService,
+        magicSites,
         currentVersion
       )
     val action =

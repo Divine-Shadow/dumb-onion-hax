@@ -60,6 +60,7 @@ dest="./data/generated-maps"
       new SpawnPlacementServiceImpl[IO]
     )
     val throneSvc = new ThronePlacementServiceImpl[IO]
+    val magicSites = new MagicSiteFlagServiceImpl
 
     val workflow = new MapWrapWorkflowImpl(
       finder,
@@ -72,6 +73,7 @@ dest="./data/generated-maps"
       nation,
       dueler,
       throneSvc,
+      magicSites,
       currentVersion
     )
 

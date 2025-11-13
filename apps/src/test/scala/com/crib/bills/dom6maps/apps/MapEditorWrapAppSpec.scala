@@ -80,7 +80,8 @@ object MapEditorWrapAppSpec extends SimpleIOSuite:
   }
 
   test("copies latest editor and severs map to hwrap") {
-    for
+    val action =
+      for
       _ <- IO(JFiles.deleteIfExists(JPath.of("throne-override.conf")))
       _ <- IO(sys.props.update("dom6.ignoreOverrides", "true"))
       rootDir <- IO(JFiles.createTempDirectory("root-editor"))
@@ -130,11 +131,12 @@ dest="${destRoot.toString}"
       directives.contains(HWrapAround),
       !hasTopBottom,
     )
-
+    action.guarantee(IO(sys.props.remove("dom6.ignoreOverrides")).void)
   }
 
   test("severs cave map when selected") {
-    for
+    val action =
+      for
       _ <- IO(JFiles.deleteIfExists(JPath.of("throne-override.conf")))
       _ <- IO(sys.props.update("dom6.ignoreOverrides", "true"))
       rootDir <- IO(JFiles.createTempDirectory("root-editor-cave"))
@@ -165,6 +167,7 @@ dest="${destRoot.toString}"
       cavePath = destDir / "map_plane2.map"
       directives <- MapFileParser.parseFile[IO](cavePath).compile.toVector
     yield expect(directives.contains(VWrapAround))
+    action.guarantee(IO(sys.props.remove("dom6.ignoreOverrides")).void)
   }
 
   test("applies ground surface duel when selected") {

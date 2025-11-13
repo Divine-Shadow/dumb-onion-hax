@@ -26,6 +26,7 @@ class MapWrapWorkflowImpl(
     nationChooser: GroundSurfaceNationService[IO],
     dueler: GroundSurfaceDuelPipe[IO],
     throneService: ThronePlacementService[IO],
+    magicSiteFlags: MagicSiteFlagService,
     currentVersion: Version
   ) extends MapWrapWorkflow:
   private type ErrorOr[A] = Either[Throwable, A]
@@ -64,18 +65,28 @@ class MapWrapWorkflowImpl(
           chooser.chooseSettings[ErrorOr](ThroneFeatureConfig(Vector.empty, Vector.empty, overrides.overrides), caveAvailability)
         )
         updatedState <- EitherT(throneService.update[ErrorOr](layer.state, settings.thrones.placements))
-        baseLayer = layer.copy(state = updatedState)
+        throneLayer = layer.copy(state = updatedState)
+        baseLayer = throneLayer.copy(state = magicSiteFlags.apply(throneLayer.state, settings.magicSites.surface))
         _ <- settings.wraps.main match {
           case WrapChoice.GroundSurfaceDuel =>
             copied.cave match
               case Some((caveBytes, caveOutPath)) =>
                 for {
                   caveLayer <- EitherT(loader.load[ErrorOr](caveBytes))
+                  caveLayerWithSites = caveLayer.copy(state = magicSiteFlags.apply(caveLayer.state, settings.magicSites.cave))
                   nations <- EitherT(nationChooser.chooseNations[ErrorOr]())
-                  duelRes <- EitherT(dueler.apply[ErrorOr](baseLayer.state, caveLayer.state, GroundSurfaceDuelConfig.default, nations.surface, nations.underground))
+                  duelRes <- EitherT(
+                    dueler.apply[ErrorOr](
+                      baseLayer.state,
+                      caveLayerWithSites.state,
+                      GroundSurfaceDuelConfig.default,
+                      nations.surface,
+                      nations.underground
+                    )
+                  )
                   (surfRes, caveRes) = duelRes
                   _ <- EitherT(writer.write[ErrorOr](baseLayer.copy(state = surfRes), outPath))
-                  _ <- EitherT(writer.write[ErrorOr](caveLayer.copy(state = caveRes), caveOutPath))
+                  _ <- EitherT(writer.write[ErrorOr](caveLayerWithSites.copy(state = caveRes), caveOutPath))
                 } yield ()
               case None => EitherT.leftT[IO, Unit](new NoSuchElementException("cave map not found"))
           case wrapChoice =>
@@ -88,8 +99,9 @@ class MapWrapWorkflowImpl(
                     case Some((caveBytes, caveOutPath)) =>
                       for {
                         caveLayer <- EitherT(loader.load[ErrorOr](caveBytes))
-                        caveConverted <- EitherT(converter.convert[ErrorOr](caveLayer.state, caveChoice))
-                        _ <- EitherT(writer.write[ErrorOr](caveLayer.copy(state = caveConverted), caveOutPath))
+                        caveLayerWithSites = caveLayer.copy(state = magicSiteFlags.apply(caveLayer.state, settings.magicSites.cave))
+                        caveConverted <- EitherT(converter.convert[ErrorOr](caveLayerWithSites.state, caveChoice))
+                        _ <- EitherT(writer.write[ErrorOr](caveLayerWithSites.copy(state = caveConverted), caveOutPath))
                       } yield ()
                     case None => EitherT.leftT[IO, Unit](new NoSuchElementException("cave map not found"))
                 case None =>
@@ -97,7 +109,8 @@ class MapWrapWorkflowImpl(
                     case Some((caveBytes, caveOutPath)) =>
                       for {
                         caveLayer <- EitherT(loader.load[ErrorOr](caveBytes))
-                        _ <- EitherT(writer.write[ErrorOr](caveLayer, caveOutPath))
+                        updated = magicSiteFlags.apply(caveLayer.state, settings.magicSites.cave)
+                        _ <- EitherT(writer.write[ErrorOr](caveLayer.copy(state = updated), caveOutPath))
                       } yield ()
                     case None => EitherT.rightT[IO, Throwable](())
               }
