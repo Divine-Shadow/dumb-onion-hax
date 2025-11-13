@@ -110,6 +110,8 @@ enum Nation(val id: Int, val epithet: String):
   case Erytheia_Late      extends Nation(125, "Kingdom of Two Worlds")
   case Atlantis_Late      extends Nation(126, "Frozen Sea")
   case Rlyeh_Late         extends Nation(127, "Dreamlands")
+  case Gondwana_Late      extends Nation(202, "The Shrouded Lands")
+  case Houssa_Late        extends Nation(205, "Island in the Savannah")
 
   // Special
   case Independents        extends Nation(0, "Independents")
