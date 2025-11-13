@@ -2,6 +2,7 @@ package com.crib.bills.dom6maps
 package model.map
 
 import model.{ProvinceId, BorderFlag}
+import scala.collection.mutable.ArrayBuffer
 
 object MapDirectiveCodecs:
   trait Encoder[A]:
@@ -122,6 +123,51 @@ object MapDirectiveCodecs:
       case NoDeepChoice       => true
       case _                  => false
 
+  private enum DirectiveSection:
+    case Header, AllowedPlayer, SpecStart, Terrain, Feature, Gate, Adjacency, Border, PassThrough, Separator
+
+  private val separatedSections: Set[DirectiveSection] =
+    Set(
+      DirectiveSection.Header,
+      DirectiveSection.AllowedPlayer,
+      DirectiveSection.SpecStart,
+      DirectiveSection.Terrain,
+      DirectiveSection.Feature,
+      DirectiveSection.Gate,
+      DirectiveSection.Adjacency,
+      DirectiveSection.Border,
+      DirectiveSection.PassThrough
+    )
+
+  private def classify(directive: MapDirective): DirectiveSection =
+    directive match
+      case LineBreak              => DirectiveSection.Separator
+      case _: AllowedPlayer       => DirectiveSection.AllowedPlayer
+      case _: SpecStart | _: Start => DirectiveSection.SpecStart
+      case _: Terrain | _: LandName => DirectiveSection.Terrain
+      case _: ProvinceFeature | _: SetLand | _: Feature => DirectiveSection.Feature
+      case _: Gate                => DirectiveSection.Gate
+      case _: Neighbour           => DirectiveSection.Adjacency
+      case _: NeighbourSpec       => DirectiveSection.Border
+      case _ if isHeader(directive) => DirectiveSection.Header
+      case _                      => DirectiveSection.PassThrough
+
+  private def insertSectionBreaks(directives: Vector[MapDirective]): Vector[MapDirective] =
+    val buffer = ArrayBuffer.empty[MapDirective]
+    var previous: Option[DirectiveSection] = None
+    directives.foreach { directive =>
+      classify(directive) match
+        case DirectiveSection.Separator =>
+          if buffer.lastOption.forall(_ != LineBreak) then buffer += LineBreak
+        case section =>
+          val shouldBreak =
+            previous.exists(prev => prev != section && separatedSections.contains(prev) && separatedSections.contains(section))
+          if shouldBreak && buffer.lastOption.forall(_ != LineBreak) then buffer += LineBreak
+          buffer += directive
+          previous = Some(section)
+    }
+    buffer.toVector
+
   def merge(state: MapState, passThrough: Vector[MapDirective]): Vector[MapDirective] =
     val (pt, nonPt) = passThrough.partition(isPassThrough)
     require(nonPt.isEmpty, "passThrough contains state-owned directives")
@@ -180,4 +226,4 @@ object MapDirectiveCodecs:
     val headerSet = headerSelected.toSet
     val remainingPT = pt.filterNot(headerSet.contains)
 
-    headerSelected ++ stateBody ++ remainingPT
+    insertSectionBreaks(headerSelected ++ stateBody ++ remainingPT)

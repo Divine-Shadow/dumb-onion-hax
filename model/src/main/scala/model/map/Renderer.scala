@@ -46,3 +46,4 @@ object Renderer:
           case Neighbour(a,b)        => s"#neighbour ${a.value} ${b.value}"
           case NeighbourSpec(a,b,f)  => s"#neighbourspec ${a.value} ${b.value} ${f.mask}"
           case Comment(value)        => s"--$value"
+          case LineBreak             => ""

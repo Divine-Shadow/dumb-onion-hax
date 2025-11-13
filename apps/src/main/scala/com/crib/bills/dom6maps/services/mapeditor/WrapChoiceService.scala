@@ -96,12 +96,14 @@ Fixed: $fixedSummary"""
           scrollPane <- sequencer.delay {
             val preferred = panel.getPreferredSize()
             val screen = Toolkit.getDefaultToolkit.getScreenSize
-            val maxWidth = (screen.width * 0.75).toInt
-            val maxHeight = (screen.height * 0.75).toInt
-            val width = preferred.width.max(420).min(maxWidth)
-            val height = preferred.height.max(320).min(maxHeight)
+            val maxWidth = (screen.width * 0.9).toInt
+            val maxHeight = (screen.height * 0.9).toInt
+            val allowance = 32
+            val width = (preferred.width + allowance).max(420).min(maxWidth)
+            val height = (preferred.height + allowance).max(320).min(maxHeight)
             val scroll = new JScrollPane(panel)
             scroll.setPreferredSize(new Dimension(width, height))
+            scroll.setMinimumSize(new Dimension(360, 280))
             scroll.setBorder(BorderFactory.createEmptyBorder())
             scroll.getVerticalScrollBar.setUnitIncrement(12)
             scroll

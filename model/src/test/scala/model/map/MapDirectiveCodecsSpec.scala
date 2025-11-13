@@ -3,7 +3,7 @@ package model.map
 
 import cats.effect.IO
 import weaver.SimpleIOSuite
-import model.{ProvinceId, BorderFlag, Nation, TerrainFlag, MagicType}
+import model.{ProvinceId, BorderFlag, Nation, TerrainFlag, MagicType, FeatureId}
 import MapDirectiveCodecs.given
 import MapDirectiveCodecs.Encoder
 
@@ -50,8 +50,39 @@ object MapDirectiveCodecsSpec extends SimpleIOSuite:
   test("merges pass-through directives") {
     val state = MapState.empty
     val pass = Vector(SailDist(2), Features(7))
-    val expected = Vector(NoWrapAround) ++ pass
+    val expected = Vector(NoWrapAround, LineBreak, SailDist(2), Features(7))
     IO.pure(expect(MapDirectiveCodecs.merge(state, pass) == expected))
+  }
+
+  test("inserts section breaks between directive groups") {
+    val state = MapState.empty.copy(
+      title = Some(MapTitle("Example")),
+      description = Some(MapDescription("desc")),
+      allowedPlayers = Vector(AllowedPlayer(Nation.Agartha_Early)),
+      startingPositions = Vector(SpecStart(Nation.Agartha_Early, ProvinceId(1))),
+      terrains = Vector(Terrain(ProvinceId(1), 1L)),
+      features = Vector(ProvinceFeature(ProvinceId(1), FeatureId(5))),
+      gates = Vector(Gate(ProvinceId(1), ProvinceId(2))),
+      adjacency = Vector((ProvinceId(1), ProvinceId(2))),
+      borders = Vector(Border(ProvinceId(2), ProvinceId(3), BorderFlag.MountainPass))
+    )
+
+    val merged = MapDirectiveCodecs.merge(state, Vector.empty)
+    val firstAllowed = merged.indexWhere { case _: AllowedPlayer => true; case _ => false }
+    val firstSpecStart = merged.indexWhere { case _: SpecStart => true; case _ => false }
+    val firstTerrain = merged.indexWhere { case _: Terrain => true; case _ => false }
+    val firstGate = merged.indexWhere { case _: Gate => true; case _ => false }
+    val firstNeighbour = merged.indexWhere { case _: Neighbour => true; case _ => false }
+    val firstNeighbourSpec = merged.indexWhere { case _: NeighbourSpec => true; case _ => false }
+
+    IO.pure(
+      expect(firstAllowed > 0 && merged(firstAllowed - 1) == LineBreak) &&
+        expect(firstSpecStart > 0 && merged(firstSpecStart - 1) == LineBreak) &&
+        expect(firstTerrain > 0 && merged(firstTerrain - 1) == LineBreak) &&
+        expect(firstGate > 0 && merged(firstGate - 1) == LineBreak) &&
+        expect(firstNeighbour > 0 && merged(firstNeighbour - 1) == LineBreak) &&
+        expect(firstNeighbourSpec > 0 && merged(firstNeighbourSpec - 1) == LineBreak)
+    )
   }
 
   test("encodes allowed players and spec starts in ascending nation id order") {

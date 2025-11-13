@@ -45,6 +45,7 @@ object DirectiveOrderInspectorApp extends IOApp:
     case model.map.Neighbour(_, _)      => "#neighbour"
     case model.map.NeighbourSpec(_,_,_) => "#neighbourspec"
     case model.map.Comment(_)           => "--comment"
+    case model.map.LineBreak            => "<linebreak>"
 
   override def run(args: List[String]): IO[ExitCode] =
     val usage = IO.println(

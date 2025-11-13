@@ -54,3 +54,4 @@ final case class Gate(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class Neighbour(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class NeighbourSpec(a: ProvinceId, b: ProvinceId, border: BorderFlag) extends MapDirective
 final case class Comment(value: String) extends MapDirective
+case object LineBreak extends MapDirective

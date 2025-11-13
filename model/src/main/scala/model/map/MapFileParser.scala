@@ -19,9 +19,11 @@ object MapFileParser:
   def parse[Sequencer[_]: Sync]: Pipe[Sequencer, Byte, MapDirective] =
     _.through(text.utf8.decode)
       .through(text.lines)
-      .map(_.trim)
-      .filter(_.nonEmpty)
-      .evalMap(parseLine[Sequencer])
+      .evalMap { raw =>
+        val trimmed = raw.trim
+        if trimmed.isEmpty then Sync[Sequencer].pure(LineBreak)
+        else parseLine[Sequencer](trimmed)
+      }
 
   private def ws[$: P]: P[Unit] = P(CharIn(" \t").rep(1))
   private def int[$: P]: P[Int] =
