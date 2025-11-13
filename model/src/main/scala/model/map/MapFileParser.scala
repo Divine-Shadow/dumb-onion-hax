@@ -167,7 +167,7 @@ object MapFileParser:
   private def commentP[$: P]: P[Option[MapDirective]] =
     P("--" ~ rest.?).map(t => Some(Comment(t.getOrElse(""))))
 
-  private def directive[$: P]: P[Option[MapDirective]] = P(
+  private def directiveMetadata[$: P]: P[Option[MapDirective]] = P(
     dom2TitleP |
       imageFileP |
       winterImageFileP |
@@ -185,8 +185,11 @@ object MapFileParser:
       maptextcolP |
       mapdomcolP |
       saildistP |
-      featuresP |
-      allowedPlayerP |
+      featuresP
+  )
+
+  private def directiveAssignments[$: P]: P[Option[MapDirective]] = P(
+    allowedPlayerP |
       specStartP |
       startP |
       pbP |
@@ -194,12 +197,18 @@ object MapFileParser:
       landnameP |
       setlandP |
       provinceFeatureP |
-      featureP |
-      gateP |
+      featureP
+  )
+
+  private def directiveConnectivity[$: P]: P[Option[MapDirective]] = P(
+    gateP |
       neighbourP |
       neighbourspecP |
       commentP
   )
+
+  private def directive[$: P]: P[Option[MapDirective]] =
+    P(directiveMetadata | directiveAssignments | directiveConnectivity)
 
   private def parseLine[F[_]: Sync](line: String): F[MapDirective] =
     fastparse.parse(line, p => directive(using p)) match
