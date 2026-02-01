@@ -38,6 +38,8 @@ enum Nation(val id: Int, val epithet: String):
   case Therodos_Early     extends Nation(42, "Telkhine Spectre")
   case Atlantis_Early     extends Nation(43, "Emergence of the Deep Ones")
   case Rlyeh_Early        extends Nation(44, "Time of Aboleths")
+  case Fennoscandia_Early extends Nation(189, "Souls of the Land")
+  case Nihuala_Early      extends Nation(198, "The First People")
 
   // Middle Era
   case Arcoscephale_Middle extends Nation(50, "The Old Kingdom")
@@ -77,6 +79,7 @@ enum Nation(val id: Int, val epithet: String):
   case Oceania_Middle      extends Nation(87, "Mermidons")
   case Atlantis_Middle     extends Nation(88, "Kings of the Deep")
   case Rlyeh_Middle        extends Nation(89, "Fallen Star")
+  case Shambhala_Middle    extends Nation(188, "The Hidden City")
 
   // Late Era
   case Arcoscephale_Late  extends Nation(95, "Sibylline Guidance")
@@ -110,8 +113,10 @@ enum Nation(val id: Int, val epithet: String):
   case Erytheia_Late      extends Nation(125, "Kingdom of Two Worlds")
   case Atlantis_Late      extends Nation(126, "Frozen Sea")
   case Rlyeh_Late         extends Nation(127, "Dreamlands")
-  case Gondwana_Late      extends Nation(202, "The Shrouded Lands")
+  case Ongtupqa_Late      extends Nation(183, "Cleansing Flame")
+  case Gondwana_Late      extends Nation(202, "The Shrouded Land")
   case Houssa_Late        extends Nation(205, "Island in the Savannah")
+  case BantayTubig_Early  extends Nation(207, "Guardians of the Water")
 
   // Special
   case Independents        extends Nation(0, "Independents")
