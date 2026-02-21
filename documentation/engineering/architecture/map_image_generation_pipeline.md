@@ -34,10 +34,16 @@ This page describes how map image bytes are generated from map directives.
 6. Write bytes to disk.
 
 ## Components
+- `model.map.image.MapTerrainPainter`
+  - Service contract for mapping ownership + terrain masks to RGB image bytes.
+- `model.map.image.PrimaryTerrainColorMapTerrainPainter`
+  - Default implementation that assigns deterministic colors by primary terrain type.
+- `model.map.image.ConstantColorMapTerrainPainter`
+  - Alternate implementation that keeps classic land/sea constant coloring.
 - `model.map.image.ProvincePixelRasterizer`
   - Converts `#pb` runs to province ownership pixels.
 - `model.map.image.MapImagePainter`
-  - Produces deterministic RGB bytes.
+  - Shared low-level paint utility used by terrain painters.
 - `model.map.image.TargaImageEncoder`
   - Encodes RGB bytes into `.tga` format.
 - `apps.services.mapeditor.MapImageWriter`

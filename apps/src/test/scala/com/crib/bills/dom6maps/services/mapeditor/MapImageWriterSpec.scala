@@ -8,6 +8,7 @@ import fs2.io.file.Path
 import java.nio.file.{Files => JFiles}
 import model.{ProvinceId, TerrainFlag}
 import model.map.*
+import model.map.image.{MapImagePainter, MapTerrainPainter, ProvincePixelRasterizer}
 import weaver.SimpleIOSuite
 
 object MapImageWriterSpec extends SimpleIOSuite:
@@ -75,4 +76,33 @@ object MapImageWriterSpec extends SimpleIOSuite:
         bytes(14) == 32.toByte,
         bytes(15) == 3.toByte
       )
+  }
+
+  test("writeMainImage uses injected terrain painter implementation") {
+    val constantPainter = new MapTerrainPainter:
+      override def paint(
+          ownership: ProvincePixelRasterizer.ProvincePixelOwnership,
+          terrainMaskByProvince: Map[ProvinceId, Long]
+      ): MapImagePainter.MapImage =
+        val bytes = Array.fill[Byte](ownership.widthPixels * ownership.heightPixels * 3)(7.toByte)
+        MapImagePainter.MapImage(ownership.widthPixels, ownership.heightPixels, bytes)
+
+    val writer = new MapImageWriterImpl[IO](constantPainter)
+    val mapState = MapState.empty.copy(
+      terrains = Vector(Terrain(ProvinceId(1), TerrainFlag.Plains.mask))
+    )
+    val passThrough = Vector(
+      ImageFile("generated.tga"),
+      Pb(0, 0, 1, ProvinceId(1))
+    )
+    val layer = MapLayer[IO](mapState, Stream.emits(passThrough).covary[IO])
+
+    for
+      directory <- IO(JFiles.createTempDirectory("map-image-writer-injected-painter"))
+      outputPath = Path.fromNioPath(directory.resolve("generated.tga"))
+      result <- writer.writeMainImage[EC](layer, outputPath)
+      _ <- IO.fromEither(result)
+      bytes <- IO(JFiles.readAllBytes(outputPath.toNioPath))
+      firstPayloadByte = bytes(18) & 0xff
+    yield expect(firstPayloadByte == 7)
   }

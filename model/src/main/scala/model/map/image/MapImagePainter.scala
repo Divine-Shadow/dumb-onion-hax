@@ -32,12 +32,29 @@ object MapImagePainter:
       terrainMaskByProvince: Map[ProvinceId, Long],
       palette: PainterPalette = defaultPalette
   ): MapImage =
+    paintWithProvinceColor(
+      ownership = ownership,
+      provinceColor = provinceId =>
+        if isSeaProvince(provinceId, terrainMaskByProvince) then palette.seaColor
+        else palette.landColor,
+      backgroundColor = palette.seaColor,
+      borderColor = palette.borderColor,
+      provinceAnchorColor = palette.provinceAnchorColor
+    )
+
+  def paintWithProvinceColor(
+      ownership: ProvincePixelRasterizer.ProvincePixelOwnership,
+      provinceColor: ProvinceId => RedGreenBlueColor,
+      backgroundColor: RedGreenBlueColor,
+      borderColor: RedGreenBlueColor,
+      provinceAnchorColor: RedGreenBlueColor
+  ): MapImage =
     val bytes = Array.ofDim[Byte](ownership.widthPixels * ownership.heightPixels * 3)
 
-    fillBackground(bytes, palette.seaColor)
-    paintProvinceAreas(ownership, bytes, terrainMaskByProvince, palette)
-    paintProvinceBorders(ownership, bytes, palette.borderColor)
-    paintProvinceAnchorPixels(ownership, bytes, palette.provinceAnchorColor)
+    fillBackground(bytes, backgroundColor)
+    paintProvinceAreas(ownership, bytes, provinceColor)
+    paintProvinceBorders(ownership, bytes, borderColor)
+    paintProvinceAnchorPixels(ownership, bytes, provinceAnchorColor)
 
     MapImage(ownership.widthPixels, ownership.heightPixels, bytes)
 
@@ -52,16 +69,13 @@ object MapImagePainter:
   private def paintProvinceAreas(
       ownership: ProvincePixelRasterizer.ProvincePixelOwnership,
       bytes: Array[Byte],
-      terrainMaskByProvince: Map[ProvinceId, Long],
-      palette: PainterPalette
+      provinceColor: ProvinceId => RedGreenBlueColor
   ): Unit =
     var pixelIndex = 0
     while pixelIndex < ownership.provinceIdentifierByPixel.length do
       val provinceIdentifier = ownership.provinceIdentifierByPixel(pixelIndex)
       if provinceIdentifier > 0 then
-        val color =
-          if isSeaProvince(ProvinceId(provinceIdentifier), terrainMaskByProvince) then palette.seaColor
-          else palette.landColor
+        val color = provinceColor(ProvinceId(provinceIdentifier))
         paintPixel(bytes, pixelIndex, color)
       pixelIndex += 1
 

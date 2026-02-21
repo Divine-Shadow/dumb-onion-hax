@@ -7,7 +7,12 @@ import cats.effect.Async
 import fs2.io.file.{Files, Path}
 import fs2.Stream
 import model.map.{ImageFile, MapDirective, MapLayer, MapSizePixels, MapWidthPixels, MapHeightPixels, Pb}
-import model.map.image.{MapImagePainter, ProvincePixelRasterizer, TargaImageEncoder}
+import model.map.image.{
+  MapTerrainPainter,
+  PrimaryTerrainColorMapTerrainPainter,
+  ProvincePixelRasterizer,
+  TargaImageEncoder
+}
 
 trait MapImageWriter[Sequencer[_]]:
   def writeMainImage[ErrorChannel[_]](
@@ -18,7 +23,9 @@ trait MapImageWriter[Sequencer[_]]:
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[Unit]]
 
-class MapImageWriterImpl[Sequencer[_]: Async: Files] extends MapImageWriter[Sequencer]:
+class MapImageWriterImpl[Sequencer[_]: Async: Files](
+    mapTerrainPainter: MapTerrainPainter = new PrimaryTerrainColorMapTerrainPainter()
+) extends MapImageWriter[Sequencer]:
   private val sequencer = summon[Async[Sequencer]]
 
   override def writeMainImage[ErrorChannel[_]](
@@ -41,7 +48,7 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files] extends MapImageWriter[Sequ
         )
       )
       terrainMaskByProvince = layer.state.terrains.map(t => t.province -> t.mask).toMap
-      paintedImage = MapImagePainter.paint(ownership, terrainMaskByProvince)
+      paintedImage = mapTerrainPainter.paint(ownership, terrainMaskByProvince)
       bytes <- sequencer.fromEither(
         TargaImageEncoder.encodeRawBottomLeft24Bit(
           paintedImage.widthPixels,
