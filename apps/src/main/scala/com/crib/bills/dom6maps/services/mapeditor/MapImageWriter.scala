@@ -8,6 +8,8 @@ import fs2.io.file.{Files, Path}
 import fs2.Stream
 import model.map.{ImageFile, MapDirective, MapLayer, MapSizePixels, MapWidthPixels, MapHeightPixels, Pb}
 import model.map.image.{
+  BorderFlagMapConnectionOverlayPainter,
+  MapConnectionOverlayPainter,
   MapTerrainPainter,
   PrimaryTerrainColorMapTerrainPainter,
   ProvincePixelRasterizer,
@@ -24,7 +26,8 @@ trait MapImageWriter[Sequencer[_]]:
   ): Sequencer[ErrorChannel[Unit]]
 
 class MapImageWriterImpl[Sequencer[_]: Async: Files](
-    mapTerrainPainter: MapTerrainPainter = new PrimaryTerrainColorMapTerrainPainter()
+    mapTerrainPainter: MapTerrainPainter = new PrimaryTerrainColorMapTerrainPainter(),
+    mapConnectionOverlayPainter: MapConnectionOverlayPainter = new BorderFlagMapConnectionOverlayPainter()
 ) extends MapImageWriter[Sequencer]:
   private val sequencer = summon[Async[Sequencer]]
 
@@ -48,7 +51,8 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
         )
       )
       terrainMaskByProvince = layer.state.terrains.map(t => t.province -> t.mask).toMap
-      paintedImage = mapTerrainPainter.paint(ownership, terrainMaskByProvince)
+      baseImage = mapTerrainPainter.paint(ownership, terrainMaskByProvince)
+      paintedImage = mapConnectionOverlayPainter.paint(baseImage, ownership, layer.state.borders)
       bytes <- sequencer.fromEither(
         TargaImageEncoder.encodeRawBottomLeft24Bit(
           paintedImage.widthPixels,

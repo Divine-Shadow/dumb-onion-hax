@@ -12,3 +12,9 @@ enum BorderFlag(val mask: Int):
   case River       extends BorderFlag(2)
   case Impassable  extends BorderFlag(4)
   case Road        extends BorderFlag(8)
+  case BridgedRiver extends BorderFlag(10)
+
+object BorderFlag:
+  extension (borderFlag: BorderFlag)
+    def includes(requiredFlag: BorderFlag): Boolean =
+      (borderFlag.mask & requiredFlag.mask) == requiredFlag.mask

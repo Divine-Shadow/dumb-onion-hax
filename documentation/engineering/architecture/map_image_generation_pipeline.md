@@ -40,6 +40,10 @@ This page describes how map image bytes are generated from map directives.
   - Default implementation that assigns deterministic colors by primary terrain type.
 - `model.map.image.ConstantColorMapTerrainPainter`
   - Alternate implementation that keeps classic land/sea constant coloring.
+- `model.map.image.MapConnectionOverlayPainter`
+  - Service contract for painting roads/rivers/mountains/mountain-passes over a base image.
+- `model.map.image.BorderFlagMapConnectionOverlayPainter`
+  - Default overlay implementation driven by `#neighbourspec` border flags.
 - `model.map.image.ProvincePixelRasterizer`
   - Converts `#pb` runs to province ownership pixels.
 - `model.map.image.MapImagePainter`
