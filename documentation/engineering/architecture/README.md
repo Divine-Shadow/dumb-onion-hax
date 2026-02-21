@@ -27,3 +27,6 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 18. [Map State Model Migration Progress](map_state_model_migration_progress.md)
 19. [Throne Feature Application Plan](throne_feature_plan.md)
 20. [Province Location ASCII Grid Service Plan](province_location_ascii_grid_service_plan.md)
+21. [Map Image Generation Pipeline](map_image_generation_pipeline.md)
+22. [Map Geometry Generation Pipeline](map_geometry_generation_pipeline.md)
+23. [MVP Map Set Requirements](mvp_map_set_requirements.md)

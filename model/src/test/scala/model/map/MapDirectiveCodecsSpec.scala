@@ -3,7 +3,7 @@ package model.map
 
 import cats.effect.IO
 import weaver.SimpleIOSuite
-import model.{ProvinceId, BorderFlag, Nation, TerrainFlag, MagicType, FeatureId}
+import model.{ProvinceId, BorderFlag, Nation, TerrainFlag, MagicType}
 import MapDirectiveCodecs.given
 import MapDirectiveCodecs.Encoder
 

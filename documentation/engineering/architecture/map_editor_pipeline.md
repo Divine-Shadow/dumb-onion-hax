@@ -34,12 +34,17 @@ This document captures the initial plan for processing map-editor directories an
    - Parse directives into a [`MapLayer`](map_state_model_migration.md#maplayer-abstraction) capturing the `MapState` and remaining directives, then apply a transformation function.
 4. **Render and persist the updated `.map` file**
    - Build a `MapWriter` capability that merges state-owned output with the preserved directives and writes the file to the output directory.
-5. **Compose a higher-level service**
+5. **Optionally render and persist the `.tga` image**
+   - Use `MapImageWriter` to rasterize `#pb` ownership runs and write a deterministic Targa image.
+6. **Optional geometry-first generation workflow**
+   - Use `MapGeometryGenerator` and `MapGenerationService` to create new `#pb`, `#terrain`, and adjacency directives from seed/config before writing map and image outputs.
+7. **Compose a higher-level service**
    - Assemble the above capabilities into an orchestrating `MapProcessingService` that:
      1. Finds the latest editor folder.
      2. Copies contents, extracting the map.
      3. Applies the state transformation while retaining pass-through directives.
      4. Writes the modified `.map` file alongside the copied assets.
+     5. Optionally writes the map image when an image writer is configured.
 
 ## Milestones
 1. **Scaffolding**

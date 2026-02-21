@@ -10,6 +10,10 @@ hs_err_pid*
 *.conf
 data/live-games/*
 data/generated-maps/
+data/reference maps/
+outputs/
+.sbt/
+.ivy2/
 
 /.devhome/
 /.devhomes/

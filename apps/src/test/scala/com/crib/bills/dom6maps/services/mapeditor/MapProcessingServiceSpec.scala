@@ -41,3 +41,30 @@ object MapProcessingServiceSpec extends SimpleIOSuite:
       directives.contains(MapNoHide)
     )
   }
+
+  test("process optionally writes image when image writer is configured") {
+    val finder = new LatestEditorFinderImpl[IO]
+    val copier = new MapEditorCopierImpl[IO]
+    val writer = new MapWriterImpl[IO]
+    val imageWriter = new MapImageWriterImpl[IO]
+    val service = new MapProcessingServiceImpl[IO](finder, copier, writer, Some(imageWriter))
+    for
+      rootDir <- IO(Files.createTempDirectory("root-editor-image"))
+      latest <- IO(Files.createDirectory(rootDir.resolve("latest")))
+      _ <- IO(Files.copy(Path("data/test-map.map").toNioPath, latest.resolve("map.map")))
+      _ <- IO(Files.write(latest.resolve("source-image.tga"), Array[Byte](1,2,3)))
+      _ <- IO(Files.setLastModifiedTime(latest, FileTime.fromMillis(2000)))
+      destDir <- IO(Files.createTempDirectory("dest-editor-image"))
+      resultEC <- service.process[EC](
+                    Path.fromNioPath(rootDir),
+                    Path.fromNioPath(destDir),
+                    layer => IO.pure(layer)
+                  )
+      outPath <- IO.fromEither(resultEC)
+      imagePath = outPath.parent.get.toNioPath.resolve("sample.tga")
+    yield expect.all(
+      Files.exists(outPath.toNioPath),
+      Files.exists(imagePath),
+      Files.size(imagePath) > 18L
+    )
+  }

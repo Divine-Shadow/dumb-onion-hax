@@ -18,7 +18,8 @@ trait MapProcessingService[Sequencer[_]]:
 class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
     finder: LatestEditorFinder[Sequencer],
     copier: MapEditorCopier[Sequencer],
-    writer: MapWriter[Sequencer]
+    writer: MapWriter[Sequencer],
+    imageWriter: Option[MapImageWriter[Sequencer]] = None
 ) extends MapProcessingService[Sequencer]:
     override def process[ErrorChannel[_]](
         root: Path,
@@ -29,21 +30,30 @@ class MapProcessingServiceImpl[Sequencer[_]: Async: Files](
       for
         folderEC <- finder.mostRecentFolder[ErrorChannel](root)
         nested <- folderEC.traverse { folder =>
+          for
+            copyEC <- copier.copyWithoutMaps[ErrorChannel](folder, dest)
+            mapResult <- copyEC.traverse { streams =>
+              val (mapBytes, outPath) = streams.main
+              for
+                parsed <- MapState.fromDirectivesWithPassThrough(
+                  mapBytes.through(MapFileParser.parse[Sequencer])
+                )
+                transformed <- transform(parsed)
+                writtenEC <- writer.write[ErrorChannel](
+                  transformed,
+                  outPath
+                )
+                _ <- imageWriter match
+                  case Some(service) =>
                     for
-                      copyEC <- copier.copyWithoutMaps[ErrorChannel](folder, dest)
-                      mapResult <- copyEC.traverse { streams =>
-                                    val (mapBytes, outPath) = streams.main
-                                    for
-                                      parsed <- MapState.fromDirectivesWithPassThrough(
-                                                  mapBytes.through(MapFileParser.parse[Sequencer])
-                                                )
-                                      transformed <- transform(parsed)
-                                      writtenEC <- writer.write[ErrorChannel](
-                                                      transformed,
-                                                      outPath
-                                                    )
-                                    yield writtenEC.as(outPath)
-                                  }
-                    yield mapResult
-                  }
+                      passThrough <- transformed.passThrough.compile.toVector
+                      imagePath = MapImageWriter.resolveImagePath(outPath, passThrough)
+                      imageWritten <- service.writeMainImage[ErrorChannel](transformed, imagePath)
+                    yield imageWritten
+                  case None =>
+                    Async[Sequencer].pure(errorChannel.pure(()))
+              yield writtenEC.as(outPath)
+            }
+          yield mapResult
+        }
       yield nested.flatMap(identity).flatMap(identity)
