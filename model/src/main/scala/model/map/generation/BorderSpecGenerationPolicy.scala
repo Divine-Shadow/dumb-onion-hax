@@ -37,12 +37,12 @@ final case class BorderSpecGenerationPolicy private (
 object BorderSpecGenerationPolicy:
   val default: BorderSpecGenerationPolicy =
     BorderSpecGenerationPolicy(
-      nonHighlandRiverPercent = NonHighlandRiverPercent(Percent.unsafe(0.14)),
-      nonHighlandRoadPercent = NonHighlandRoadPercent(Percent.unsafe(0.10)),
+      nonHighlandRiverPercent = NonHighlandRiverPercent(Percent.unsafe(0.20)),
+      nonHighlandRoadPercent = NonHighlandRoadPercent(Percent.unsafe(0.20)),
       nonHighlandBridgedRiverPercent = NonHighlandBridgedRiverPercent(Percent.unsafe(0.0)),
-      highlandMountainPercent = HighlandMountainPercent(Percent.unsafe(0.20)),
-      highlandMountainPassPercent = HighlandMountainPassPercent(Percent.unsafe(0.16)),
-      highlandRoadPercent = HighlandRoadPercent(Percent.unsafe(0.07))
+      highlandMountainPercent = HighlandMountainPercent(Percent.unsafe(0.30)),
+      highlandMountainPassPercent = HighlandMountainPassPercent(Percent.unsafe(0.20)),
+      highlandRoadPercent = HighlandRoadPercent(Percent.unsafe(0.15))
     )
 
   def fromRaw[ErrorChannel[_]](

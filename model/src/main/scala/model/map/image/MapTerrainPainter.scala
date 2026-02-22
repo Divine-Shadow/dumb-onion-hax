@@ -38,15 +38,15 @@ object PrimaryTerrainColorMapTerrainPainter:
   val defaultPalette: PrimaryTerrainPalette =
     PrimaryTerrainPalette(
       colorByPrimaryTerrainType = Map(
-        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(56, 106, 148),
-        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(64, 120, 70),
-        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(188, 174, 92),
-        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(98, 124, 66),
-        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(170, 126, 74),
-        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(128, 128, 116),
-        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(148, 168, 102)
+        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(52, 123, 191),
+        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(56, 120, 60),
+        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(210, 186, 96),
+        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(97, 111, 70),
+        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(202, 168, 103),
+        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(150, 150, 150),
+        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(140, 174, 100)
       ),
-      backgroundColor = MapImagePainter.RedGreenBlueColor(56, 106, 148),
+      backgroundColor = MapImagePainter.RedGreenBlueColor(52, 123, 191),
       borderColor = MapImagePainter.defaultPalette.borderColor,
       provinceAnchorColor = MapImagePainter.defaultPalette.provinceAnchorColor
     )

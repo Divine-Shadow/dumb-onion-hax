@@ -41,10 +41,10 @@ final case class MapGeneratorConnectionBordersConfig(
 object MapGeneratorConnectionBordersConfig:
   val default: MapGeneratorConnectionBordersConfig =
     MapGeneratorConnectionBordersConfig(
-      nonHighlandRiverPercent = 0.14,
-      nonHighlandRoadPercent = 0.10,
+      nonHighlandRiverPercent = 0.20,
+      nonHighlandRoadPercent = 0.20,
       nonHighlandBridgedRiverPercent = 0.0,
-      highlandMountainPercent = 0.20,
-      highlandMountainPassPercent = 0.16,
-      highlandRoadPercent = 0.07
+      highlandMountainPercent = 0.30,
+      highlandMountainPassPercent = 0.20,
+      highlandRoadPercent = 0.15
     )

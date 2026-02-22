@@ -10,12 +10,12 @@ object BorderSpecGenerationPolicySpec extends SimpleIOSuite:
 
   test("creates policy from valid raw percentages") {
     val result = BorderSpecGenerationPolicy.fromRaw[ErrorOr](
-      nonHighlandRiverPercent = 0.14,
-      nonHighlandRoadPercent = 0.10,
+      nonHighlandRiverPercent = 0.20,
+      nonHighlandRoadPercent = 0.20,
       nonHighlandBridgedRiverPercent = 0.0,
-      highlandMountainPercent = 0.20,
-      highlandMountainPassPercent = 0.16,
-      highlandRoadPercent = 0.07
+      highlandMountainPercent = 0.30,
+      highlandMountainPassPercent = 0.20,
+      highlandRoadPercent = 0.15
     )
 
     IO(expect(result == Right(BorderSpecGenerationPolicy.default)))

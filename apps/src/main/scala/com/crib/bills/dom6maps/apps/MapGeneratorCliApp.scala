@@ -60,12 +60,12 @@ terrain-images {
 }
 
 connection-borders {
-  non-highland-river-percent=0.14
-  non-highland-road-percent=0.10
+  non-highland-river-percent=0.20
+  non-highland-road-percent=0.20
   non-highland-bridged-river-percent=0.0
-  highland-mountain-percent=0.20
-  highland-mountain-pass-percent=0.16
-  highland-road-percent=0.07
+  highland-mountain-percent=0.30
+  highland-mountain-pass-percent=0.20
+  highland-road-percent=0.15
 }
 """
 
