@@ -62,7 +62,7 @@ terrain-images {
 connection-borders {
   non-highland-river-percent=0.14
   non-highland-road-percent=0.10
-  non-highland-bridged-river-percent=0.03
+  non-highland-bridged-river-percent=0.0
   highland-mountain-percent=0.20
   highland-mountain-pass-percent=0.16
   highland-road-percent=0.07

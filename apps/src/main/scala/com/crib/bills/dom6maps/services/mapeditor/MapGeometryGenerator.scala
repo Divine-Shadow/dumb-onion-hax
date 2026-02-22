@@ -21,7 +21,6 @@ trait MapGeometryGenerator[Sequencer[_]]:
 
 class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometryGenerator[Sequencer]:
   private val sequencer = summon[Async[Sequencer]]
-  private val maxOwnershipHeightPixels = 800
 
   private final case class ProvinceSeed(
       provinceId: ProvinceId,
@@ -46,7 +45,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       Left(IllegalArgumentException("seaRatio must be in range [0.0, 1.0]"))
     else
       val widthPixels = input.mapSize.value * 256
-      val heightPixels = math.min(input.mapSize.value * 160, maxOwnershipHeightPixels)
+      val heightPixels = input.mapSize.value * 160
       val random = Random(input.seed)
       val provinceSeeds = generateSeeds(
         widthPixels,

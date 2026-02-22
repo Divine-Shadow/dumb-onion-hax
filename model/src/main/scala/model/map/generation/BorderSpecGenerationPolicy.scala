@@ -39,7 +39,7 @@ object BorderSpecGenerationPolicy:
     BorderSpecGenerationPolicy(
       nonHighlandRiverPercent = NonHighlandRiverPercent(Percent.unsafe(0.14)),
       nonHighlandRoadPercent = NonHighlandRoadPercent(Percent.unsafe(0.10)),
-      nonHighlandBridgedRiverPercent = NonHighlandBridgedRiverPercent(Percent.unsafe(0.03)),
+      nonHighlandBridgedRiverPercent = NonHighlandBridgedRiverPercent(Percent.unsafe(0.0)),
       highlandMountainPercent = HighlandMountainPercent(Percent.unsafe(0.20)),
       highlandMountainPassPercent = HighlandMountainPassPercent(Percent.unsafe(0.16)),
       highlandRoadPercent = HighlandRoadPercent(Percent.unsafe(0.07))

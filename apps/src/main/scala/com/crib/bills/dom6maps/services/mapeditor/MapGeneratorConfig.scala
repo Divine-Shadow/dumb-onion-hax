@@ -43,7 +43,7 @@ object MapGeneratorConnectionBordersConfig:
     MapGeneratorConnectionBordersConfig(
       nonHighlandRiverPercent = 0.14,
       nonHighlandRoadPercent = 0.10,
-      nonHighlandBridgedRiverPercent = 0.03,
+      nonHighlandBridgedRiverPercent = 0.0,
       highlandMountainPercent = 0.20,
       highlandMountainPassPercent = 0.16,
       highlandRoadPercent = 0.07

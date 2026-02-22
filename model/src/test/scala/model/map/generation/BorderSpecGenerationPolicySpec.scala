@@ -12,7 +12,7 @@ object BorderSpecGenerationPolicySpec extends SimpleIOSuite:
     val result = BorderSpecGenerationPolicy.fromRaw[ErrorOr](
       nonHighlandRiverPercent = 0.14,
       nonHighlandRoadPercent = 0.10,
-      nonHighlandBridgedRiverPercent = 0.03,
+      nonHighlandBridgedRiverPercent = 0.0,
       highlandMountainPercent = 0.20,
       highlandMountainPassPercent = 0.16,
       highlandRoadPercent = 0.07
@@ -25,7 +25,7 @@ object BorderSpecGenerationPolicySpec extends SimpleIOSuite:
     val result = BorderSpecGenerationPolicy.fromRaw[ErrorOr](
       nonHighlandRiverPercent = 1.4,
       nonHighlandRoadPercent = 0.10,
-      nonHighlandBridgedRiverPercent = 0.03,
+      nonHighlandBridgedRiverPercent = 0.0,
       highlandMountainPercent = 0.20,
       highlandMountainPassPercent = 0.16,
       highlandRoadPercent = 0.07
@@ -38,7 +38,7 @@ object BorderSpecGenerationPolicySpec extends SimpleIOSuite:
     val result = BorderSpecGenerationPolicy.fromRaw[ErrorOr](
       nonHighlandRiverPercent = 0.60,
       nonHighlandRoadPercent = 0.10,
-      nonHighlandBridgedRiverPercent = 0.03,
+      nonHighlandBridgedRiverPercent = 0.0,
       highlandMountainPercent = 0.50,
       highlandMountainPassPercent = 0.10,
       highlandRoadPercent = 0.07
