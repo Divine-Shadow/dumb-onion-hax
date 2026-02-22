@@ -12,7 +12,7 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 import apps.services.mapeditor.*
 import apps.util.PathUtils
 import model.map.{MapSize, WrapState}
-import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
+import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainImageVariantPolicy}
 
 /**
  * CLI entry point that generates a new map set from a generator configuration file.
@@ -58,6 +58,15 @@ geometry {
 terrain-images {
   policy="base-only"
 }
+
+connection-borders {
+  non-highland-river-percent=0.14
+  non-highland-road-percent=0.10
+  non-highland-bridged-river-percent=0.03
+  highland-mountain-percent=0.20
+  highland-mountain-pass-percent=0.16
+  highland-road-percent=0.07
+}
 """
 
   override def run(args: List[String]): IO[ExitCode] =
@@ -96,6 +105,9 @@ terrain-images {
       mapSize <- MapSize.from(config.geometry.mapSize)
       wrapState <- parseWrapStateForTest(config.geometry.wrapState)
       terrainPolicy <- parseTerrainImagePolicyForTest(config.terrainImages.policy)
+      borderPolicy <- parseBorderSpecGenerationPolicyForTest(
+        config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
+      )
       seed = config.geometry.seed.getOrElse(0L)
     yield
       MapGenerationRequest(
@@ -111,6 +123,7 @@ terrain-images {
           noiseScale = config.geometry.noiseScale,
           gridJitter = config.geometry.gridJitter
         ),
+        borderSpecGenerationPolicy = borderPolicy,
         terrainImageVariantPolicy = terrainPolicy
       )
 
@@ -128,3 +141,15 @@ terrain-images {
       case "base-and-winter" | "winter" => Right(TerrainImageVariantPolicy.BaseAndWinter)
       case "full" | "full-terrain-set" => Right(TerrainImageVariantPolicy.FullTerrainSet)
       case other => Left(IllegalArgumentException(s"Unsupported terrain image policy value: $other"))
+
+  private[apps] def parseBorderSpecGenerationPolicyForTest(
+      config: MapGeneratorConnectionBordersConfig
+  ): Either[Throwable, BorderSpecGenerationPolicy] =
+    BorderSpecGenerationPolicy.fromRaw[ErrorOr](
+      nonHighlandRiverPercent = config.nonHighlandRiverPercent,
+      nonHighlandRoadPercent = config.nonHighlandRoadPercent,
+      nonHighlandBridgedRiverPercent = config.nonHighlandBridgedRiverPercent,
+      highlandMountainPercent = config.highlandMountainPercent,
+      highlandMountainPassPercent = config.highlandMountainPassPercent,
+      highlandRoadPercent = config.highlandRoadPercent
+    )

@@ -11,7 +11,8 @@ final case class MapGeneratorConfig(
     mapTitle: String,
     mapDescription: Option[String],
     geometry: MapGeneratorGeometryConfig,
-    terrainImages: MapGeneratorTerrainImagesConfig
+    terrainImages: MapGeneratorTerrainImagesConfig,
+    connectionBorders: Option[MapGeneratorConnectionBordersConfig]
 ) derives ConfigReader
 
 final case class MapGeneratorGeometryConfig(
@@ -27,3 +28,23 @@ final case class MapGeneratorGeometryConfig(
 final case class MapGeneratorTerrainImagesConfig(
     policy: String
 ) derives ConfigReader
+
+final case class MapGeneratorConnectionBordersConfig(
+    nonHighlandRiverPercent: Double,
+    nonHighlandRoadPercent: Double,
+    nonHighlandBridgedRiverPercent: Double,
+    highlandMountainPercent: Double,
+    highlandMountainPassPercent: Double,
+    highlandRoadPercent: Double
+) derives ConfigReader
+
+object MapGeneratorConnectionBordersConfig:
+  val default: MapGeneratorConnectionBordersConfig =
+    MapGeneratorConnectionBordersConfig(
+      nonHighlandRiverPercent = 0.14,
+      nonHighlandRoadPercent = 0.10,
+      nonHighlandBridgedRiverPercent = 0.03,
+      highlandMountainPercent = 0.20,
+      highlandMountainPassPercent = 0.16,
+      highlandRoadPercent = 0.07
+    )

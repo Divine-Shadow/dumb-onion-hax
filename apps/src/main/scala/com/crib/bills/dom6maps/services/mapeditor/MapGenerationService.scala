@@ -23,12 +23,14 @@ import model.map.{
   WinterImageFile
 }
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
+import model.map.generation.BorderSpecGenerationPolicy
 
 final case class MapGenerationRequest(
     mapName: String,
     mapTitle: String,
     mapDescription: Option[String],
     geometryInput: GeometryGenerationInput,
+    borderSpecGenerationPolicy: BorderSpecGenerationPolicy = BorderSpecGenerationPolicy.default,
     terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly
 )
 
@@ -66,7 +68,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
           nestedResult <- generatedGeometryErrorChannel.traverse { generatedGeometry =>
             val enrichedGeometry = generatedBorderSpecService.populateBorders(
               generatedGeometry,
-              request.geometryInput.seed
+              request.geometryInput.seed,
+              request.borderSpecGenerationPolicy
             )
             val generatedLayer = buildLayer(request, enrichedGeometry)
             for

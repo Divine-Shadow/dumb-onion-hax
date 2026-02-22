@@ -2,8 +2,9 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
+import apps.services.mapeditor.MapGeneratorConnectionBordersConfig
 import model.map.WrapState
-import model.map.generation.TerrainImageVariantPolicy
+import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
 object MapGeneratorCliAppSpec extends SimpleIOSuite:
@@ -25,4 +26,23 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
       parsedBase == Right(TerrainImageVariantPolicy.BaseOnly),
       parsedFull == Right(TerrainImageVariantPolicy.FullTerrainSet)
     ))
+  }
+
+  test("parses valid border generation policy config") {
+    val parsed = MapGeneratorCliApp.parseBorderSpecGenerationPolicyForTest(
+      MapGeneratorConnectionBordersConfig.default
+    )
+
+    IO(expect(parsed == Right(BorderSpecGenerationPolicy.default)))
+  }
+
+  test("rejects invalid border generation policy config") {
+    val parsed = MapGeneratorCliApp.parseBorderSpecGenerationPolicyForTest(
+      MapGeneratorConnectionBordersConfig.default.copy(
+        nonHighlandRiverPercent = 0.8,
+        highlandMountainPercent = 0.5
+      )
+    )
+
+    IO(expect(parsed.isLeft))
   }

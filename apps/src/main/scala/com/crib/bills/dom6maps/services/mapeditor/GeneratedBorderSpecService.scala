@@ -3,18 +3,20 @@ package apps.services.mapeditor
 
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.Border
-import model.map.generation.GeneratedGeometry
+import model.map.generation.{BorderSpecGenerationPolicy, GeneratedGeometry}
 
 trait GeneratedBorderSpecService:
   def populateBorders(
       generatedGeometry: GeneratedGeometry,
-      seed: Long
+      seed: Long,
+      borderSpecGenerationPolicy: BorderSpecGenerationPolicy
   ): GeneratedGeometry
 
 class GeneratedBorderSpecServiceImpl extends GeneratedBorderSpecService:
   override def populateBorders(
       generatedGeometry: GeneratedGeometry,
-      seed: Long
+      seed: Long,
+      borderSpecGenerationPolicy: BorderSpecGenerationPolicy
   ): GeneratedGeometry =
     val existingByPair = generatedGeometry.borders.map(border => normalizedPair(border.a, border.b) -> border).toMap
     val terrainMaskByProvince = generatedGeometry.terrainByProvince.map(terrain => terrain.province -> terrain.mask).toMap
@@ -22,7 +24,13 @@ class GeneratedBorderSpecServiceImpl extends GeneratedBorderSpecService:
     val inferredBorders = generatedGeometry.adjacency.flatMap { case (firstProvince, secondProvince) =>
       val provincePair = normalizedPair(firstProvince, secondProvince)
       if existingByPair.contains(provincePair) then None
-      else inferBorderFlag(firstProvince, secondProvince, terrainMaskByProvince, seed).map(flag =>
+      else inferBorderFlag(
+        firstProvince,
+        secondProvince,
+        terrainMaskByProvince,
+        seed,
+        borderSpecGenerationPolicy
+      ).map(flag =>
         Border(provincePair._1, provincePair._2, flag)
       )
     }
@@ -46,7 +54,8 @@ class GeneratedBorderSpecServiceImpl extends GeneratedBorderSpecService:
       firstProvince: ProvinceId,
       secondProvince: ProvinceId,
       terrainMaskByProvince: Map[ProvinceId, Long],
-      seed: Long
+      seed: Long,
+      borderSpecGenerationPolicy: BorderSpecGenerationPolicy
   ): Option[BorderFlag] =
     val firstTerrainMask = terrainMaskByProvince.get(firstProvince).map(TerrainMask.apply)
     val secondTerrainMask = terrainMaskByProvince.get(secondProvince).map(TerrainMask.apply)
@@ -60,15 +69,28 @@ class GeneratedBorderSpecServiceImpl extends GeneratedBorderSpecService:
 
       val bucket = stableBorderBucket(firstProvince, secondProvince, seed)
       if hasHighland then
-        if bucket < 20 then Some(BorderFlag.Impassable)
-        else if bucket < 36 then Some(BorderFlag.MountainPass)
-        else if bucket < 43 then Some(BorderFlag.Road)
+        val mountainThreshold = toBucketThreshold(borderSpecGenerationPolicy.highlandMountainPercent.value.value)
+        val mountainPassThreshold =
+          mountainThreshold + toBucketThreshold(borderSpecGenerationPolicy.highlandMountainPassPercent.value.value)
+        val roadThreshold =
+          mountainPassThreshold + toBucketThreshold(borderSpecGenerationPolicy.highlandRoadPercent.value.value)
+        if bucket < mountainThreshold then Some(BorderFlag.Impassable)
+        else if bucket < mountainPassThreshold then Some(BorderFlag.MountainPass)
+        else if bucket < roadThreshold then Some(BorderFlag.Road)
         else None
       else
-        if bucket < 14 then Some(BorderFlag.River)
-        else if bucket < 24 then Some(BorderFlag.Road)
-        else if bucket < 27 then Some(BorderFlag.BridgedRiver)
+        val riverThreshold = toBucketThreshold(borderSpecGenerationPolicy.nonHighlandRiverPercent.value.value)
+        val roadThreshold =
+          riverThreshold + toBucketThreshold(borderSpecGenerationPolicy.nonHighlandRoadPercent.value.value)
+        val bridgedRiverThreshold =
+          roadThreshold + toBucketThreshold(borderSpecGenerationPolicy.nonHighlandBridgedRiverPercent.value.value)
+        if bucket < riverThreshold then Some(BorderFlag.River)
+        else if bucket < roadThreshold then Some(BorderFlag.Road)
+        else if bucket < bridgedRiverThreshold then Some(BorderFlag.BridgedRiver)
         else None
+
+  private def toBucketThreshold(percentValue: Double): Int =
+    math.round(percentValue * 100.0).toInt
 
   private def inferFallbackBorder(
       adjacency: Vector[(ProvinceId, ProvinceId)],

@@ -3,7 +3,7 @@ package apps.services.mapeditor
 
 import cats.effect.IO
 import model.{BorderFlag, ProvinceId, TerrainFlag}
-import model.map.generation.GeneratedGeometry
+import model.map.generation.{BorderSpecGenerationPolicy, GeneratedGeometry}
 import model.map.{Border, ProvinceLocation, Terrain, XCell, YCell}
 import weaver.SimpleIOSuite
 
@@ -34,8 +34,8 @@ object GeneratedBorderSpecServiceSpec extends SimpleIOSuite:
       )
     )
 
-    val first = service.populateBorders(geometry, seed = 42L)
-    val second = service.populateBorders(geometry, seed = 42L)
+    val first = service.populateBorders(geometry, seed = 42L, borderSpecGenerationPolicy = BorderSpecGenerationPolicy.default)
+    val second = service.populateBorders(geometry, seed = 42L, borderSpecGenerationPolicy = BorderSpecGenerationPolicy.default)
 
     IO(expect.all(
       first.borders.nonEmpty,
@@ -56,7 +56,11 @@ object GeneratedBorderSpecServiceSpec extends SimpleIOSuite:
       provinceCentroids = Map.empty
     )
 
-    val updated = service.populateBorders(geometry, seed = 999L)
+    val updated = service.populateBorders(
+      geometry,
+      seed = 999L,
+      borderSpecGenerationPolicy = BorderSpecGenerationPolicy.default
+    )
 
     IO(expect(updated.borders.contains(Border(ProvinceId(1), ProvinceId(2), BorderFlag.MountainPass))))
   }
