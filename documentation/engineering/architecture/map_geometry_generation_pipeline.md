@@ -62,6 +62,7 @@ This page documents generation of province geometry for new maps.
 ## Integration
 - `MapGenerationService` composes:
   - `MapGeometryGenerator`
+  - `GeneratedBorderSpecService` (in-memory `NeighbourSpec` enrichment before write/render)
   - `MapWriter`
   - `MapImageWriter`
   - `TerrainImageVariantService`

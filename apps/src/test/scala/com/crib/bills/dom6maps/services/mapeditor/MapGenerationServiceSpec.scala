@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
-import model.map.{MapFileParser, MapSize, WrapState, ImageFile, WinterImageFile, Pb}
+import model.map.{MapFileParser, MapSize, WrapState, ImageFile, NeighbourSpec, WinterImageFile, Pb}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -15,6 +15,7 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
   test("generates map file and base image") {
     val service = new MapGenerationServiceImpl[IO](
       new GridNoiseMapGeometryGeneratorImpl[IO],
+      new GeneratedBorderSpecServiceImpl,
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO]
@@ -45,13 +46,15 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       JavaFiles.exists(outputDirectory.resolve("generated_example.map")),
       JavaFiles.exists(outputDirectory.resolve("generated_example.tga")),
       directives.exists { case ImageFile("generated_example.tga") => true; case _ => false },
-      directives.exists { case _: Pb => true; case _ => false }
+      directives.exists { case _: Pb => true; case _ => false },
+      directives.exists { case _: NeighbourSpec => true; case _ => false }
     )
   }
 
   test("generates winter image directive and file when configured") {
     val service = new MapGenerationServiceImpl[IO](
       new GridNoiseMapGeometryGeneratorImpl[IO],
+      new GeneratedBorderSpecServiceImpl,
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO]

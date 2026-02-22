@@ -64,11 +64,13 @@ terrain-images {
     val configPath = resolveConfigPath()
 
     val geometryGenerator = new GridNoiseMapGeometryGeneratorImpl[IO]
+    val borderSpecService = new GeneratedBorderSpecServiceImpl
     val mapWriter = new MapWriterImpl[IO]
     val mapImageWriter = new MapImageWriterImpl[IO]
     val terrainVariants = new TerrainImageVariantServiceImpl[IO]
     val generationService = new MapGenerationServiceImpl[IO](
       geometryGenerator,
+      borderSpecService,
       mapWriter,
       mapImageWriter,
       terrainVariants

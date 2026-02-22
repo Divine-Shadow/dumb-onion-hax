@@ -43,6 +43,7 @@ trait MapGenerationService[Sequencer[_]]:
 
 class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     mapGeometryGenerator: MapGeometryGenerator[Sequencer],
+    generatedBorderSpecService: GeneratedBorderSpecService,
     mapWriter: MapWriter[Sequencer],
     mapImageWriter: MapImageWriter[Sequencer],
     terrainImageVariantService: TerrainImageVariantService[Sequencer]
@@ -63,7 +64,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         for
           generatedGeometryErrorChannel <- mapGeometryGenerator.generate[ErrorChannel](request.geometryInput)
           nestedResult <- generatedGeometryErrorChannel.traverse { generatedGeometry =>
-            val generatedLayer = buildLayer(request, generatedGeometry)
+            val enrichedGeometry = generatedBorderSpecService.populateBorders(
+              generatedGeometry,
+              request.geometryInput.seed
+            )
+            val generatedLayer = buildLayer(request, enrichedGeometry)
             for
               mapWriteResult <- mapWriter.write[ErrorChannel](generatedLayer, outputMapPath)
               nestedImage <- mapWriteResult.traverse { _ =>
