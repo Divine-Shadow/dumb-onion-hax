@@ -38,6 +38,7 @@ enum Nation(val id: Int, val epithet: String):
   case Therodos_Early     extends Nation(42, "Telkhine Spectre")
   case Atlantis_Early     extends Nation(43, "Emergence of the Deep Ones")
   case Rlyeh_Early        extends Nation(44, "Time of Aboleths")
+  case Sitecah_Early      extends Nation(184, "White Giants")
   case Fennoscandia_Early extends Nation(189, "Souls of the Land")
   case Nihuala_Early      extends Nation(198, "The First People")
 
