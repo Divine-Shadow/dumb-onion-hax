@@ -10,7 +10,9 @@ import model.map.{ImageFile, MapDirective, MapLayer, MapSizePixels, MapWidthPixe
 import model.map.image.{
   BorderFlagMapConnectionOverlayPainter,
   MapConnectionOverlayPainter,
+  MapImagePainter,
   MapTerrainPainter,
+  ProvinceAnchorLocator,
   PrimaryTerrainColorMapTerrainPainter,
   ProvincePixelRasterizer,
   TargaImageEncoder
@@ -52,7 +54,8 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
       )
       terrainMaskByProvince = layer.state.terrains.map(t => t.province -> t.mask).toMap
       baseImage = mapTerrainPainter.paint(ownership, terrainMaskByProvince)
-      paintedImage = mapConnectionOverlayPainter.paint(baseImage, ownership, layer.state.borders)
+      overlaidImage = mapConnectionOverlayPainter.paint(baseImage, ownership, layer.state.borders)
+      paintedImage = repaintProvinceAnchors(overlaidImage, ownership)
       bytes <- sequencer.fromEither(
         TargaImageEncoder.encodeRawBottomLeft24Bit(
           paintedImage.widthPixels,
@@ -96,6 +99,21 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
       val maxYExclusive = provinceRuns.map(run => run.y + 1).max
       if maxXExclusive <= 0 || maxYExclusive <= 0 then None
       else Some(MapSizePixels(MapWidthPixels(maxXExclusive), MapHeightPixels(maxYExclusive)))
+
+  private def repaintProvinceAnchors(
+      image: MapImagePainter.MapImage,
+      ownership: ProvincePixelRasterizer.ProvincePixelOwnership
+  ): MapImagePainter.MapImage =
+    val bytes = image.redGreenBlueBytes.clone()
+    val anchorColor = MapImagePainter.defaultPalette.provinceAnchorColor
+    val anchorByProvince = ProvinceAnchorLocator.locateAnchorPixelByProvince(ownership)
+    anchorByProvince.values.foreach { pixelIndex =>
+      val byteIndex = pixelIndex * 3
+      bytes(byteIndex) = anchorColor.red.toByte
+      bytes(byteIndex + 1) = anchorColor.green.toByte
+      bytes(byteIndex + 2) = anchorColor.blue.toByte
+    }
+    MapImagePainter.MapImage(image.widthPixels, image.heightPixels, bytes)
 
 object MapImageWriter:
   def resolveImagePath(

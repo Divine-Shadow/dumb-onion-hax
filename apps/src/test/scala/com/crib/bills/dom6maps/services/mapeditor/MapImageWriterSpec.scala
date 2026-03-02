@@ -93,7 +93,7 @@ object MapImageWriterSpec extends SimpleIOSuite:
     )
     val passThrough = Vector(
       ImageFile("generated.tga"),
-      Pb(0, 0, 1, ProvinceId(1))
+      Pb(0, 0, 2, ProvinceId(1))
     )
     val layer = MapLayer[IO](mapState, Stream.emits(passThrough).covary[IO])
 
@@ -104,5 +104,9 @@ object MapImageWriterSpec extends SimpleIOSuite:
       _ <- IO.fromEither(result)
       bytes <- IO(JFiles.readAllBytes(outputPath.toNioPath))
       firstPayloadByte = bytes(18) & 0xff
-    yield expect(firstPayloadByte == 7)
+      secondPayloadByte = bytes(21) & 0xff
+    yield expect.all(
+      firstPayloadByte == 255,
+      secondPayloadByte == 7
+    )
   }

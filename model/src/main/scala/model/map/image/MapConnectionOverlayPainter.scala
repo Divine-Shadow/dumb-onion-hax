@@ -258,8 +258,8 @@ object BorderFlagMapConnectionOverlayPainter:
     ConnectionStyle(
       roadColor = MapImagePainter.RedGreenBlueColor(145, 92, 46),
       riverColor = MapImagePainter.RedGreenBlueColor(35, 146, 232),
-      mountainColor = MapImagePainter.RedGreenBlueColor(122, 122, 122),
-      mountainPassColor = MapImagePainter.RedGreenBlueColor(176, 176, 176),
+      mountainColor = MapImagePainter.RedGreenBlueColor(78, 78, 78),
+      mountainPassColor = MapImagePainter.RedGreenBlueColor(160, 160, 160),
       roadThickness = 2,
       riverThickness = 2,
       mountainThickness = 2,

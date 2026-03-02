@@ -26,6 +26,7 @@ object PrimaryTerrainColorMapTerrainPainter:
     case Swamp
     case Waste
     case Highland
+    case Mountain
     case Plain
 
   final case class PrimaryTerrainPalette(
@@ -38,26 +39,28 @@ object PrimaryTerrainColorMapTerrainPainter:
   val defaultPalette: PrimaryTerrainPalette =
     PrimaryTerrainPalette(
       colorByPrimaryTerrainType = Map(
-        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(52, 123, 191),
-        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(56, 120, 60),
-        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(210, 186, 96),
-        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(97, 111, 70),
-        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(202, 168, 103),
-        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(150, 150, 150),
-        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(140, 174, 100)
+        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(54, 120, 191),
+        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(42, 126, 61),
+        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(224, 193, 84),
+        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(83, 105, 65),
+        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(182, 140, 88),
+        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(156, 170, 122),
+        PrimaryTerrainType.Mountain -> MapImagePainter.RedGreenBlueColor(132, 132, 132),
+        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(176, 168, 120)
       ),
-      backgroundColor = MapImagePainter.RedGreenBlueColor(52, 123, 191),
+      backgroundColor = MapImagePainter.RedGreenBlueColor(54, 120, 191),
       borderColor = MapImagePainter.defaultPalette.borderColor,
       provinceAnchorColor = MapImagePainter.defaultPalette.provinceAnchorColor
     )
 
   def resolvePrimaryTerrainType(terrainMask: TerrainMask): PrimaryTerrainType =
     if terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea) then PrimaryTerrainType.Sea
+    else if terrainMask.hasFlag(TerrainFlag.Mountains) then PrimaryTerrainType.Mountain
     else if terrainMask.hasFlag(TerrainFlag.Forest) then PrimaryTerrainType.Forest
     else if terrainMask.hasFlag(TerrainFlag.Farm) then PrimaryTerrainType.Farm
     else if terrainMask.hasFlag(TerrainFlag.Swamp) then PrimaryTerrainType.Swamp
     else if terrainMask.hasFlag(TerrainFlag.Waste) then PrimaryTerrainType.Waste
-    else if terrainMask.hasFlag(TerrainFlag.Highlands) || terrainMask.hasFlag(TerrainFlag.Mountains) then
+    else if terrainMask.hasFlag(TerrainFlag.Highlands) then
       PrimaryTerrainType.Highland
     else PrimaryTerrainType.Plain
 
