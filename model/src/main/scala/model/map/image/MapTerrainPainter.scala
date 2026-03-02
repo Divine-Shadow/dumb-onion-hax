@@ -27,6 +27,7 @@ object PrimaryTerrainColorMapTerrainPainter:
     case Waste
     case Highland
     case Mountain
+    case Cave
     case Plain
 
   final case class PrimaryTerrainPalette(
@@ -39,22 +40,24 @@ object PrimaryTerrainColorMapTerrainPainter:
   val defaultPalette: PrimaryTerrainPalette =
     PrimaryTerrainPalette(
       colorByPrimaryTerrainType = Map(
-        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(54, 120, 191),
-        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(42, 126, 61),
-        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(224, 193, 84),
-        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(83, 105, 65),
-        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(182, 140, 88),
-        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(156, 170, 122),
-        PrimaryTerrainType.Mountain -> MapImagePainter.RedGreenBlueColor(132, 132, 132),
-        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(176, 168, 120)
+        PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(56, 126, 202),
+        PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(36, 122, 56),
+        PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(228, 206, 92),
+        PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(82, 102, 52),
+        PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(191, 122, 64),
+        PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(142, 170, 112),
+        PrimaryTerrainType.Mountain -> MapImagePainter.RedGreenBlueColor(126, 126, 126),
+        PrimaryTerrainType.Cave -> MapImagePainter.RedGreenBlueColor(96, 86, 130),
+        PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(196, 174, 122)
       ),
-      backgroundColor = MapImagePainter.RedGreenBlueColor(54, 120, 191),
+      backgroundColor = MapImagePainter.RedGreenBlueColor(56, 126, 202),
       borderColor = MapImagePainter.defaultPalette.borderColor,
       provinceAnchorColor = MapImagePainter.defaultPalette.provinceAnchorColor
     )
 
   def resolvePrimaryTerrainType(terrainMask: TerrainMask): PrimaryTerrainType =
     if terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea) then PrimaryTerrainType.Sea
+    else if terrainMask.hasFlag(TerrainFlag.Cave) then PrimaryTerrainType.Cave
     else if terrainMask.hasFlag(TerrainFlag.Mountains) then PrimaryTerrainType.Mountain
     else if terrainMask.hasFlag(TerrainFlag.Forest) then PrimaryTerrainType.Forest
     else if terrainMask.hasFlag(TerrainFlag.Farm) then PrimaryTerrainType.Farm

@@ -10,5 +10,6 @@ final case class GeometryGenerationInput(
     seed: Long,
     seaRatio: Double,
     noiseScale: Double,
-    gridJitter: Double
+    gridJitter: Double,
+    terrainDistributionPolicy: TerrainDistributionPolicy = TerrainDistributionPolicy.default
 )

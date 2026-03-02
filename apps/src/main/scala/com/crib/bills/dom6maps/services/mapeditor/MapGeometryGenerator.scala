@@ -6,7 +6,7 @@ import cats.syntax.all.*
 import cats.effect.Async
 import model.{ProvinceId, TerrainFlag}
 import model.map.{Border, Pb, ProvinceLocation, Terrain, WrapState, XCell, YCell}
-import model.map.generation.{GeneratedGeometry, GeometryGenerationInput}
+import model.map.generation.{GeneratedGeometry, GeometryGenerationInput, TerrainDistributionPolicy}
 import model.map.image.{ProvinceAnchorLocator, ProvincePixelRasterizer}
 
 import scala.util.Random
@@ -309,7 +309,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         input.seed,
         input.noiseScale
       )
-      val terrainMask = buildTerrainMask(noiseValue, input.seaRatio)
+      val terrainMask = buildTerrainMask(noiseValue, input.seaRatio, input.terrainDistributionPolicy)
       val remappedIdentifier = oldIdentifierToNewIdentifier.getOrElse(provinceSeed.provinceId.value, provinceSeed.provinceId.value)
       Terrain(ProvinceId(remappedIdentifier), terrainMask)
     }
@@ -323,16 +323,14 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
     val boundedScale = math.max(0.0001, noiseScale)
     val scaledX = (xPixel / 256.0) * boundedScale
     val scaledY = (yPixel / 160.0) * boundedScale
-    val hashInput =
-      (scaledX.toLong * 73856093L) ^
-        (scaledY.toLong * 19349663L) ^
-        (seed * 83492791L)
-    val positiveHash = hashInput & 0x7fffffffL
-    positiveHash.toDouble / 0x7fffffffL.toDouble
+    val phase = scaledX * 12.9898 + scaledY * 78.233 + seed.toDouble * 0.0001
+    val value = math.sin(phase) * 43758.5453
+    value - math.floor(value)
 
   private def buildTerrainMask(
       noiseValue: Double,
-      seaRatio: Double
+      seaRatio: Double,
+      terrainDistributionPolicy: TerrainDistributionPolicy
   ): Long =
     if noiseValue < seaRatio then
       TerrainFlag.Sea.mask
@@ -340,11 +338,19 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       val normalizedLandValue =
         if seaRatio >= 1.0 then 1.0
         else (noiseValue - seaRatio) / (1.0 - seaRatio)
-      if normalizedLandValue < 0.16 then TerrainFlag.Swamp.mask
-      else if normalizedLandValue < 0.32 then TerrainFlag.Farm.mask
-      else if normalizedLandValue < 0.50 then TerrainFlag.Forest.mask
-      else if normalizedLandValue < 0.68 then TerrainFlag.Waste.mask
-      else if normalizedLandValue < 0.84 then TerrainFlag.Highlands.mask
+      val swampThreshold = terrainDistributionPolicy.swampPercent.value.value
+      val wasteThreshold = swampThreshold + terrainDistributionPolicy.wastePercent.value.value
+      val highlandThreshold = wasteThreshold + terrainDistributionPolicy.highlandPercent.value.value
+      val forestThreshold = highlandThreshold + terrainDistributionPolicy.forestPercent.value.value
+      val farmThreshold = forestThreshold + terrainDistributionPolicy.farmPercent.value.value
+      val extraLakeThreshold = farmThreshold + terrainDistributionPolicy.extraLakePercent.value.value
+
+      if normalizedLandValue < swampThreshold then TerrainFlag.Swamp.mask
+      else if normalizedLandValue < wasteThreshold then TerrainFlag.Waste.mask
+      else if normalizedLandValue < highlandThreshold then TerrainFlag.Highlands.mask
+      else if normalizedLandValue < forestThreshold then TerrainFlag.Forest.mask
+      else if normalizedLandValue < farmThreshold then TerrainFlag.Farm.mask
+      else if normalizedLandValue < extraLakeThreshold then TerrainFlag.FreshWater.mask
       else TerrainFlag.Plains.mask
 
   private def deriveCentroids(

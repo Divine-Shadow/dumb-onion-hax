@@ -11,6 +11,7 @@ final case class MapGeneratorConfig(
     mapTitle: String,
     mapDescription: Option[String],
     geometry: MapGeneratorGeometryConfig,
+    terrainDistribution: Option[MapGeneratorTerrainDistributionConfig],
     terrainImages: MapGeneratorTerrainImagesConfig,
     connectionBorders: Option[MapGeneratorConnectionBordersConfig]
 ) derives ConfigReader
@@ -28,6 +29,26 @@ final case class MapGeneratorGeometryConfig(
 final case class MapGeneratorTerrainImagesConfig(
     policy: String
 ) derives ConfigReader
+
+final case class MapGeneratorTerrainDistributionConfig(
+    swampPercent: Double,
+    wastePercent: Double,
+    highlandPercent: Double,
+    forestPercent: Double,
+    farmPercent: Double,
+    extraLakePercent: Double
+) derives ConfigReader
+
+object MapGeneratorTerrainDistributionConfig:
+  val default: MapGeneratorTerrainDistributionConfig =
+    MapGeneratorTerrainDistributionConfig(
+      swampPercent = 0.16,
+      wastePercent = 0.18,
+      highlandPercent = 0.16,
+      forestPercent = 0.18,
+      farmPercent = 0.16,
+      extraLakePercent = 0.0
+    )
 
 final case class MapGeneratorConnectionBordersConfig(
     nonHighlandRiverPercent: Double,

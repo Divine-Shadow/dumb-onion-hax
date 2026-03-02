@@ -18,6 +18,7 @@ This page documents generation of province geometry for new maps.
   - `seaRatio`
   - `noiseScale`
   - `gridJitter`
+  - `terrainDistributionPolicy`
 
 ## Contract
 - `MapGeometryGenerator`

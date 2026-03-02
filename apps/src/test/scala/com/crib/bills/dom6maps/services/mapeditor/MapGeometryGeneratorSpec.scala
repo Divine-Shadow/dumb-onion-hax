@@ -3,8 +3,9 @@ package apps.services.mapeditor
 
 import cats.effect.IO
 import cats.instances.either.*
+import model.TerrainFlag
 import model.map.{MapSize, WrapState}
-import model.map.generation.GeometryGenerationInput
+import model.map.generation.{GeometryGenerationInput, TerrainDistributionPolicy}
 import weaver.SimpleIOSuite
 
 object MapGeometryGeneratorSpec extends SimpleIOSuite:
@@ -55,5 +56,35 @@ object MapGeometryGeneratorSpec extends SimpleIOSuite:
       firstGeometry.adjacency == secondGeometry.adjacency,
       firstGeometry.terrainByProvince == secondGeometry.terrainByProvince,
       firstGeometry.provinceCentroids == secondGeometry.provinceCentroids
+    )
+  }
+
+  test("grid noise generator honors configured terrain distribution policy") {
+    val generator = new GridNoiseMapGeometryGeneratorImpl[IO]
+    val wasteOnlyPolicy = TerrainDistributionPolicy.fromRaw[ErrorOr](
+      swampPercent = 0.0,
+      wastePercent = 1.0,
+      highlandPercent = 0.0,
+      forestPercent = 0.0,
+      farmPercent = 0.0,
+      extraLakePercent = 0.0
+    ).toOption.get
+
+    val input = GeometryGenerationInput(
+      mapSize = MapSize.from(2).toOption.get,
+      provinceCount = 12,
+      wrapState = WrapState.NoWrap,
+      seed = 98765L,
+      seaRatio = 0.0,
+      noiseScale = 1.0,
+      gridJitter = 0.5,
+      terrainDistributionPolicy = wasteOnlyPolicy
+    )
+
+    for
+      result <- generator.generate[ErrorOr](input)
+      generatedGeometry <- IO.fromEither(result)
+    yield expect(
+      generatedGeometry.terrainByProvince.forall(terrain => terrain.mask == TerrainFlag.Waste.mask)
     )
   }

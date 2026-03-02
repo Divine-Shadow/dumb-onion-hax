@@ -31,3 +31,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 22. [Map Geometry Generation Pipeline](map_geometry_generation_pipeline.md)
 23. [MVP Map Set Requirements](mvp_map_set_requirements.md)
 24. [Map Generation Feature Roadmap](map_generation_feature_roadmap.md)
+25. [Terrain Distribution Weighting ExecPlan](terrain_distribution_weighting_exec_plan.md)

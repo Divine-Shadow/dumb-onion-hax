@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.MapGeneratorConnectionBordersConfig
+import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig}
 import model.map.WrapState
 import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -41,6 +41,36 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
       MapGeneratorConnectionBordersConfig.default.copy(
         nonHighlandRiverPercent = 0.8,
         highlandMountainPercent = 0.5
+      )
+    )
+
+    IO(expect(parsed.isLeft))
+  }
+
+  test("parses valid terrain distribution policy config") {
+    val parsed = MapGeneratorCliApp.parseTerrainDistributionPolicyForTest(
+      MapGeneratorTerrainDistributionConfig(
+        swampPercent = 0.07,
+        wastePercent = 0.07,
+        highlandPercent = 0.06,
+        forestPercent = 0.17,
+        farmPercent = 0.15,
+        extraLakePercent = 0.07
+      )
+    )
+
+    IO(expect(parsed.isRight))
+  }
+
+  test("rejects invalid terrain distribution policy config") {
+    val parsed = MapGeneratorCliApp.parseTerrainDistributionPolicyForTest(
+      MapGeneratorTerrainDistributionConfig(
+        swampPercent = 0.25,
+        wastePercent = 0.25,
+        highlandPercent = 0.20,
+        forestPercent = 0.20,
+        farmPercent = 0.20,
+        extraLakePercent = 0.20
       )
     )
 

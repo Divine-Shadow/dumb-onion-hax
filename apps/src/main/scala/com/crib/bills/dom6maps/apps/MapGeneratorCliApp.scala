@@ -12,7 +12,7 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 import apps.services.mapeditor.*
 import apps.util.PathUtils
 import model.map.{MapSize, WrapState}
-import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainImageVariantPolicy}
+import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainDistributionPolicy, TerrainImageVariantPolicy}
 
 /**
  * CLI entry point that generates a new map set from a generator configuration file.
@@ -53,6 +53,15 @@ geometry {
   sea-ratio=0.30
   noise-scale=1.0
   grid-jitter=0.5
+}
+
+terrain-distribution {
+  swamp-percent=0.07
+  waste-percent=0.07
+  highland-percent=0.06
+  forest-percent=0.17
+  farm-percent=0.15
+  extra-lake-percent=0.07
 }
 
 terrain-images {
@@ -105,6 +114,9 @@ connection-borders {
       mapSize <- MapSize.from(config.geometry.mapSize)
       wrapState <- parseWrapStateForTest(config.geometry.wrapState)
       terrainPolicy <- parseTerrainImagePolicyForTest(config.terrainImages.policy)
+      terrainDistributionPolicy <- parseTerrainDistributionPolicyForTest(
+        config.terrainDistribution.getOrElse(MapGeneratorTerrainDistributionConfig.default)
+      )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
       )
@@ -121,7 +133,8 @@ connection-borders {
           seed = seed,
           seaRatio = config.geometry.seaRatio,
           noiseScale = config.geometry.noiseScale,
-          gridJitter = config.geometry.gridJitter
+          gridJitter = config.geometry.gridJitter,
+          terrainDistributionPolicy = terrainDistributionPolicy
         ),
         borderSpecGenerationPolicy = borderPolicy,
         terrainImageVariantPolicy = terrainPolicy
@@ -152,4 +165,16 @@ connection-borders {
       highlandMountainPercent = config.highlandMountainPercent,
       highlandMountainPassPercent = config.highlandMountainPassPercent,
       highlandRoadPercent = config.highlandRoadPercent
+    )
+
+  private[apps] def parseTerrainDistributionPolicyForTest(
+      config: MapGeneratorTerrainDistributionConfig
+  ): Either[Throwable, TerrainDistributionPolicy] =
+    TerrainDistributionPolicy.fromRaw[ErrorOr](
+      swampPercent = config.swampPercent,
+      wastePercent = config.wastePercent,
+      highlandPercent = config.highlandPercent,
+      forestPercent = config.forestPercent,
+      farmPercent = config.farmPercent,
+      extraLakePercent = config.extraLakePercent
     )
