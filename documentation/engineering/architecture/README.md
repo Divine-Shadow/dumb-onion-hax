@@ -30,3 +30,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 21. [Map Image Generation Pipeline](map_image_generation_pipeline.md)
 22. [Map Geometry Generation Pipeline](map_geometry_generation_pipeline.md)
 23. [MVP Map Set Requirements](mvp_map_set_requirements.md)
+24. [Map Generation Feature Roadmap](map_generation_feature_roadmap.md)
