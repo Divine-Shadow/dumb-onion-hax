@@ -125,6 +125,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundPath = outputDirectory.resolve("generated_pair_plane2.map")
       undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
       undergroundTerrains = undergroundDirectives.collect { case terrain: Terrain => terrain }
+      undergroundHasFreshWater = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.FreshWater.mask) != 0L)
+      undergroundHasMountains = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.Mountains.mask) != 0L)
       surfaceTerrains = surfaceDirectives.collect { case terrain: Terrain => terrain }
       surfaceBorderSpecs = surfaceDirectives.collect { case neighbourSpec: NeighbourSpec => neighbourSpec }
       borderFlagsByProvince = surfaceBorderSpecs.foldLeft(Map.empty[ProvinceId, Vector[BorderFlag]]) { (accumulator, neighbourSpec) =>
@@ -163,6 +165,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       surfaceMountainRequiresImpassable,
       undergroundAllHaveCaveFlag,
       undergroundHasSubtypeBits,
+      !undergroundHasFreshWater,
+      !undergroundHasMountains,
       !undergroundHasAnySeaBits,
       surfaceGates.nonEmpty,
       surfaceGates.forall(gate => gate.a == gate.b),
