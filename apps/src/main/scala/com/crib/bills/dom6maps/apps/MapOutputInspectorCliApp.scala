@@ -64,6 +64,7 @@ object MapOutputInspectorCliApp extends IOApp:
       pass      <- layer.passThrough.compile.toVector
       reconstructed =
         pass.foldLeft((Option.empty[ProvinceId], Vector.empty[(ProvinceId, FeatureId)])) {
+          case ((_, acc), Land(p))         => (Some(p), acc)
           case ((current, acc), SetLand(p))      => (Some(p), acc)
           case ((Some(p), acc), Feature(fid))    => (Some(p), acc :+ (p -> fid))
           case ((c, acc), _)                     => (c, acc)

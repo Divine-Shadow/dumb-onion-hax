@@ -137,6 +137,9 @@ object MapFileParser:
       Some(LandName(ProvinceId(p), n))
     }
 
+  private def landP[$: P]: P[Option[MapDirective]] =
+    P("#land" ~ ws ~ int).map(p => Some(Land(ProvinceId(p))))
+
   private def setlandP[$: P]: P[Option[MapDirective]] =
     P("#setland" ~ ws ~ int).map(p => Some(SetLand(ProvinceId(p))))
 
@@ -205,6 +208,7 @@ object MapFileParser:
       pbP |
       terrainP |
       landnameP |
+      landP |
       setlandP |
       provinceFeatureP |
       featureP |
@@ -224,5 +228,5 @@ object MapFileParser:
 
   private def parseLine[F[_]: Sync](line: String): F[MapDirective] =
     fastparse.parse(line, p => directive(using p)) match
-      case Parsed.Success(Some(value), _) => Sync[F].pure(value)
+      case Parsed.Success(Some(value), index) if index == line.length => Sync[F].pure(value)
       case _                              => Sync[F].raiseError(UnmappedLine(line))

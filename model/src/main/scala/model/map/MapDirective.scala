@@ -46,6 +46,7 @@ final case class Start(province: ProvinceId) extends MapDirective
 final case class Pb(x: Int, y: Int, length: Int, province: ProvinceId) extends MapDirective
 final case class Terrain(province: ProvinceId, mask: Long) extends MapDirective
 final case class LandName(province: ProvinceId, name: String) extends MapDirective
+final case class Land(province: ProvinceId) extends MapDirective
 final case class SetLand(province: ProvinceId) extends MapDirective
 final case class Feature(id: FeatureId) extends MapDirective
 final case class FeatureId(value: Int) extends AnyVal

@@ -102,7 +102,7 @@ object MapState:
           adjacency = state.adjacency :+ ((a, b)),
           borders = state.borders :+ Border(a, b, f)
         )
-      case SetLand(_) | Feature(_) =>
+      case Land(_) | SetLand(_) | Feature(_) =>
         state
       case _ =>
         state
@@ -115,5 +115,5 @@ object MapState:
       case WrapAround | HWrapAround | VWrapAround | NoWrapAround => false
       case _: AllowedPlayer | _: SpecStart | _: Terrain | _: ProvinceFeature | _: Gate => false
       case Neighbour(_, _) | NeighbourSpec(_, _, _)              => false
-      case SetLand(_) | Feature(_)                               => true
+      case Land(_) | SetLand(_) | Feature(_)                     => true
       case _                                                     => true

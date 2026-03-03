@@ -14,20 +14,18 @@ import model.map.{
   FloatColor,
   Gate,
   ImageFile,
-  MapSize,
   MapDescription,
   MapDomColor,
   MapLayer,
   MapState,
   MapTextColor,
-  Pb,
+  Land,
   MapTitle,
   NoDeepCaves,
   NoDeepChoice,
   PlaneName,
   ProvinceLocation,
   ProvinceLocations,
-  SetLand,
   Terrain,
   ThroneLevel,
   ThronePlacement,
@@ -144,14 +142,12 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
             val surfaceThrones =
               resolveSurfaceThronePlacements(
                 request,
-                terrainBorderConsistentGeometry,
                 generatedLayer.state
               )
             for
               surfacedStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, generatedLayer.state, surfaceThrones)
               nestedImage <- surfacedStateResult.traverse { surfacedState =>
                 val surfaceDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
-                  request.throneGenerationMode,
                   surfaceThrones,
                   surfacedState,
                   request.throneDefenderSetPieces
@@ -186,14 +182,12 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                             val undergroundThrones =
                               resolveUndergroundThronePlacements(
                                 request,
-                                terrainBorderConsistentGeometry,
                                 undergroundLayerBase.state
                               )
                             for
                               undergroundStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, undergroundLayerBase.state, undergroundThrones)
                               undergroundWriteResult <- undergroundStateResult.traverse { undergroundState =>
                                 val undergroundDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
-                                  request.throneGenerationMode,
                                   undergroundThrones,
                                   undergroundState,
                                   request.throneDefenderSetPieces
@@ -429,29 +423,24 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     else layer.copy(passThrough = layer.passThrough ++ Stream.emits(directives).covary[Sequencer])
 
   private def buildDefenderSetPieceDirectives(
-      throneGenerationMode: ThroneGenerationMode,
       thronePlacements: Vector[ThronePlacement],
       state: MapState,
       throneDefenderSetPieces: Vector[ThroneDefenderSetPiece]
   ): Vector[model.map.MapDirective] =
-    throneGenerationMode match
-      case ThroneGenerationMode.Configured(_, _) =>
-        val setPieceByLevel = throneDefenderSetPieces.map(setPiece => setPiece.throneLevel.value -> setPiece).toMap
-        thronePlacements.flatMap { placement =>
-          val maybeProvince = state.provinceLocations.provinceIdAt(placement.location)
-          val maybeLevel =
-            placement.level.map(_.value)
-              .orElse(placement.id.flatMap(resolveThroneLevelForFeatureId).map(_.value))
-          (maybeProvince, maybeLevel) match
-            case (Some(province), Some(level)) =>
-              setPieceByLevel.get(level).map { setPiece =>
-                Vector(SetLand(province), Commander(setPiece.commanderType)) ++
-                  setPiece.units.map(unit => Units(unit.count, unit.unitType))
-              }.getOrElse(Vector.empty)
-            case _ => Vector.empty
-        }
-      case _ =>
-        Vector.empty
+    val setPieceByLevel = throneDefenderSetPieces.map(setPiece => setPiece.throneLevel.value -> setPiece).toMap
+    thronePlacements.flatMap { placement =>
+      val maybeProvince = state.provinceLocations.provinceIdAt(placement.location)
+      val maybeLevel =
+        placement.level.map(_.value)
+          .orElse(placement.id.flatMap(resolveThroneLevelForFeatureId).map(_.value))
+      (maybeProvince, maybeLevel) match
+        case (Some(province), Some(level)) =>
+          setPieceByLevel.get(level).map { setPiece =>
+            Vector(Land(province), Commander(setPiece.commanderType)) ++
+              setPiece.units.map(unit => Units(unit.count, unit.unitType))
+          }.getOrElse(Vector.empty)
+        case _ => Vector.empty
+    }
 
   private def resolveThroneLevelForFeatureId(featureId: FeatureId): Option[ThroneLevel] =
     if DomFeature.levelOneThrones.exists(_.id.value == featureId.value) then Some(ThroneLevel(1))
@@ -461,7 +450,6 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
 
   private def resolveSurfaceThronePlacements(
       request: MapGenerationRequest,
-      generatedGeometry: model.map.generation.GeneratedGeometry,
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
@@ -469,12 +457,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case ThroneGenerationMode.Configured(surfaceThrones, _) =>
         resolveConfiguredThronePlacements(state, surfaceThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, includeSurface, _) =>
-        if includeSurface then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
+        if includeSurface then randomCornerThronePlacements(state, throneLevel)
         else Vector.empty
 
   private def resolveUndergroundThronePlacements(
       request: MapGenerationRequest,
-      generatedGeometry: model.map.generation.GeneratedGeometry,
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
@@ -482,7 +469,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case ThroneGenerationMode.Configured(_, undergroundThrones) =>
         resolveConfiguredThronePlacements(state, undergroundThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, _, includeUnderground) =>
-        if includeUnderground then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
+        if includeUnderground then randomCornerThronePlacements(state, throneLevel)
         else Vector.empty
 
   private def resolveConfiguredThronePlacements(
@@ -502,55 +489,37 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     }
 
   private def randomCornerThronePlacements(
-      mapSize: MapSize,
-      provinceRuns: Vector[Pb],
       state: MapState,
       throneLevel: ThroneLevel
   ): Vector[ThronePlacement] =
-    val widthPixels = mapSize.value * 256
-    val heightPixels = mapSize.value * 160
-    val cornerPixelCoordinates = Vector(
-      (0, 0),
-      (widthPixels - 1, 0),
-      (0, heightPixels - 1),
-      (widthPixels - 1, heightPixels - 1)
-    )
-    val provinceIdsByCorner =
-      cornerPixelCoordinates.map { case (xPixel, yPixel) =>
-        rankProvincesByDistanceToPixel(provinceRuns, xPixel, yPixel)
+    val provinceLocations = state.provinceLocations.indexByProvinceId.toVector
+    if provinceLocations.isEmpty then Vector.empty
+    else
+      val xValues = provinceLocations.map(_._2.x.value)
+      val yValues = provinceLocations.map(_._2.y.value)
+      val minX = xValues.min
+      val maxX = xValues.max
+      val minY = yValues.min
+      val maxY = yValues.max
+      val footprintCorners = Vector(
+        (minX, minY),
+        (maxX, minY),
+        (minX, maxY),
+        (maxX, maxY)
+      )
+
+      val selectedProvinceIds = footprintCorners.foldLeft(Vector.empty[ProvinceId]) { case (accumulator, (targetX, targetY)) =>
+        val rankedProvinceIds = provinceLocations
+          .sortBy { case (provinceId, location) =>
+            val distance = math.abs(location.x.value - targetX) + math.abs(location.y.value - targetY)
+            (distance, provinceId.value)
+          }
+          .map(_._1)
+        rankedProvinceIds.find(provinceId => !accumulator.contains(provinceId)) match
+          case Some(provinceId) => accumulator :+ provinceId
+          case None => accumulator
       }
 
-    val selectedProvinceIds = provinceIdsByCorner.foldLeft(Vector.empty[ProvinceId]) { (accumulator, rankedProvinceIds) =>
-      rankedProvinceIds.find(provinceId => !accumulator.contains(provinceId)) match
-        case Some(provinceId) => accumulator :+ provinceId
-        case None =>
-          rankedProvinceIds.headOption match
-            case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
-            case _ => accumulator
-    }
-
-    selectedProvinceIds.flatMap { provinceId =>
-      state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
-    }
-
-  private def rankProvincesByDistanceToPixel(
-      provinceRuns: Vector[Pb],
-      xPixel: Int,
-      yPixel: Int
-  ): Vector[ProvinceId] =
-    val minimumDistanceByProvince = provinceRuns.foldLeft(Map.empty[ProvinceId, Int]) { (accumulator, run) =>
-      val runStart = run.x
-      val runEnd = run.x + run.length - 1
-      val deltaX =
-        if xPixel < runStart then runStart - xPixel
-        else if xPixel > runEnd then xPixel - runEnd
-        else 0
-      val deltaY = math.abs(yPixel - run.y)
-      val distance = deltaX + deltaY
-      val current = accumulator.getOrElse(run.province, Int.MaxValue)
-      if distance < current then accumulator.updated(run.province, distance)
-      else accumulator
-    }
-    minimumDistanceByProvince.toVector
-      .sortBy { case (provinceId, distance) => (distance, provinceId.value) }
-      .map(_._1)
+      selectedProvinceIds.flatMap { provinceId =>
+        state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
+      }

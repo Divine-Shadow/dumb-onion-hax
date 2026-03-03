@@ -102,7 +102,7 @@ object MapDirectiveCodecs:
       case WrapAround | HWrapAround | VWrapAround | NoWrapAround       => false
       case _: AllowedPlayer | _: SpecStart | _: Terrain | _: ProvinceFeature | _: Gate      => false
       case Neighbour(_, _) | NeighbourSpec(_, _, _)                    => false
-      case SetLand(_) | Feature(_)                                     => true
+      case Land(_) | SetLand(_) | Feature(_)                           => true
       case _                                                           => true
 
   // Header-like pass-through directives that should appear before state-owned output
@@ -145,7 +145,7 @@ object MapDirectiveCodecs:
       case _: AllowedPlayer       => DirectiveSection.AllowedPlayer
       case _: SpecStart | _: Start => DirectiveSection.SpecStart
       case _: Terrain | _: LandName => DirectiveSection.Terrain
-      case _: ProvinceFeature | _: SetLand | _: Feature => DirectiveSection.Feature
+      case _: ProvinceFeature | _: Land | _: SetLand | _: Feature => DirectiveSection.Feature
       case _: Gate                => DirectiveSection.Gate
       case _: Neighbour           => DirectiveSection.Adjacency
       case _: NeighbourSpec       => DirectiveSection.Border
