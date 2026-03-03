@@ -18,7 +18,8 @@ object MapRendererSpec extends SimpleIOSuite with Checkers:
       .parse[IO]
       .apply(Stream.emits((line + "\n").getBytes(StandardCharsets.UTF_8)).covary[IO])
       .compile
-      .last
+      .toList
+      .map(_.find(_ != LineBreak))
 
   test("render round trip") {
     forall { (directive: MapDirective) =>
