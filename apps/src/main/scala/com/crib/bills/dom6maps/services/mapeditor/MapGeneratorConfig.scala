@@ -13,7 +13,8 @@ final case class MapGeneratorConfig(
     geometry: MapGeneratorGeometryConfig,
     terrainDistribution: Option[MapGeneratorTerrainDistributionConfig],
     terrainImages: MapGeneratorTerrainImagesConfig,
-    connectionBorders: Option[MapGeneratorConnectionBordersConfig]
+    connectionBorders: Option[MapGeneratorConnectionBordersConfig],
+    underground: Option[MapGeneratorUndergroundConfig]
 ) derives ConfigReader
 
 final case class MapGeneratorGeometryConfig(
@@ -48,6 +49,20 @@ object MapGeneratorTerrainDistributionConfig:
       forestPercent = 0.18,
       farmPercent = 0.16,
       extraLakePercent = 0.0
+    )
+
+final case class MapGeneratorUndergroundConfig(
+    enabled: Boolean,
+    planeName: String,
+    connectEveryProvinceWithTunnel: Boolean
+) derives ConfigReader
+
+object MapGeneratorUndergroundConfig:
+  val disabled: MapGeneratorUndergroundConfig =
+    MapGeneratorUndergroundConfig(
+      enabled = false,
+      planeName = "The Underworld",
+      connectEveryProvinceWithTunnel = true
     )
 
 final case class MapGeneratorConnectionBordersConfig(

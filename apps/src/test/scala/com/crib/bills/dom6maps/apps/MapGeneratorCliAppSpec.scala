@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig}
+import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorUndergroundConfig, UndergroundGenerationMode}
 import model.map.WrapState
 import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -71,6 +71,30 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
         forestPercent = 0.20,
         farmPercent = 0.20,
         extraLakePercent = 0.20
+      )
+    )
+
+    IO(expect(parsed.isLeft))
+  }
+
+  test("parses enabled underground generation mode") {
+    val parsed = MapGeneratorCliApp.parseUndergroundGenerationModeForTest(
+      MapGeneratorUndergroundConfig(
+        enabled = true,
+        planeName = "The Underworld",
+        connectEveryProvinceWithTunnel = true
+      )
+    )
+
+    IO(expect(parsed == Right(UndergroundGenerationMode.MirroredPlane("The Underworld", true))))
+  }
+
+  test("rejects enabled underground generation mode with blank plane name") {
+    val parsed = MapGeneratorCliApp.parseUndergroundGenerationModeForTest(
+      MapGeneratorUndergroundConfig(
+        enabled = true,
+        planeName = "   ",
+        connectEveryProvinceWithTunnel = true
       )
     )
 

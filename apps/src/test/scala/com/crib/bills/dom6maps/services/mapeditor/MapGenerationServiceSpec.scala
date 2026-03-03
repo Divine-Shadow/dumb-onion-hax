@@ -5,7 +5,8 @@ import cats.effect.IO
 import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
-import model.map.{MapFileParser, MapSize, WrapState, ImageFile, NeighbourSpec, WinterImageFile, Pb}
+import model.{TerrainFlag}
+import model.map.{Gate, ImageFile, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, Terrain, WrapState, WinterImageFile}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -84,5 +85,63 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
     yield expect.all(
       directives.exists { case WinterImageFile("generated_winter_winter.tga") => true; case _ => false },
       JavaFiles.exists(outputDirectory.resolve("generated_winter_winter.tga"))
+    )
+  }
+
+  test("generates mirrored underground companion map and image when enabled") {
+    val service = new MapGenerationServiceImpl[IO](
+      new GridNoiseMapGeometryGeneratorImpl[IO],
+      new GeneratedBorderSpecServiceImpl,
+      new MapWriterImpl[IO],
+      new MapImageWriterImpl[IO],
+      new TerrainImageVariantServiceImpl[IO]
+    )
+
+    val request = MapGenerationRequest(
+      mapName = "generated_pair",
+      mapTitle = "Generated Pair",
+      mapDescription = Some("Generated pair"),
+      geometryInput = GeometryGenerationInput(
+        mapSize = MapSize.from(2).toOption.get,
+        provinceCount = 10,
+        wrapState = WrapState.NoWrap,
+        seed = 31L,
+        seaRatio = 0.3,
+        noiseScale = 1.0,
+        gridJitter = 0.5
+      ),
+      terrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
+      undergroundGenerationMode = UndergroundGenerationMode.MirroredPlane(
+        planeName = "The Underworld",
+        connectEveryProvinceWithTunnel = true
+      )
+    )
+
+    for
+      outputDirectory <- IO(JavaFiles.createTempDirectory("map-generation-underground-pair"))
+      result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
+      outputMapPath <- IO.fromEither(result)
+      surfaceDirectives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
+      undergroundPath = outputDirectory.resolve("generated_pair_plane2.map")
+      undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
+      undergroundTerrains = undergroundDirectives.collect { case terrain: Terrain => terrain }
+      surfaceGates = surfaceDirectives.collect { case gate: Gate => gate }
+      undergroundGates = undergroundDirectives.collect { case gate: Gate => gate }
+      hasAnySurfaceCave = surfaceDirectives.collect { case terrain: Terrain => terrain }.exists { terrain =>
+        (terrain.mask & TerrainFlag.Cave.mask) != 0L || (terrain.mask & TerrainFlag.CaveWall.mask) != 0L
+      }
+    yield expect.all(
+      JavaFiles.exists(outputDirectory.resolve("generated_pair.map")),
+      JavaFiles.exists(outputDirectory.resolve("generated_pair.tga")),
+      JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.map")),
+      JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
+      undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
+      undergroundTerrains.nonEmpty,
+      undergroundTerrains.forall(terrain => terrain.mask == TerrainFlag.Cave.mask),
+      surfaceGates.nonEmpty,
+      surfaceGates.forall(gate => gate.a == gate.b),
+      undergroundGates.nonEmpty,
+      undergroundGates.forall(gate => gate.a == gate.b),
+      !hasAnySurfaceCave
     )
   }

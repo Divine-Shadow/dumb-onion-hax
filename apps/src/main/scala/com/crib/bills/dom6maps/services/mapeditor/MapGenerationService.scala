@@ -10,6 +10,7 @@ import model.map.{
   ColorComponent,
   DomVersion,
   FloatColor,
+  Gate,
   ImageFile,
   MapDescription,
   MapDomColor,
@@ -19,11 +20,21 @@ import model.map.{
   MapTitle,
   NoDeepCaves,
   NoDeepChoice,
+  PlaneName,
   ProvinceLocations,
+  Terrain,
   WinterImageFile
 }
+import model.{ProvinceId, TerrainFlag, TerrainMask}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import model.map.generation.BorderSpecGenerationPolicy
+
+enum UndergroundGenerationMode:
+  case Disabled
+  case MirroredPlane(
+      planeName: String = "The Underworld",
+      connectEveryProvinceWithTunnel: Boolean = true
+    )
 
 final case class MapGenerationRequest(
     mapName: String,
@@ -31,7 +42,8 @@ final case class MapGenerationRequest(
     mapDescription: Option[String],
     geometryInput: GeometryGenerationInput,
     borderSpecGenerationPolicy: BorderSpecGenerationPolicy = BorderSpecGenerationPolicy.default,
-    terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly
+    terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
+    undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled
 )
 
 trait MapGenerationService[Sequencer[_]]:
@@ -63,6 +75,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case Right(_) =>
         val outputMapPath = outputDirectory / s"${request.mapName}.map"
         val outputImagePath = outputDirectory / s"${request.mapName}.tga"
+        val outputUndergroundMapPath = outputDirectory / s"${request.mapName}_plane2.map"
+        val outputUndergroundImagePath = outputDirectory / s"${request.mapName}_plane2.tga"
         for
           generatedGeometryErrorChannel <- mapGeometryGenerator.generate[ErrorChannel](request.geometryInput)
           nestedResult <- generatedGeometryErrorChannel.traverse { generatedGeometry =>
@@ -71,7 +85,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
               request.geometryInput.seed,
               request.borderSpecGenerationPolicy
             )
-            val generatedLayer = buildLayer(request, enrichedGeometry)
+            val mirroredUndergroundMode =
+              request.undergroundGenerationMode match
+                case mode: UndergroundGenerationMode.MirroredPlane => Some(mode)
+                case UndergroundGenerationMode.Disabled => None
+            val generatedLayer = buildLayer(request, enrichedGeometry, mirroredUndergroundMode)
             for
               mapWriteResult <- mapWriter.write[ErrorChannel](generatedLayer, outputMapPath)
               nestedImage <- mapWriteResult.traverse { _ =>
@@ -82,9 +100,27 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                       generatedLayer,
                       outputImagePath,
                       request.terrainImageVariantPolicy
-                    ).map(_.as(outputMapPath))
+                    ).map(_.as(()))
                   }
-                yield nestedVariants.flatMap(identity)
+                  undergroundWrite <- nestedVariants.traverse { _ =>
+                    request.undergroundGenerationMode match
+                      case UndergroundGenerationMode.Disabled =>
+                        summon[Async[Sequencer]].pure(errorChannel.pure(()))
+                      case undergroundMode: UndergroundGenerationMode.MirroredPlane =>
+                        val undergroundLayer =
+                          buildUndergroundLayer(
+                            request,
+                            enrichedGeometry,
+                            undergroundMode
+                          )
+                        for
+                          undergroundMapWriteResult <- mapWriter.write[ErrorChannel](undergroundLayer, outputUndergroundMapPath)
+                          undergroundImageWriteResult <- undergroundMapWriteResult.traverse { _ =>
+                            mapImageWriter.writeMainImage[ErrorChannel](undergroundLayer, outputUndergroundImagePath)
+                          }
+                        yield undergroundImageWriteResult.flatMap(identity)
+                  }
+                yield undergroundWrite.flatMap(identity).as(outputMapPath)
               }
             yield nestedImage.flatMap(identity)
           }
@@ -97,16 +133,28 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
 
   private def buildLayer(
       request: MapGenerationRequest,
-      generatedGeometry: model.map.generation.GeneratedGeometry
+      generatedGeometry: model.map.generation.GeneratedGeometry,
+      mirroredUndergroundMode: Option[UndergroundGenerationMode.MirroredPlane]
   ): MapLayer[Sequencer] =
+    val sanitizedSurfaceTerrains = generatedGeometry.terrainByProvince.map { terrain =>
+      terrain.copy(mask = sanitizeSurfaceTerrainMask(terrain.mask))
+    }
+    val provinceIds = collectProvinceIds(generatedGeometry)
+    val surfaceGates =
+      mirroredUndergroundMode
+        .filter(_.connectEveryProvinceWithTunnel)
+        .map(_ => provinceIds.map(provinceId => Gate(provinceId, provinceId)))
+        .getOrElse(Vector.empty)
+
     val state = MapState.empty.copy(
       size = Some(request.geometryInput.mapSize),
       adjacency = generatedGeometry.adjacency,
       borders = generatedGeometry.borders,
+      gates = surfaceGates,
       wrap = request.geometryInput.wrapState,
       title = Some(MapTitle(request.mapTitle)),
       description = request.mapDescription.map(MapDescription.apply),
-      terrains = generatedGeometry.terrainByProvince,
+      terrains = sanitizedSurfaceTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
 
@@ -135,3 +183,64 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         generatedGeometry.provincePixelRuns
 
     MapLayer(state, Stream.emits(passThrough).covary[Sequencer])
+
+  private def buildUndergroundLayer(
+      request: MapGenerationRequest,
+      generatedGeometry: model.map.generation.GeneratedGeometry,
+      undergroundMode: UndergroundGenerationMode.MirroredPlane
+  ): MapLayer[Sequencer] =
+    val provinceIds = collectProvinceIds(generatedGeometry)
+
+    val undergroundTerrains =
+      provinceIds.map(provinceId => Terrain(provinceId, TerrainFlag.Cave.mask))
+
+    val undergroundGates =
+      if undergroundMode.connectEveryProvinceWithTunnel then
+        provinceIds.map(provinceId => Gate(provinceId, provinceId))
+      else Vector.empty
+
+    val state = MapState.empty.copy(
+      size = Some(request.geometryInput.mapSize),
+      adjacency = generatedGeometry.adjacency,
+      borders = Vector.empty,
+      gates = undergroundGates,
+      wrap = request.geometryInput.wrapState,
+      title = None,
+      description = request.mapDescription.map(MapDescription.apply),
+      terrains = undergroundTerrains,
+      provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
+    )
+
+    val passThrough =
+      Vector(
+        ImageFile(s"${request.mapName}_plane2.tga"),
+        MapTextColor(
+          FloatColor(
+            ColorComponent(0.2),
+            ColorComponent(0.0),
+            ColorComponent(0.0),
+            ColorComponent(1.0)
+          )
+        ),
+        MapDomColor(255, 255, 30, 38),
+        DomVersion(575),
+        NoDeepCaves,
+        NoDeepChoice,
+        PlaneName(undergroundMode.planeName)
+      ) ++ generatedGeometry.provincePixelRuns
+
+    MapLayer(state, Stream.emits(passThrough).covary[Sequencer])
+
+  private def sanitizeSurfaceTerrainMask(maskValue: Long): Long =
+    TerrainMask(maskValue)
+      .withoutFlag(TerrainFlag.Cave)
+      .withoutFlag(TerrainFlag.CaveWall)
+      .value
+
+  private def collectProvinceIds(
+      generatedGeometry: model.map.generation.GeneratedGeometry
+  ): Vector[ProvinceId] =
+    generatedGeometry.terrainByProvince
+      .map(_.province)
+      .distinct
+      .sortBy(_.value)

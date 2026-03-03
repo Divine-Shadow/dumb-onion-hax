@@ -68,6 +68,7 @@ This page documents generation of province geometry for new maps.
   - `MapImageWriter`
   - `TerrainImageVariantService`
 - The generator emits `.map` and `.tga` artifacts to a target directory.
+- When underground companion mode is enabled, the generator also emits `_plane2.map` and `_plane2.tga` with mirrored ownership runs and per-province tunnel gates.
 - MVP required directive/file checklist: [MVP Map Set Requirements](mvp_map_set_requirements.md)
 
 ## Testing Focus

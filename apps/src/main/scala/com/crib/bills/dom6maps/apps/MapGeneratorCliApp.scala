@@ -68,6 +68,12 @@ terrain-images {
   policy="base-only"
 }
 
+underground {
+  enabled=true
+  plane-name="The Underworld"
+  connect-every-province-with-tunnel=true
+}
+
 connection-borders {
   non-highland-river-percent=0.20
   non-highland-road-percent=0.20
@@ -117,6 +123,9 @@ connection-borders {
       terrainDistributionPolicy <- parseTerrainDistributionPolicyForTest(
         config.terrainDistribution.getOrElse(MapGeneratorTerrainDistributionConfig.default)
       )
+      undergroundGenerationMode <- parseUndergroundGenerationModeForTest(
+        config.underground.getOrElse(MapGeneratorUndergroundConfig.disabled)
+      )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
       )
@@ -137,7 +146,8 @@ connection-borders {
           terrainDistributionPolicy = terrainDistributionPolicy
         ),
         borderSpecGenerationPolicy = borderPolicy,
-        terrainImageVariantPolicy = terrainPolicy
+        terrainImageVariantPolicy = terrainPolicy,
+        undergroundGenerationMode = undergroundGenerationMode
       )
 
   private[apps] def parseWrapStateForTest(value: String): Either[Throwable, WrapState] =
@@ -178,3 +188,16 @@ connection-borders {
       farmPercent = config.farmPercent,
       extraLakePercent = config.extraLakePercent
     )
+
+  private[apps] def parseUndergroundGenerationModeForTest(
+      config: MapGeneratorUndergroundConfig
+  ): Either[Throwable, UndergroundGenerationMode] =
+    if !config.enabled then Right(UndergroundGenerationMode.Disabled)
+    else if config.planeName.trim.isEmpty then Left(IllegalArgumentException("underground.planeName must not be empty"))
+    else
+      Right(
+        UndergroundGenerationMode.MirroredPlane(
+          planeName = config.planeName,
+          connectEveryProvinceWithTunnel = config.connectEveryProvinceWithTunnel
+        )
+      )
