@@ -41,7 +41,7 @@ This page documents generation of province geometry for new maps.
 3. Remap province identifiers by deterministic anchor scan order.
 4. Compress ownership to run-length `#pb` rows.
 5. Derive adjacency by scanning province boundaries.
-6. Assign terrain masks per province from deterministic noise.
+6. Assign terrain masks per province from deterministic distribution sampling.
 7. Derive province centroids and convert to province cell coordinates.
 
 ## Dominions Compatibility Invariants

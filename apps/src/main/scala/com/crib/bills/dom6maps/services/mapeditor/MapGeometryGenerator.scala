@@ -303,29 +303,24 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       oldIdentifierToNewIdentifier: Map[Int, Int]
   ): Vector[Terrain] =
     provinceSeeds.map { provinceSeed =>
-      val noiseValue = sampledNoiseValue(
-        provinceSeed.xPixel,
-        provinceSeed.yPixel,
-        input.seed,
-        input.noiseScale
-      )
-      val terrainMask = buildTerrainMask(noiseValue, input.seaRatio, input.terrainDistributionPolicy)
+      val randomDraw = sampledProvinceTerrainDraw(provinceSeed.provinceId, input.seed)
+      val terrainMask = buildTerrainMask(randomDraw, input.seaRatio, input.terrainDistributionPolicy)
       val remappedIdentifier = oldIdentifierToNewIdentifier.getOrElse(provinceSeed.provinceId.value, provinceSeed.provinceId.value)
       Terrain(ProvinceId(remappedIdentifier), terrainMask)
     }
 
-  private def sampledNoiseValue(
-      xPixel: Double,
-      yPixel: Double,
-      seed: Long,
-      noiseScale: Double
+  private def sampledProvinceTerrainDraw(
+      provinceId: ProvinceId,
+      seed: Long
   ): Double =
-    val boundedScale = math.max(0.0001, noiseScale)
-    val scaledX = (xPixel / 256.0) * boundedScale
-    val scaledY = (yPixel / 160.0) * boundedScale
-    val phase = scaledX * 12.9898 + scaledY * 78.233 + seed.toDouble * 0.0001
-    val value = math.sin(phase) * 43758.5453
-    value - math.floor(value)
+    val mixed = splitMix64(seed + provinceId.value.toLong * 0x9e3779b97f4a7c15L)
+    val positiveHash = mixed & 0x7fffffffffffffffL
+    positiveHash.toDouble / Long.MaxValue.toDouble
+
+  private def splitMix64(value: Long): Long =
+    val step1 = (value ^ (value >>> 30)) * 0xbf58476d1ce4e5b9L
+    val step2 = (step1 ^ (step1 >>> 27)) * 0x94d049bb133111ebL
+    step2 ^ (step2 >>> 31)
 
   private def buildTerrainMask(
       noiseValue: Double,

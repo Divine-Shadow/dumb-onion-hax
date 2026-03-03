@@ -20,6 +20,9 @@ The user-visible result is that `map-generator.conf` gains a `terrain-distributi
 - [x] (2026-03-02 23:59Z) Ran full targeted compile/test validation for model and apps changes.
 - [x] (2026-03-03 00:53Z) Regenerated `sample_mvp` and validated generated terrain mask diversity against configured profile.
 - [x] (2026-03-03 00:54Z) Commit implementation and updated docs.
+- [x] (2026-03-03 00:36Z) Switched terrain assignment to deterministic random per-province sampling from configured distribution.
+- [x] (2026-03-03 00:38Z) Revalidated apps test suite and regenerated `sample_mvp` with updated sampler.
+- [ ] (2026-03-03 00:39Z) Commit post-ExecPlan sampler refinement and doc updates.
 
 ## Surprises & Discoveries
 
@@ -29,8 +32,8 @@ The user-visible result is that `map-generator.conf` gains a `terrain-distributi
 - Observation: `map-generator.conf` and `apps/map-generator.conf` are ignored from git, so user runtime behavior can differ from repository defaults unless both local files are updated.
   Evidence: prior sessions showed local CLI runs loading `apps/map-generator.conf`.
 
-- Observation: Initial hash-based terrain sampling logic still skewed terrain assignment, under-representing low-threshold terrain types.
-  Evidence: generated terrain mask counts clustered into only a subset of configured classes during early validation runs.
+- Observation: Initial post-ExecPlan sampler variants (bit-truncating hash and coordinate sine noise) still produced undesirable bias on small map sizes.
+  Evidence: generated terrain mask counts repeatedly clustered into a subset of configured classes during test runs.
 
 ## Decision Log
 
@@ -50,9 +53,13 @@ The user-visible result is that `map-generator.conf` gains a `terrain-distributi
   Rationale: Truncation-based hashing created clustering that prevented configured percentages from appearing reliably on small to medium generated maps.
   Date/Author: 2026-03-03 / Codex
 
+- Decision: Use deterministic random per-province sampling (SplitMix64-based draw) rather than coordinate-based noise for terrain assignment.
+  Rationale: User requested random sampling from configured distribution, and per-province deterministic draws provide unbiased frequency matching while preserving seed determinism.
+  Date/Author: 2026-03-03 / Codex
+
 ## Outcomes & Retrospective
 
-Implementation and validation are complete except for final commit. The change introduces explicit, validated control over terrain composition and keeps deterministic output characteristics intact.
+Implementation and validation are complete except for final commit. The change introduces explicit, validated control over terrain composition and keeps deterministic output characteristics intact, with terrain type assigned by deterministic random sampling from configured percentages.
 
 Observed result in generated `sample_mvp` (48 provinces, sea ratio 0.30) includes all requested terrain families:
 
@@ -143,4 +150,4 @@ Generator dependency:
 
 ---
 
-Revision Note (2026-03-03 00:54Z): Marked plan complete after committing implementation and docs, preserving validation evidence and final decisions.
+Revision Note (2026-03-03 00:39Z): Reopened living plan to reflect post-commit sampler refinement requested by user ("randomly sample from distribution"), with commit pending for this follow-up.
