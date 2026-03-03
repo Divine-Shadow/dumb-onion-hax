@@ -8,7 +8,6 @@ import fs2.Stream
 import fs2.io.file.{Files, Path}
 import model.map.{
   ColorComponent,
-  CornerLocations,
   DomVersion,
   FloatColor,
   Gate,
@@ -20,7 +19,6 @@ import model.map.{
   MapState,
   MapTextColor,
   Pb,
-  ProvinceLocation,
   MapTitle,
   NoDeepCaves,
   NoDeepChoice,
@@ -396,40 +394,42 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       (0, heightPixels - 1),
       (widthPixels - 1, heightPixels - 1)
     )
-    val cornerCellLocations = CornerLocations.all(mapSize)
-
-    val selectedProvinceIds =
-      cornerCellLocations.zip(cornerPixelCoordinates).foldLeft(Vector.empty[ProvinceId]) { case (accumulator, (cellLocation, pixelCoordinate)) =>
-        val resolvedProvinceId =
-          provinceIdAtPixel(provinceRuns, pixelCoordinate._1, pixelCoordinate._2)
-            .orElse(state.provinceLocations.provinceIdAt(cellLocation))
-            .orElse(nearestProvinceIdForLocation(cellLocation, state))
-        resolvedProvinceId match
-          case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
-          case _ => accumulator
+    val provinceIdsByCorner =
+      cornerPixelCoordinates.map { case (xPixel, yPixel) =>
+        rankProvincesByDistanceToPixel(provinceRuns, xPixel, yPixel)
       }
+
+    val selectedProvinceIds = provinceIdsByCorner.foldLeft(Vector.empty[ProvinceId]) { (accumulator, rankedProvinceIds) =>
+      rankedProvinceIds.find(provinceId => !accumulator.contains(provinceId)) match
+        case Some(provinceId) => accumulator :+ provinceId
+        case None =>
+          rankedProvinceIds.headOption match
+            case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
+            case _ => accumulator
+    }
 
     selectedProvinceIds.flatMap { provinceId =>
       state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
     }
 
-  private def provinceIdAtPixel(
+  private def rankProvincesByDistanceToPixel(
       provinceRuns: Vector[Pb],
       xPixel: Int,
       yPixel: Int
-  ): Option[ProvinceId] =
-    provinceRuns.collectFirst {
-      case Pb(runX, runY, runLength, provinceId)
-          if runY == yPixel && xPixel >= runX && xPixel < (runX + runLength) =>
-        provinceId
+  ): Vector[ProvinceId] =
+    val minimumDistanceByProvince = provinceRuns.foldLeft(Map.empty[ProvinceId, Int]) { (accumulator, run) =>
+      val runStart = run.x
+      val runEnd = run.x + run.length - 1
+      val deltaX =
+        if xPixel < runStart then runStart - xPixel
+        else if xPixel > runEnd then xPixel - runEnd
+        else 0
+      val deltaY = math.abs(yPixel - run.y)
+      val distance = deltaX + deltaY
+      val current = accumulator.getOrElse(run.province, Int.MaxValue)
+      if distance < current then accumulator.updated(run.province, distance)
+      else accumulator
     }
-
-  private def nearestProvinceIdForLocation(
-      targetLocation: ProvinceLocation,
-      state: MapState
-  ): Option[ProvinceId] =
-    state.provinceLocations.indexByProvinceId.minByOption { case (_, provinceLocation) =>
-      val deltaX = math.abs(provinceLocation.x.value - targetLocation.x.value)
-      val deltaY = math.abs(provinceLocation.y.value - targetLocation.y.value)
-      deltaX + deltaY
-    }.map(_._1)
+    minimumDistanceByProvince.toVector
+      .sortBy { case (provinceId, distance) => (distance, provinceId.value) }
+      .map(_._1)
