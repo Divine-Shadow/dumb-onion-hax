@@ -19,6 +19,7 @@ import model.map.{
   MapLayer,
   MapState,
   MapTextColor,
+  Pb,
   Land,
   MapTitle,
   NoDeepCaves,
@@ -142,6 +143,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
             val surfaceThrones =
               resolveSurfaceThronePlacements(
                 request,
+                terrainBorderConsistentGeometry.provincePixelRuns,
                 generatedLayer.state
               )
             for
@@ -182,6 +184,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                             val undergroundThrones =
                               resolveUndergroundThronePlacements(
                                 request,
+                                terrainBorderConsistentGeometry.provincePixelRuns,
                                 undergroundLayerBase.state
                               )
                             for
@@ -450,6 +453,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
 
   private def resolveSurfaceThronePlacements(
       request: MapGenerationRequest,
+      provinceRuns: Vector[Pb],
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
@@ -457,11 +461,12 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case ThroneGenerationMode.Configured(surfaceThrones, _) =>
         resolveConfiguredThronePlacements(state, surfaceThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, includeSurface, _) =>
-        if includeSurface then randomCornerThronePlacements(state, throneLevel)
+        if includeSurface then randomCornerThronePlacements(provinceRuns, state, throneLevel)
         else Vector.empty
 
   private def resolveUndergroundThronePlacements(
       request: MapGenerationRequest,
+      provinceRuns: Vector[Pb],
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
@@ -469,7 +474,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case ThroneGenerationMode.Configured(_, undergroundThrones) =>
         resolveConfiguredThronePlacements(state, undergroundThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, _, includeUnderground) =>
-        if includeUnderground then randomCornerThronePlacements(state, throneLevel)
+        if includeUnderground then randomCornerThronePlacements(provinceRuns, state, throneLevel)
         else Vector.empty
 
   private def resolveConfiguredThronePlacements(
@@ -489,37 +494,66 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     }
 
   private def randomCornerThronePlacements(
+      provinceRuns: Vector[Pb],
       state: MapState,
       throneLevel: ThroneLevel
   ): Vector[ThronePlacement] =
-    val provinceLocations = state.provinceLocations.indexByProvinceId.toVector
-    if provinceLocations.isEmpty then Vector.empty
+    if provinceRuns.isEmpty then Vector.empty
     else
-      val xValues = provinceLocations.map(_._2.x.value)
-      val yValues = provinceLocations.map(_._2.y.value)
-      val minX = xValues.min
-      val maxX = xValues.max
-      val minY = yValues.min
-      val maxY = yValues.max
-      val footprintCorners = Vector(
+      val (minX, maxX, minY, maxY) = provinceRuns.foldLeft((Int.MaxValue, Int.MinValue, Int.MaxValue, Int.MinValue)) {
+        case ((currentMinX, currentMaxX, currentMinY, currentMaxY), run) =>
+          val runStart = run.x
+          val runEnd = run.x + run.length - 1
+          (
+            math.min(currentMinX, runStart),
+            math.max(currentMaxX, runEnd),
+            math.min(currentMinY, run.y),
+            math.max(currentMaxY, run.y)
+          )
+      }
+
+      val cornerPixelCoordinates = Vector(
         (minX, minY),
         (maxX, minY),
         (minX, maxY),
         (maxX, maxY)
       )
+      val provinceIdsByCorner =
+        cornerPixelCoordinates.map { case (xPixel, yPixel) =>
+          rankProvincesByDistanceToPixel(provinceRuns, xPixel, yPixel)
+        }
 
-      val selectedProvinceIds = footprintCorners.foldLeft(Vector.empty[ProvinceId]) { case (accumulator, (targetX, targetY)) =>
-        val rankedProvinceIds = provinceLocations
-          .sortBy { case (provinceId, location) =>
-            val distance = math.abs(location.x.value - targetX) + math.abs(location.y.value - targetY)
-            (distance, provinceId.value)
-          }
-          .map(_._1)
+      val selectedProvinceIds = provinceIdsByCorner.foldLeft(Vector.empty[ProvinceId]) { (accumulator, rankedProvinceIds) =>
         rankedProvinceIds.find(provinceId => !accumulator.contains(provinceId)) match
           case Some(provinceId) => accumulator :+ provinceId
-          case None => accumulator
+          case None =>
+            rankedProvinceIds.headOption match
+              case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
+              case _ => accumulator
       }
 
       selectedProvinceIds.flatMap { provinceId =>
         state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
       }
+
+  private def rankProvincesByDistanceToPixel(
+      provinceRuns: Vector[Pb],
+      xPixel: Int,
+      yPixel: Int
+  ): Vector[ProvinceId] =
+    val minimumDistanceByProvince = provinceRuns.foldLeft(Map.empty[ProvinceId, Int]) { (accumulator, run) =>
+      val runStart = run.x
+      val runEnd = run.x + run.length - 1
+      val deltaX =
+        if xPixel < runStart then runStart - xPixel
+        else if xPixel > runEnd then xPixel - runEnd
+        else 0
+      val deltaY = math.abs(yPixel - run.y)
+      val distance = deltaX + deltaY
+      val current = accumulator.getOrElse(run.province, Int.MaxValue)
+      if distance < current then accumulator.updated(run.province, distance)
+      else accumulator
+    }
+    minimumDistanceByProvince.toVector
+      .sortBy { case (provinceId, distance) => (distance, provinceId.value) }
+      .map(_._1)
