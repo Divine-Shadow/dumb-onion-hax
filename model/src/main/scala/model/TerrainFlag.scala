@@ -25,4 +25,4 @@ enum TerrainFlag(val mask: Long):
   case CaveWall          extends TerrainFlag(68719476736L)
 
 object TerrainFlag:
-  val Throne: TerrainFlag = TerrainFlag.GoodStart
+  val Throne: TerrainFlag = TerrainFlag.GoodThrone

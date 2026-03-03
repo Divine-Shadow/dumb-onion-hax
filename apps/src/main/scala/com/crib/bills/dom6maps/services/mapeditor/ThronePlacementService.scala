@@ -110,8 +110,8 @@ ${details}""")
           updatedTerrains = state.terrains.map {
             case t @ Terrain(province, mask) =>
               val updated =
-                if throneSet.contains(province) then TerrainMask(mask).withFlag(TerrainFlag.Throne)
-                else TerrainMask(mask).withoutFlag(TerrainFlag.Throne)
+                if throneSet.contains(province) then TerrainMask(mask).withFlag(TerrainFlag.GoodThrone)
+                else TerrainMask(mask).withoutFlag(TerrainFlag.GoodThrone)
               t.copy(mask = updated.value)
           }
           existingFeatures = state.features.filterNot(pf => throneSet.contains(pf.province))
@@ -126,4 +126,3 @@ class ThronePlacementServiceStub[Sequencer[_]: Applicative] extends ThronePlacem
       thrones: Vector[ThronePlacement]
   )(using MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]): Sequencer[ErrorChannel[MapState]] =
     state.pure[ErrorChannel].pure[Sequencer]
-
