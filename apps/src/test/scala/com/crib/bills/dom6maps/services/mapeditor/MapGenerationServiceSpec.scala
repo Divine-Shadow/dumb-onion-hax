@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
-import model.{TerrainFlag}
+import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.{Gate, ImageFile, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, Terrain, WrapState, WinterImageFile}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -125,6 +125,25 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundPath = outputDirectory.resolve("generated_pair_plane2.map")
       undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
       undergroundTerrains = undergroundDirectives.collect { case terrain: Terrain => terrain }
+      surfaceTerrains = surfaceDirectives.collect { case terrain: Terrain => terrain }
+      surfaceBorderSpecs = surfaceDirectives.collect { case neighbourSpec: NeighbourSpec => neighbourSpec }
+      borderFlagsByProvince = surfaceBorderSpecs.foldLeft(Map.empty[ProvinceId, Vector[BorderFlag]]) { (accumulator, neighbourSpec) =>
+        val firstFlags = accumulator.getOrElse(neighbourSpec.a, Vector.empty) :+ neighbourSpec.border
+        val secondFlags = accumulator.getOrElse(neighbourSpec.b, Vector.empty) :+ neighbourSpec.border
+        accumulator.updated(neighbourSpec.a, firstFlags).updated(neighbourSpec.b, secondFlags)
+      }
+      surfaceFreshWaterRequiresRiver = surfaceTerrains.forall { terrain =>
+        val terrainMask = TerrainMask(terrain.mask)
+        !terrainMask.hasFlag(TerrainFlag.FreshWater) || borderFlagsByProvince
+          .getOrElse(terrain.province, Vector.empty)
+          .exists(flag => flag.includes(BorderFlag.River))
+      }
+      surfaceMountainRequiresImpassable = surfaceTerrains.forall { terrain =>
+        val terrainMask = TerrainMask(terrain.mask)
+        !terrainMask.hasFlag(TerrainFlag.Mountains) || borderFlagsByProvince
+          .getOrElse(terrain.province, Vector.empty)
+          .exists(flag => flag.includes(BorderFlag.Impassable))
+      }
       undergroundAllHaveCaveFlag = undergroundTerrains.forall(terrain => (terrain.mask & TerrainFlag.Cave.mask) != 0L)
       undergroundHasSubtypeBits = undergroundTerrains.exists(terrain => terrain.mask != TerrainFlag.Cave.mask)
       undergroundHasAnySeaBits = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.Sea.mask) != 0L || (terrain.mask & TerrainFlag.DeepSea.mask) != 0L)
@@ -140,6 +159,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
       undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
       undergroundTerrains.nonEmpty,
+      surfaceFreshWaterRequiresRiver,
+      surfaceMountainRequiresImpassable,
       undergroundAllHaveCaveFlag,
       undergroundHasSubtypeBits,
       !undergroundHasAnySeaBits,

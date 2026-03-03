@@ -25,7 +25,7 @@ import model.map.{
   Terrain,
   WinterImageFile
 }
-import model.{ProvinceId, TerrainFlag, TerrainMask}
+import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import model.map.generation.BorderSpecGenerationPolicy
 
@@ -85,11 +85,14 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
               request.geometryInput.seed,
               request.borderSpecGenerationPolicy
             )
+            val terrainBorderConsistentGeometry = enrichedGeometry.copy(
+              terrainByProvince = enforceTerrainBorderConsistency(enrichedGeometry)
+            )
             val mirroredUndergroundMode =
               request.undergroundGenerationMode match
                 case mode: UndergroundGenerationMode.MirroredPlane => Some(mode)
                 case UndergroundGenerationMode.Disabled => None
-            val generatedLayer = buildLayer(request, enrichedGeometry, mirroredUndergroundMode)
+            val generatedLayer = buildLayer(request, terrainBorderConsistentGeometry, mirroredUndergroundMode)
             for
               mapWriteResult <- mapWriter.write[ErrorChannel](generatedLayer, outputMapPath)
               nestedImage <- mapWriteResult.traverse { _ =>
@@ -110,7 +113,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                         val undergroundLayer =
                           buildUndergroundLayer(
                             request,
-                            enrichedGeometry,
+                            terrainBorderConsistentGeometry,
                             undergroundMode
                           )
                         for
@@ -237,6 +240,38 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       .withoutFlag(TerrainFlag.Cave)
       .withoutFlag(TerrainFlag.CaveWall)
       .value
+
+  private def enforceTerrainBorderConsistency(
+      generatedGeometry: model.map.generation.GeneratedGeometry
+  ): Vector[Terrain] =
+    val borderFlagsByProvince =
+      generatedGeometry.borders.foldLeft(Map.empty[ProvinceId, Vector[BorderFlag]]) { (accumulator, border) =>
+        val firstFlags = accumulator.getOrElse(border.a, Vector.empty) :+ border.flag
+        val secondFlags = accumulator.getOrElse(border.b, Vector.empty) :+ border.flag
+        accumulator.updated(border.a, firstFlags).updated(border.b, secondFlags)
+      }
+
+    generatedGeometry.terrainByProvince.map { terrain =>
+      val hasRiverBorder = borderFlagsByProvince
+        .getOrElse(terrain.province, Vector.empty)
+        .exists(flag => flag.includes(BorderFlag.River))
+      val hasImpassableMountainBorder = borderFlagsByProvince
+        .getOrElse(terrain.province, Vector.empty)
+        .exists(flag => flag.includes(BorderFlag.Impassable))
+
+      val baseMask = TerrainMask(sanitizeSurfaceTerrainMask(terrain.mask))
+        .withoutFlag(TerrainFlag.FreshWater)
+        .withoutFlag(TerrainFlag.Mountains)
+
+      val withRiverTerrain =
+        if hasRiverBorder then baseMask.withFlag(TerrainFlag.FreshWater)
+        else baseMask
+      val withMountainTerrain =
+        if hasImpassableMountainBorder then withRiverTerrain.withFlag(TerrainFlag.Mountains)
+        else withRiverTerrain
+
+      terrain.copy(mask = withMountainTerrain.value)
+    }
 
   private def toUndergroundTerrainMask(surfaceMaskValue: Long): Long =
     val normalizedSurfaceMask = TerrainMask(sanitizeSurfaceTerrainMask(surfaceMaskValue))
