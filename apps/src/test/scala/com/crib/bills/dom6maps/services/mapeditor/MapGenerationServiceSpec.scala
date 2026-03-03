@@ -6,7 +6,7 @@ import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{Gate, ImageFile, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, Terrain, WrapState, WinterImageFile}
+import model.map.{Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, SetLand, Terrain, ThroneLevel, WrapState, WinterImageFile}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -19,7 +19,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new GeneratedBorderSpecServiceImpl,
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
-      new TerrainImageVariantServiceImpl[IO]
+      new TerrainImageVariantServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -58,7 +59,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new GeneratedBorderSpecServiceImpl,
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
-      new TerrainImageVariantServiceImpl[IO]
+      new TerrainImageVariantServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -94,7 +96,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new GeneratedBorderSpecServiceImpl,
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
-      new TerrainImageVariantServiceImpl[IO]
+      new TerrainImageVariantServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -114,6 +117,11 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundGenerationMode = UndergroundGenerationMode.MirroredPlane(
         planeName = "The Underworld",
         connectEveryProvinceWithTunnel = true
+      ),
+      throneGenerationMode = ThroneGenerationMode.RandomCorners(
+        throneLevel = ThroneLevel(1),
+        includeSurface = true,
+        includeUnderground = true
       )
     )
 
@@ -128,6 +136,10 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundHasFreshWater = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.FreshWater.mask) != 0L)
       undergroundHasMountains = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.Mountains.mask) != 0L)
       surfaceTerrains = surfaceDirectives.collect { case terrain: Terrain => terrain }
+      surfaceThroneFeatures = countEncodedThroneFeatures(surfaceDirectives)
+      undergroundThroneFeatures = countEncodedThroneFeatures(undergroundDirectives)
+      surfaceThroneTerrains = surfaceTerrains.count(terrain => TerrainMask(terrain.mask).hasFlag(TerrainFlag.Throne))
+      undergroundThroneTerrains = undergroundTerrains.count(terrain => TerrainMask(terrain.mask).hasFlag(TerrainFlag.Throne))
       surfaceBorderSpecs = surfaceDirectives.collect { case neighbourSpec: NeighbourSpec => neighbourSpec }
       borderFlagsByProvince = surfaceBorderSpecs.foldLeft(Map.empty[ProvinceId, Vector[BorderFlag]]) { (accumulator, neighbourSpec) =>
         val firstFlags = accumulator.getOrElse(neighbourSpec.a, Vector.empty) :+ neighbourSpec.border
@@ -161,6 +173,10 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
       undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
       undergroundTerrains.nonEmpty,
+      surfaceThroneFeatures == 4,
+      undergroundThroneFeatures == 4,
+      surfaceThroneTerrains == 4,
+      undergroundThroneTerrains == 4,
       surfaceFreshWaterRequiresRiver,
       surfaceMountainRequiresImpassable,
       undergroundAllHaveCaveFlag,
@@ -175,3 +191,9 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       !hasAnySurfaceCave
     )
   }
+
+  private def countEncodedThroneFeatures(directives: Vector[MapDirective]): Int =
+    directives.sliding(2).count {
+      case Vector(_: SetLand, _: Feature) => true
+      case _ => false
+    }

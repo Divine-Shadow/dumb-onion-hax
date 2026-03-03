@@ -4,6 +4,8 @@ package apps.services.mapeditor
 import pureconfig.ConfigReader
 import pureconfig.generic.derivation.default.*
 import java.nio.file.Path as NioPath
+import model.map.ThronePlacement
+import apps.services.mapeditor.ThroneConfiguration.given
 
 final case class MapGeneratorConfig(
     output: NioPath,
@@ -14,7 +16,8 @@ final case class MapGeneratorConfig(
     terrainDistribution: Option[MapGeneratorTerrainDistributionConfig],
     terrainImages: MapGeneratorTerrainImagesConfig,
     connectionBorders: Option[MapGeneratorConnectionBordersConfig],
-    underground: Option[MapGeneratorUndergroundConfig]
+    underground: Option[MapGeneratorUndergroundConfig],
+    thrones: Option[MapGeneratorThronesConfig]
 ) derives ConfigReader
 
 final case class MapGeneratorGeometryConfig(
@@ -63,6 +66,26 @@ object MapGeneratorUndergroundConfig:
       enabled = false,
       planeName = "The Underworld",
       connectEveryProvinceWithTunnel = true
+    )
+
+final case class MapGeneratorThronesConfig(
+    mode: String,
+    randomCornerLevel: Int,
+    includeSurface: Boolean,
+    includeUnderground: Boolean,
+    surfaceOverrides: Vector[ThronePlacement],
+    undergroundOverrides: Vector[ThronePlacement]
+) derives ConfigReader
+
+object MapGeneratorThronesConfig:
+  val disabled: MapGeneratorThronesConfig =
+    MapGeneratorThronesConfig(
+      mode = "disabled",
+      randomCornerLevel = 1,
+      includeSurface = true,
+      includeUnderground = true,
+      surfaceOverrides = Vector.empty,
+      undergroundOverrides = Vector.empty
     )
 
 final case class MapGeneratorConnectionBordersConfig(

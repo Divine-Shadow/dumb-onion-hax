@@ -8,21 +8,27 @@ import fs2.Stream
 import fs2.io.file.{Files, Path}
 import model.map.{
   ColorComponent,
+  CornerLocations,
   DomVersion,
   FloatColor,
   Gate,
   ImageFile,
+  MapSize,
   MapDescription,
   MapDomColor,
   MapLayer,
   MapState,
   MapTextColor,
+  Pb,
+  ProvinceLocation,
   MapTitle,
   NoDeepCaves,
   NoDeepChoice,
   PlaneName,
   ProvinceLocations,
   Terrain,
+  ThroneLevel,
+  ThronePlacement,
   WinterImageFile
 }
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
@@ -36,6 +42,18 @@ enum UndergroundGenerationMode:
       connectEveryProvinceWithTunnel: Boolean = true
     )
 
+enum ThroneGenerationMode:
+  case Disabled
+  case RandomCorners(
+      throneLevel: ThroneLevel = ThroneLevel(1),
+      includeSurface: Boolean = true,
+      includeUnderground: Boolean = true
+    )
+  case Configured(
+      surfaceThrones: Vector[ThronePlacement],
+      undergroundThrones: Vector[ThronePlacement]
+    )
+
 final case class MapGenerationRequest(
     mapName: String,
     mapTitle: String,
@@ -43,7 +61,8 @@ final case class MapGenerationRequest(
     geometryInput: GeometryGenerationInput,
     borderSpecGenerationPolicy: BorderSpecGenerationPolicy = BorderSpecGenerationPolicy.default,
     terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
-    undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled
+    undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled,
+    throneGenerationMode: ThroneGenerationMode = ThroneGenerationMode.Disabled
 )
 
 trait MapGenerationService[Sequencer[_]]:
@@ -60,7 +79,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     generatedBorderSpecService: GeneratedBorderSpecService,
     mapWriter: MapWriter[Sequencer],
     mapImageWriter: MapImageWriter[Sequencer],
-    terrainImageVariantService: TerrainImageVariantService[Sequencer]
+    terrainImageVariantService: TerrainImageVariantService[Sequencer],
+    thronePlacementService: ThronePlacementService[Sequencer]
 ) extends MapGenerationService[Sequencer]:
   override def generate[ErrorChannel[_]](
       request: MapGenerationRequest,
@@ -96,37 +116,61 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                 case mode: UndergroundGenerationMode.MirroredPlane => Some(mode)
                 case UndergroundGenerationMode.Disabled => None
             val generatedLayer = buildLayer(request, terrainBorderConsistentGeometry, mirroredUndergroundMode)
+            val surfaceThrones =
+              resolveSurfaceThronePlacements(
+                request,
+                terrainBorderConsistentGeometry,
+                generatedLayer.state
+              )
             for
-              mapWriteResult <- mapWriter.write[ErrorChannel](generatedLayer, outputMapPath)
-              nestedImage <- mapWriteResult.traverse { _ =>
+              surfacedStateResult <- applyThrones[ErrorChannel](generatedLayer.state, surfaceThrones)
+              nestedImage <- surfacedStateResult.traverse { surfacedState =>
+                val surfacedLayer = generatedLayer.copy(state = surfacedState)
                 for
-                  imageWriteResult <- mapImageWriter.writeMainImage[ErrorChannel](generatedLayer, outputImagePath)
-                  nestedVariants <- imageWriteResult.traverse { _ =>
-                    terrainImageVariantService.writeVariants[ErrorChannel](
-                      generatedLayer,
-                      outputImagePath,
-                      request.terrainImageVariantPolicy
-                    ).map(_.as(()))
+                  mapWriteResult <- mapWriter.write[ErrorChannel](surfacedLayer, outputMapPath)
+                  nestedWrite <- mapWriteResult.traverse { _ =>
+                    for
+                      imageWriteResult <- mapImageWriter.writeMainImage[ErrorChannel](surfacedLayer, outputImagePath)
+                      nestedVariants <- imageWriteResult.traverse { _ =>
+                        terrainImageVariantService.writeVariants[ErrorChannel](
+                          surfacedLayer,
+                          outputImagePath,
+                          request.terrainImageVariantPolicy
+                        ).map(_.as(()))
+                      }
+                      undergroundWrite <- nestedVariants.traverse { _ =>
+                        request.undergroundGenerationMode match
+                          case UndergroundGenerationMode.Disabled =>
+                            summon[Async[Sequencer]].pure(errorChannel.pure(()))
+                          case undergroundMode: UndergroundGenerationMode.MirroredPlane =>
+                            val undergroundLayerBase =
+                              buildUndergroundLayer(
+                                request,
+                                terrainBorderConsistentGeometry,
+                                undergroundMode
+                              )
+                            val undergroundThrones =
+                              resolveUndergroundThronePlacements(
+                                request,
+                                terrainBorderConsistentGeometry,
+                                undergroundLayerBase.state
+                              )
+                            for
+                              undergroundStateResult <- applyThrones[ErrorChannel](undergroundLayerBase.state, undergroundThrones)
+                              undergroundWriteResult <- undergroundStateResult.traverse { undergroundState =>
+                                val undergroundLayer = undergroundLayerBase.copy(state = undergroundState)
+                                for
+                                  undergroundMapWriteResult <- mapWriter.write[ErrorChannel](undergroundLayer, outputUndergroundMapPath)
+                                  undergroundImageWriteResult <- undergroundMapWriteResult.traverse { _ =>
+                                    mapImageWriter.writeMainImage[ErrorChannel](undergroundLayer, outputUndergroundImagePath)
+                                  }
+                                yield undergroundImageWriteResult.flatMap(identity)
+                              }
+                            yield undergroundWriteResult.flatMap(identity)
+                      }
+                    yield undergroundWrite.flatMap(identity)
                   }
-                  undergroundWrite <- nestedVariants.traverse { _ =>
-                    request.undergroundGenerationMode match
-                      case UndergroundGenerationMode.Disabled =>
-                        summon[Async[Sequencer]].pure(errorChannel.pure(()))
-                      case undergroundMode: UndergroundGenerationMode.MirroredPlane =>
-                        val undergroundLayer =
-                          buildUndergroundLayer(
-                            request,
-                            terrainBorderConsistentGeometry,
-                            undergroundMode
-                          )
-                        for
-                          undergroundMapWriteResult <- mapWriter.write[ErrorChannel](undergroundLayer, outputUndergroundMapPath)
-                          undergroundImageWriteResult <- undergroundMapWriteResult.traverse { _ =>
-                            mapImageWriter.writeMainImage[ErrorChannel](undergroundLayer, outputUndergroundImagePath)
-                          }
-                        yield undergroundImageWriteResult.flatMap(identity)
-                  }
-                yield undergroundWrite.flatMap(identity).as(outputMapPath)
+                yield nestedWrite.flatMap(identity).as(outputMapPath)
               }
             yield nestedImage.flatMap(identity)
           }
@@ -304,3 +348,88 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       .map(_.province)
       .distinct
       .sortBy(_.value)
+
+  private def applyThrones[ErrorChannel[_]](
+      state: MapState,
+      thronePlacements: Vector[ThronePlacement]
+  )(using
+      errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+  ): Sequencer[ErrorChannel[MapState]] =
+    if thronePlacements.isEmpty then summon[Async[Sequencer]].pure(errorChannel.pure(state))
+    else thronePlacementService.update[ErrorChannel](state, thronePlacements)
+
+  private def resolveSurfaceThronePlacements(
+      request: MapGenerationRequest,
+      generatedGeometry: model.map.generation.GeneratedGeometry,
+      state: MapState
+  ): Vector[ThronePlacement] =
+    request.throneGenerationMode match
+      case ThroneGenerationMode.Disabled => Vector.empty
+      case ThroneGenerationMode.Configured(surfaceThrones, _) => surfaceThrones
+      case ThroneGenerationMode.RandomCorners(throneLevel, includeSurface, _) =>
+        if includeSurface then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
+        else Vector.empty
+
+  private def resolveUndergroundThronePlacements(
+      request: MapGenerationRequest,
+      generatedGeometry: model.map.generation.GeneratedGeometry,
+      state: MapState
+  ): Vector[ThronePlacement] =
+    request.throneGenerationMode match
+      case ThroneGenerationMode.Disabled => Vector.empty
+      case ThroneGenerationMode.Configured(_, undergroundThrones) => undergroundThrones
+      case ThroneGenerationMode.RandomCorners(throneLevel, _, includeUnderground) =>
+        if includeUnderground then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
+        else Vector.empty
+
+  private def randomCornerThronePlacements(
+      mapSize: MapSize,
+      provinceRuns: Vector[Pb],
+      state: MapState,
+      throneLevel: ThroneLevel
+  ): Vector[ThronePlacement] =
+    val widthPixels = mapSize.value * 256
+    val heightPixels = mapSize.value * 160
+    val cornerPixelCoordinates = Vector(
+      (0, 0),
+      (widthPixels - 1, 0),
+      (0, heightPixels - 1),
+      (widthPixels - 1, heightPixels - 1)
+    )
+    val cornerCellLocations = CornerLocations.all(mapSize)
+
+    val selectedProvinceIds =
+      cornerCellLocations.zip(cornerPixelCoordinates).foldLeft(Vector.empty[ProvinceId]) { case (accumulator, (cellLocation, pixelCoordinate)) =>
+        val resolvedProvinceId =
+          provinceIdAtPixel(provinceRuns, pixelCoordinate._1, pixelCoordinate._2)
+            .orElse(state.provinceLocations.provinceIdAt(cellLocation))
+            .orElse(nearestProvinceIdForLocation(cellLocation, state))
+        resolvedProvinceId match
+          case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
+          case _ => accumulator
+      }
+
+    selectedProvinceIds.flatMap { provinceId =>
+      state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
+    }
+
+  private def provinceIdAtPixel(
+      provinceRuns: Vector[Pb],
+      xPixel: Int,
+      yPixel: Int
+  ): Option[ProvinceId] =
+    provinceRuns.collectFirst {
+      case Pb(runX, runY, runLength, provinceId)
+          if runY == yPixel && xPixel >= runX && xPixel < (runX + runLength) =>
+        provinceId
+    }
+
+  private def nearestProvinceIdForLocation(
+      targetLocation: ProvinceLocation,
+      state: MapState
+  ): Option[ProvinceId] =
+    state.provinceLocations.indexByProvinceId.minByOption { case (_, provinceLocation) =>
+      val deltaX = math.abs(provinceLocation.x.value - targetLocation.x.value)
+      val deltaY = math.abs(provinceLocation.y.value - targetLocation.y.value)
+      deltaX + deltaY
+    }.map(_._1)

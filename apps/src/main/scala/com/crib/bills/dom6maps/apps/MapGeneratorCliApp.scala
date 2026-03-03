@@ -11,7 +11,7 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 
 import apps.services.mapeditor.*
 import apps.util.PathUtils
-import model.map.{MapSize, WrapState}
+import model.map.{MapSize, ThroneLevel, WrapState}
 import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainDistributionPolicy, TerrainImageVariantPolicy}
 
 /**
@@ -74,6 +74,15 @@ underground {
   connect-every-province-with-tunnel=true
 }
 
+thrones {
+  mode="random-corners"
+  random-corner-level=1
+  include-surface=true
+  include-underground=true
+  surface-overrides=[]
+  underground-overrides=[]
+}
+
 connection-borders {
   non-highland-river-percent=0.20
   non-highland-road-percent=0.20
@@ -92,12 +101,14 @@ connection-borders {
     val mapWriter = new MapWriterImpl[IO]
     val mapImageWriter = new MapImageWriterImpl[IO]
     val terrainVariants = new TerrainImageVariantServiceImpl[IO]
+    val thronePlacementService = new ThronePlacementServiceImpl[IO]
     val generationService = new MapGenerationServiceImpl[IO](
       geometryGenerator,
       borderSpecService,
       mapWriter,
       mapImageWriter,
-      terrainVariants
+      terrainVariants,
+      thronePlacementService
     )
 
     for
@@ -126,6 +137,10 @@ connection-borders {
       undergroundGenerationMode <- parseUndergroundGenerationModeForTest(
         config.underground.getOrElse(MapGeneratorUndergroundConfig.disabled)
       )
+      throneGenerationMode <- parseThroneGenerationModeForTest(
+        config.thrones.getOrElse(MapGeneratorThronesConfig.disabled),
+        undergroundGenerationMode
+      )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
       )
@@ -147,7 +162,8 @@ connection-borders {
         ),
         borderSpecGenerationPolicy = borderPolicy,
         terrainImageVariantPolicy = terrainPolicy,
-        undergroundGenerationMode = undergroundGenerationMode
+        undergroundGenerationMode = undergroundGenerationMode,
+        throneGenerationMode = throneGenerationMode
       )
 
   private[apps] def parseWrapStateForTest(value: String): Either[Throwable, WrapState] =
@@ -201,3 +217,36 @@ connection-borders {
           connectEveryProvinceWithTunnel = config.connectEveryProvinceWithTunnel
         )
       )
+
+  private[apps] def parseThroneGenerationModeForTest(
+      config: MapGeneratorThronesConfig,
+      undergroundGenerationMode: UndergroundGenerationMode
+  ): Either[Throwable, ThroneGenerationMode] =
+    config.mode.trim.toLowerCase match
+      case "disabled" | "none" =>
+        Right(ThroneGenerationMode.Disabled)
+      case "random-corners" =>
+        if config.randomCornerLevel <= 0 then
+          Left(IllegalArgumentException("thrones.randomCornerLevel must be positive"))
+        else if config.includeUnderground && undergroundGenerationMode == UndergroundGenerationMode.Disabled then
+          Left(IllegalArgumentException("thrones.includeUnderground requires underground generation to be enabled"))
+        else
+          Right(
+            ThroneGenerationMode.RandomCorners(
+              throneLevel = ThroneLevel(config.randomCornerLevel),
+              includeSurface = config.includeSurface,
+              includeUnderground = config.includeUnderground
+            )
+          )
+      case "configured" =>
+        if config.undergroundOverrides.nonEmpty && undergroundGenerationMode == UndergroundGenerationMode.Disabled then
+          Left(IllegalArgumentException("thrones.undergroundOverrides requires underground generation to be enabled"))
+        else
+          Right(
+            ThroneGenerationMode.Configured(
+              surfaceThrones = config.surfaceOverrides,
+              undergroundThrones = config.undergroundOverrides
+            )
+          )
+      case other =>
+        Left(IllegalArgumentException(s"Unsupported thrones.mode value: $other"))
