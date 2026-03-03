@@ -6,7 +6,7 @@ import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, SetLand, Terrain, ThroneLevel, WrapState, WinterImageFile}
+import model.map.{Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, Terrain, ThroneLevel, ThronePlacement, Units, WrapState, WinterImageFile, XCell, YCell}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -173,8 +173,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
       undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
       undergroundTerrains.nonEmpty,
-      surfaceThroneFeatures == 4,
-      undergroundThroneFeatures == 4,
+      surfaceThroneFeatures == 0,
+      undergroundThroneFeatures == 0,
       surfaceThroneTerrains == 4,
       undergroundThroneTerrains == 4,
       surfaceFreshWaterRequiresRiver,
@@ -189,6 +189,55 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundGates.nonEmpty,
       undergroundGates.forall(gate => gate.a == gate.b),
       !hasAnySurfaceCave
+    )
+  }
+
+  test("writes configured throne defender set pieces") {
+    val service = new MapGenerationServiceImpl[IO](
+      new GridNoiseMapGeometryGeneratorImpl[IO],
+      new GeneratedBorderSpecServiceImpl,
+      new MapWriterImpl[IO],
+      new MapImageWriterImpl[IO],
+      new TerrainImageVariantServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
+    )
+
+    val request = MapGenerationRequest(
+      mapName = "generated_configured_setpiece",
+      mapTitle = "Generated Configured Set Piece",
+      mapDescription = Some("Configured throne set piece"),
+      geometryInput = GeometryGenerationInput(
+        mapSize = MapSize.from(2).toOption.get,
+        provinceCount = 10,
+        wrapState = WrapState.NoWrap,
+        seed = 77L,
+        seaRatio = 0.3,
+        noiseScale = 1.0,
+        gridJitter = 0.5
+      ),
+      terrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
+      throneGenerationMode = ThroneGenerationMode.Configured(
+        surfaceThrones = Vector(ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1))),
+        undergroundThrones = Vector.empty
+      ),
+      throneDefenderSetPieces = Vector(
+        ThroneDefenderSetPiece(
+          throneLevel = ThroneLevel(1),
+          commanderType = "Indie Commander",
+          units = Vector(ThroneDefenderUnit(20, "Militia"))
+        )
+      )
+    )
+
+    for
+      outputDirectory <- IO(JavaFiles.createTempDirectory("map-generation-configured-setpiece"))
+      result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
+      outputMapPath <- IO.fromEither(result)
+      directives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
+    yield expect.all(
+      countEncodedThroneFeatures(directives) == 1,
+      directives.exists { case Commander("Indie Commander") => true; case _ => false },
+      directives.exists { case Units(20, "Militia") => true; case _ => false }
     )
   }
 

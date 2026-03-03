@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.map.{ThroneLevel, WrapState}
 import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -127,4 +127,21 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     )
 
     IO(expect(parsed.isLeft))
+  }
+
+  test("parses throne defender set pieces") {
+    val parsed = MapGeneratorCliApp.parseThroneDefenderSetPiecesForTest(
+      Vector(
+        MapGeneratorThroneDefenderSetPieceConfig(
+          level = 1,
+          commanderType = "Indie Commander",
+          units = Vector(
+            MapGeneratorThroneDefenderUnitConfig(20, "Militia"),
+            MapGeneratorThroneDefenderUnitConfig(10, "Archer")
+          )
+        )
+      )
+    )
+
+    IO(expect(parsed.isRight))
   }

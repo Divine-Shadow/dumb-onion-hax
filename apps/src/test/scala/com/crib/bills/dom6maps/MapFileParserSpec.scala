@@ -9,6 +9,9 @@ import scala.io.Source
 import weaver.SimpleIOSuite
 
 object MapFileParserSpec extends SimpleIOSuite:
+  private def withoutLineBreaks(values: Vector[MapDirective]): Vector[MapDirective] =
+    values.filterNot(_ == LineBreak)
+
   private val parsedIO =
     MapFileParser
       .parse[IO]
@@ -82,10 +85,17 @@ object MapFileParserSpec extends SimpleIOSuite:
       .compile
       .toVector
 
+  private val commanderAndUnitsParsedIO =
+    MapFileParser
+      .parse[IO]
+      .apply(Stream.emits("#commander \"Indie Commander\"\n#units 20 \"Militia\"\n".getBytes(StandardCharsets.UTF_8)).covary[IO])
+      .compile
+      .toVector
+
   test("parses sample directives") {
     parsedIO.map { parsed =>
       expect(
-        parsed == Vector(
+        withoutLineBreaks(parsed) == Vector(
           Comment("Minimal test map"),
           Dom2Title("Sample Map"),
           ImageFile("sample.tga"),
@@ -118,19 +128,19 @@ object MapFileParserSpec extends SimpleIOSuite:
 
   test("parses terrain mask above Int.MaxValue") {
     aboveIntMaskParsedIO.map { parsed =>
-      expect(parsed == Vector(Terrain(ProvinceId(1), aboveIntMask)))
+      expect(withoutLineBreaks(parsed) == Vector(Terrain(ProvinceId(1), aboveIntMask)))
     }
   }
 
   test("parses CaveWall terrain flag") {
     caveWallMaskParsedIO.map { parsed =>
-      expect(parsed == Vector(Terrain(ProvinceId(1), TerrainFlag.CaveWall.mask)))
+      expect(withoutLineBreaks(parsed) == Vector(Terrain(ProvinceId(1), TerrainFlag.CaveWall.mask)))
     }
   }
 
   test("parses Glamour magic site mask") {
     glamourMaskParsedIO.map { parsed =>
-      expect(parsed == Vector(Terrain(ProvinceId(1), glamourMask)))
+      expect(withoutLineBreaks(parsed) == Vector(Terrain(ProvinceId(1), glamourMask)))
     }
   }
 
@@ -149,21 +159,25 @@ object MapFileParserSpec extends SimpleIOSuite:
   }
 
   test("parses saildist directive") {
-    sailDistParsedIO.map(parsed => expect(parsed == Vector(SailDist(3))))
+    sailDistParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(SailDist(3))))
   }
 
   test("parses features directive") {
-    featuresParsedIO.map(parsed => expect(parsed == Vector(Features(7))))
+    featuresParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(Features(7))))
   }
 
   test("parses new nation IDs") {
-    newNationParsedIO.map(parsed => expect(parsed == Vector(AllowedPlayer(Nation.Feminie_Late))))
+    newNationParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(AllowedPlayer(Nation.Feminie_Late))))
   }
 
   test("parses GoodThrone terrain flag") {
-    goodThroneMaskParsedIO.map(parsed => expect(parsed == Vector(Terrain(ProvinceId(1), TerrainFlag.GoodThrone.mask))))
+    goodThroneMaskParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(Terrain(ProvinceId(1), TerrainFlag.GoodThrone.mask))))
   }
 
   test("parses Holy magic type mask") {
-    holyMagicMaskParsedIO.map(parsed => expect(parsed == Vector(Terrain(ProvinceId(1), MagicType.Holy.mask.toLong))))
+    holyMagicMaskParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(Terrain(ProvinceId(1), MagicType.Holy.mask.toLong))))
+  }
+
+  test("parses commander and units directives") {
+    commanderAndUnitsParsedIO.map(parsed => expect(withoutLineBreaks(parsed) == Vector(Commander("Indie Commander"), Units(20, "Militia"))))
   }

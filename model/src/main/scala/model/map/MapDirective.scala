@@ -50,6 +50,8 @@ final case class SetLand(province: ProvinceId) extends MapDirective
 final case class Feature(id: FeatureId) extends MapDirective
 final case class FeatureId(value: Int) extends AnyVal
 final case class ProvinceFeature(province: ProvinceId, id: FeatureId) extends MapDirective
+final case class Commander(unitType: String) extends MapDirective
+final case class Units(count: Int, unitType: String) extends MapDirective
 final case class Gate(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class Neighbour(a: ProvinceId, b: ProvinceId) extends MapDirective
 final case class NeighbourSpec(a: ProvinceId, b: ProvinceId, border: BorderFlag) extends MapDirective

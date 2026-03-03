@@ -41,6 +41,8 @@ object DirectiveOrderInspectorApp extends IOApp:
     case model.map.SetLand(_)           => "#setland"
     case model.map.Feature(_)           => "#feature(id)"
     case model.map.ProvinceFeature(_,_) => "#feature(province,id)"
+    case model.map.Commander(_)         => "#commander"
+    case model.map.Units(_, _)          => "#units"
     case model.map.Gate(_, _)           => "#gate"
     case model.map.Neighbour(_, _)      => "#neighbour"
     case model.map.NeighbourSpec(_,_,_) => "#neighbourspec"

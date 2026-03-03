@@ -74,7 +74,8 @@ final case class MapGeneratorThronesConfig(
     includeSurface: Boolean,
     includeUnderground: Boolean,
     surfaceOverrides: Vector[ThronePlacement],
-    undergroundOverrides: Vector[ThronePlacement]
+    undergroundOverrides: Vector[ThronePlacement],
+    defenderSetPieces: Option[Vector[MapGeneratorThroneDefenderSetPieceConfig]]
 ) derives ConfigReader
 
 object MapGeneratorThronesConfig:
@@ -85,8 +86,20 @@ object MapGeneratorThronesConfig:
       includeSurface = true,
       includeUnderground = true,
       surfaceOverrides = Vector.empty,
-      undergroundOverrides = Vector.empty
+      undergroundOverrides = Vector.empty,
+      defenderSetPieces = Some(Vector.empty)
     )
+
+final case class MapGeneratorThroneDefenderUnitConfig(
+    count: Int,
+    unitType: String
+) derives ConfigReader
+
+final case class MapGeneratorThroneDefenderSetPieceConfig(
+    level: Int,
+    commanderType: String,
+    units: Vector[MapGeneratorThroneDefenderUnitConfig]
+) derives ConfigReader
 
 final case class MapGeneratorConnectionBordersConfig(
     nonHighlandRiverPercent: Double,

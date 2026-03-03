@@ -42,6 +42,8 @@ object Renderer:
           case SetLand(p)            => s"#setland ${p.value}"
           case Feature(f)            => s"#feature ${f.value}"
           case ProvinceFeature(p,f)  => s"#feature ${p.value} ${f.value}"
+          case Commander(unitType)   => s"#commander \"$unitType\""
+          case Units(count, unitType) => s"#units $count \"$unitType\""
           case Gate(a,b)             => s"#gate ${a.value} ${b.value}"
           case Neighbour(a,b)        => s"#neighbour ${a.value} ${b.value}"
           case NeighbourSpec(a,b,f)  => s"#neighbourspec ${a.value} ${b.value} ${f.mask}"

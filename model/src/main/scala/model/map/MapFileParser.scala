@@ -148,6 +148,14 @@ object MapFileParser:
   private def featureP[$: P]: P[Option[MapDirective]] =
     P("#feature" ~ ws ~ int).map(f => Some(Feature(FeatureId(f))))
 
+  private def commanderP[$: P]: P[Option[MapDirective]] =
+    P("#commander" ~ ws ~ quoted).map(unitType => Some(Commander(unitType)))
+
+  private def unitsP[$: P]: P[Option[MapDirective]] =
+    P("#units" ~ ws ~ int ~ ws ~ quoted).map { case (count, unitType) =>
+      Some(Units(count, unitType))
+    }
+
   private def gateP[$: P]: P[Option[MapDirective]] =
     P("#gate" ~ ws ~ int ~ ws ~ int).map { case (a, b) =>
       Some(Gate(ProvinceId(a), ProvinceId(b)))
@@ -199,7 +207,9 @@ object MapFileParser:
       landnameP |
       setlandP |
       provinceFeatureP |
-      featureP
+      featureP |
+      commanderP |
+      unitsP
   )
 
   private def directiveConnectivity[$: P]: P[Option[MapDirective]] = P(

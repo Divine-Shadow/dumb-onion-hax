@@ -81,6 +81,7 @@ thrones {
   include-underground=true
   surface-overrides=[]
   underground-overrides=[]
+  defender-set-pieces=[]
 }
 
 connection-borders {
@@ -141,6 +142,12 @@ connection-borders {
         config.thrones.getOrElse(MapGeneratorThronesConfig.disabled),
         undergroundGenerationMode
       )
+      throneDefenderSetPieces <- parseThroneDefenderSetPiecesForTest(
+        config.thrones
+          .getOrElse(MapGeneratorThronesConfig.disabled)
+          .defenderSetPieces
+          .getOrElse(Vector.empty)
+      )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
       )
@@ -163,7 +170,8 @@ connection-borders {
         borderSpecGenerationPolicy = borderPolicy,
         terrainImageVariantPolicy = terrainPolicy,
         undergroundGenerationMode = undergroundGenerationMode,
-        throneGenerationMode = throneGenerationMode
+        throneGenerationMode = throneGenerationMode,
+        throneDefenderSetPieces = throneDefenderSetPieces
       )
 
   private[apps] def parseWrapStateForTest(value: String): Either[Throwable, WrapState] =
@@ -250,3 +258,21 @@ connection-borders {
           )
       case other =>
         Left(IllegalArgumentException(s"Unsupported thrones.mode value: $other"))
+
+  private[apps] def parseThroneDefenderSetPiecesForTest(
+      configs: Vector[MapGeneratorThroneDefenderSetPieceConfig]
+  ): Either[Throwable, Vector[ThroneDefenderSetPiece]] =
+    configs.traverse { config =>
+      if config.level <= 0 then Left(IllegalArgumentException("thrones.defenderSetPieces.level must be positive"))
+      else if config.commanderType.trim.isEmpty then Left(IllegalArgumentException("thrones.defenderSetPieces.commanderType must not be empty"))
+      else if config.units.exists(unit => unit.count <= 0) then Left(IllegalArgumentException("thrones.defenderSetPieces.units.count must be positive"))
+      else if config.units.exists(unit => unit.unitType.trim.isEmpty) then Left(IllegalArgumentException("thrones.defenderSetPieces.units.unitType must not be empty"))
+      else
+        Right(
+          ThroneDefenderSetPiece(
+            throneLevel = ThroneLevel(config.level),
+            commanderType = config.commanderType,
+            units = config.units.map(unit => ThroneDefenderUnit(unit.count, unit.unitType))
+          )
+        )
+    }

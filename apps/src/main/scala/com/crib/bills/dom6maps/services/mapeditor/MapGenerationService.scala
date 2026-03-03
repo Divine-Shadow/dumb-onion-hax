@@ -7,8 +7,10 @@ import cats.syntax.all.*
 import fs2.Stream
 import fs2.io.file.{Files, Path}
 import model.map.{
+  Commander,
   ColorComponent,
   DomVersion,
+  FeatureId,
   FloatColor,
   Gate,
   ImageFile,
@@ -24,14 +26,17 @@ import model.map.{
   NoDeepChoice,
   PlaneName,
   ProvinceLocations,
+  SetLand,
   Terrain,
   ThroneLevel,
   ThronePlacement,
+  Units,
   WinterImageFile
 }
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import model.map.generation.BorderSpecGenerationPolicy
+import model.dominions.{Feature as DomFeature}
 
 enum UndergroundGenerationMode:
   case Disabled
@@ -52,6 +57,17 @@ enum ThroneGenerationMode:
       undergroundThrones: Vector[ThronePlacement]
     )
 
+final case class ThroneDefenderUnit(
+    count: Int,
+    unitType: String
+)
+
+final case class ThroneDefenderSetPiece(
+    throneLevel: ThroneLevel,
+    commanderType: String,
+    units: Vector[ThroneDefenderUnit]
+)
+
 final case class MapGenerationRequest(
     mapName: String,
     mapTitle: String,
@@ -60,7 +76,8 @@ final case class MapGenerationRequest(
     borderSpecGenerationPolicy: BorderSpecGenerationPolicy = BorderSpecGenerationPolicy.default,
     terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
     undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled,
-    throneGenerationMode: ThroneGenerationMode = ThroneGenerationMode.Disabled
+    throneGenerationMode: ThroneGenerationMode = ThroneGenerationMode.Disabled,
+    throneDefenderSetPieces: Vector[ThroneDefenderSetPiece] = Vector.empty
 )
 
 trait MapGenerationService[Sequencer[_]]:
@@ -121,9 +138,18 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                 generatedLayer.state
               )
             for
-              surfacedStateResult <- applyThrones[ErrorChannel](generatedLayer.state, surfaceThrones)
+              surfacedStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, generatedLayer.state, surfaceThrones)
               nestedImage <- surfacedStateResult.traverse { surfacedState =>
-                val surfacedLayer = generatedLayer.copy(state = surfacedState)
+                val surfaceDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
+                  request.throneGenerationMode,
+                  surfaceThrones,
+                  surfacedState,
+                  request.throneDefenderSetPieces
+                )
+                val surfacedLayer = appendPassThroughDirectives(
+                  generatedLayer.copy(state = surfacedState),
+                  surfaceDefenderSetPieceDirectives
+                )
                 for
                   mapWriteResult <- mapWriter.write[ErrorChannel](surfacedLayer, outputMapPath)
                   nestedWrite <- mapWriteResult.traverse { _ =>
@@ -154,9 +180,18 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                                 undergroundLayerBase.state
                               )
                             for
-                              undergroundStateResult <- applyThrones[ErrorChannel](undergroundLayerBase.state, undergroundThrones)
+                              undergroundStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, undergroundLayerBase.state, undergroundThrones)
                               undergroundWriteResult <- undergroundStateResult.traverse { undergroundState =>
-                                val undergroundLayer = undergroundLayerBase.copy(state = undergroundState)
+                                val undergroundDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
+                                  request.throneGenerationMode,
+                                  undergroundThrones,
+                                  undergroundState,
+                                  request.throneDefenderSetPieces
+                                )
+                                val undergroundLayer = appendPassThroughDirectives(
+                                  undergroundLayerBase.copy(state = undergroundState),
+                                  undergroundDefenderSetPieceDirectives
+                                )
                                 for
                                   undergroundMapWriteResult <- mapWriter.write[ErrorChannel](undergroundLayer, outputUndergroundMapPath)
                                   undergroundImageWriteResult <- undergroundMapWriteResult.traverse { _ =>
@@ -348,13 +383,71 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       .sortBy(_.value)
 
   private def applyThrones[ErrorChannel[_]](
+      throneGenerationMode: ThroneGenerationMode,
       state: MapState,
       thronePlacements: Vector[ThronePlacement]
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapState]] =
     if thronePlacements.isEmpty then summon[Async[Sequencer]].pure(errorChannel.pure(state))
-    else thronePlacementService.update[ErrorChannel](state, thronePlacements)
+    else
+      throneGenerationMode match
+        case ThroneGenerationMode.RandomCorners(_, _, _) =>
+          summon[Async[Sequencer]].pure(errorChannel.pure(applyThroneTerrainFlagsOnly(state, thronePlacements)))
+        case _ =>
+          thronePlacementService.update[ErrorChannel](state, thronePlacements)
+
+  private def applyThroneTerrainFlagsOnly(
+      state: MapState,
+      thronePlacements: Vector[ThronePlacement]
+  ): MapState =
+    val throneProvinces = thronePlacements.flatMap(tp => state.provinceLocations.provinceIdAt(tp.location)).toSet
+    val updatedTerrains = state.terrains.map {
+      case terrain @ Terrain(province, mask) =>
+        val updatedMask =
+          if throneProvinces.contains(province) then TerrainMask(mask).withFlag(TerrainFlag.GoodThrone)
+          else TerrainMask(mask).withoutFlag(TerrainFlag.GoodThrone)
+        terrain.copy(mask = updatedMask.value)
+    }
+    state.copy(terrains = updatedTerrains)
+
+  private def appendPassThroughDirectives(
+      layer: MapLayer[Sequencer],
+      directives: Vector[model.map.MapDirective]
+  ): MapLayer[Sequencer] =
+    if directives.isEmpty then layer
+    else layer.copy(passThrough = layer.passThrough ++ Stream.emits(directives).covary[Sequencer])
+
+  private def buildDefenderSetPieceDirectives(
+      throneGenerationMode: ThroneGenerationMode,
+      thronePlacements: Vector[ThronePlacement],
+      state: MapState,
+      throneDefenderSetPieces: Vector[ThroneDefenderSetPiece]
+  ): Vector[model.map.MapDirective] =
+    throneGenerationMode match
+      case ThroneGenerationMode.Configured(_, _) =>
+        val setPieceByLevel = throneDefenderSetPieces.map(setPiece => setPiece.throneLevel.value -> setPiece).toMap
+        thronePlacements.flatMap { placement =>
+          val maybeProvince = state.provinceLocations.provinceIdAt(placement.location)
+          val maybeLevel =
+            placement.level.map(_.value)
+              .orElse(placement.id.flatMap(resolveThroneLevelForFeatureId).map(_.value))
+          (maybeProvince, maybeLevel) match
+            case (Some(province), Some(level)) =>
+              setPieceByLevel.get(level).map { setPiece =>
+                Vector(SetLand(province), Commander(setPiece.commanderType)) ++
+                  setPiece.units.map(unit => Units(unit.count, unit.unitType))
+              }.getOrElse(Vector.empty)
+            case _ => Vector.empty
+        }
+      case _ =>
+        Vector.empty
+
+  private def resolveThroneLevelForFeatureId(featureId: FeatureId): Option[ThroneLevel] =
+    if DomFeature.levelOneThrones.exists(_.id.value == featureId.value) then Some(ThroneLevel(1))
+    else if DomFeature.levelTwoThrones.exists(_.id.value == featureId.value) then Some(ThroneLevel(2))
+    else if DomFeature.levelThreeThrones.exists(_.id.value == featureId.value) then Some(ThroneLevel(3))
+    else None
 
   private def resolveSurfaceThronePlacements(
       request: MapGenerationRequest,
