@@ -189,10 +189,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       generatedGeometry: model.map.generation.GeneratedGeometry,
       undergroundMode: UndergroundGenerationMode.MirroredPlane
   ): MapLayer[Sequencer] =
-    val provinceIds = collectProvinceIds(generatedGeometry)
-
     val undergroundTerrains =
-      provinceIds.map(provinceId => Terrain(provinceId, TerrainFlag.Cave.mask))
+      generatedGeometry.terrainByProvince.map { terrain =>
+        terrain.copy(mask = toUndergroundTerrainMask(terrain.mask))
+      }
+    val provinceIds = undergroundTerrains.map(_.province).distinct.sortBy(_.value)
 
     val undergroundGates =
       if undergroundMode.connectEveryProvinceWithTunnel then
@@ -235,6 +236,23 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     TerrainMask(maskValue)
       .withoutFlag(TerrainFlag.Cave)
       .withoutFlag(TerrainFlag.CaveWall)
+      .value
+
+  private def toUndergroundTerrainMask(surfaceMaskValue: Long): Long =
+    val normalizedSurfaceMask = TerrainMask(sanitizeSurfaceTerrainMask(surfaceMaskValue))
+    val undergroundBaseMask =
+      if normalizedSurfaceMask.hasFlag(TerrainFlag.Sea) || normalizedSurfaceMask.hasFlag(TerrainFlag.DeepSea) then
+        TerrainFlag.FreshWater.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Forest) then TerrainFlag.Forest.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Swamp) then TerrainFlag.Swamp.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Waste) then TerrainFlag.Waste.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Highlands) then TerrainFlag.Highlands.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Farm) then TerrainFlag.Farm.mask
+      else if normalizedSurfaceMask.hasFlag(TerrainFlag.Mountains) then TerrainFlag.Mountains.mask
+      else TerrainFlag.Plains.mask
+
+    TerrainMask(undergroundBaseMask)
+      .withFlag(TerrainFlag.Cave)
       .value
 
   private def collectProvinceIds(

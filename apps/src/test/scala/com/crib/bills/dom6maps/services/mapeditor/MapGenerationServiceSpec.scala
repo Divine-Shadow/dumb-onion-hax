@@ -125,6 +125,9 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       undergroundPath = outputDirectory.resolve("generated_pair_plane2.map")
       undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
       undergroundTerrains = undergroundDirectives.collect { case terrain: Terrain => terrain }
+      undergroundAllHaveCaveFlag = undergroundTerrains.forall(terrain => (terrain.mask & TerrainFlag.Cave.mask) != 0L)
+      undergroundHasSubtypeBits = undergroundTerrains.exists(terrain => terrain.mask != TerrainFlag.Cave.mask)
+      undergroundHasAnySeaBits = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.Sea.mask) != 0L || (terrain.mask & TerrainFlag.DeepSea.mask) != 0L)
       surfaceGates = surfaceDirectives.collect { case gate: Gate => gate }
       undergroundGates = undergroundDirectives.collect { case gate: Gate => gate }
       hasAnySurfaceCave = surfaceDirectives.collect { case terrain: Terrain => terrain }.exists { terrain =>
@@ -137,7 +140,9 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
       undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
       undergroundTerrains.nonEmpty,
-      undergroundTerrains.forall(terrain => terrain.mask == TerrainFlag.Cave.mask),
+      undergroundAllHaveCaveFlag,
+      undergroundHasSubtypeBits,
+      !undergroundHasAnySeaBits,
       surfaceGates.nonEmpty,
       surfaceGates.forall(gate => gate.a == gate.b),
       undergroundGates.nonEmpty,

@@ -79,3 +79,54 @@ object MapTerrainPainterSpec extends SimpleIOSuite:
       pixelAt(11, 1) == (seaColor.red, seaColor.green, seaColor.blue)
     ))
   }
+
+  test("primary terrain painter uses cave subtype colors") {
+    val ownership = ProvincePixelRasterizer
+      .rasterize(
+        15,
+        5,
+        (0 until 5).flatMap { yValue =>
+          Vector(
+            Pb(0, yValue, 5, ProvinceId(1)),
+            Pb(5, yValue, 5, ProvinceId(2)),
+            Pb(10, yValue, 5, ProvinceId(3))
+          )
+        }.toVector
+      )
+      .toOption
+      .get
+
+    val terrainMaskByProvince = Map(
+      ProvinceId(1) -> (TerrainFlag.Cave.mask | TerrainFlag.Forest.mask),
+      ProvinceId(2) -> (TerrainFlag.Cave.mask | TerrainFlag.Waste.mask),
+      ProvinceId(3) -> TerrainFlag.Cave.mask
+    )
+
+    val painter = new PrimaryTerrainColorMapTerrainPainter()
+    val image = painter.paint(ownership, terrainMaskByProvince)
+
+    def pixelAt(xPixel: Int, yPixel: Int): (Int, Int, Int) =
+      val pixelIndex = yPixel * image.widthPixels + xPixel
+      val byteIndex = pixelIndex * 3
+      (
+        image.redGreenBlueBytes(byteIndex) & 0xff,
+        image.redGreenBlueBytes(byteIndex + 1) & 0xff,
+        image.redGreenBlueBytes(byteIndex + 2) & 0xff
+      )
+
+    val caveForestColor = PrimaryTerrainColorMapTerrainPainter.defaultPalette.colorByPrimaryTerrainType(
+      PrimaryTerrainColorMapTerrainPainter.PrimaryTerrainType.CaveForest
+    )
+    val caveWasteColor = PrimaryTerrainColorMapTerrainPainter.defaultPalette.colorByPrimaryTerrainType(
+      PrimaryTerrainColorMapTerrainPainter.PrimaryTerrainType.CaveWaste
+    )
+    val cavePlainColor = PrimaryTerrainColorMapTerrainPainter.defaultPalette.colorByPrimaryTerrainType(
+      PrimaryTerrainColorMapTerrainPainter.PrimaryTerrainType.CavePlain
+    )
+
+    IO(expect.all(
+      pixelAt(1, 1) == (caveForestColor.red, caveForestColor.green, caveForestColor.blue),
+      pixelAt(6, 1) == (caveWasteColor.red, caveWasteColor.green, caveWasteColor.blue),
+      pixelAt(11, 1) == (cavePlainColor.red, cavePlainColor.green, cavePlainColor.blue)
+    ))
+  }

@@ -21,13 +21,20 @@ final class ConstantColorMapTerrainPainter(
 object PrimaryTerrainColorMapTerrainPainter:
   enum PrimaryTerrainType:
     case Sea
+    case CavePlain
+    case CaveForest
+    case CaveFarm
+    case CaveSwamp
+    case CaveWaste
+    case CaveHighland
+    case CaveMountain
+    case CaveWater
     case Forest
     case Farm
     case Swamp
     case Waste
     case Highland
     case Mountain
-    case Cave
     case Plain
 
   final case class PrimaryTerrainPalette(
@@ -41,13 +48,20 @@ object PrimaryTerrainColorMapTerrainPainter:
     PrimaryTerrainPalette(
       colorByPrimaryTerrainType = Map(
         PrimaryTerrainType.Sea -> MapImagePainter.RedGreenBlueColor(56, 126, 202),
+        PrimaryTerrainType.CavePlain -> MapImagePainter.RedGreenBlueColor(116, 102, 86),
+        PrimaryTerrainType.CaveForest -> MapImagePainter.RedGreenBlueColor(72, 122, 78),
+        PrimaryTerrainType.CaveFarm -> MapImagePainter.RedGreenBlueColor(178, 154, 86),
+        PrimaryTerrainType.CaveSwamp -> MapImagePainter.RedGreenBlueColor(86, 108, 80),
+        PrimaryTerrainType.CaveWaste -> MapImagePainter.RedGreenBlueColor(152, 108, 74),
+        PrimaryTerrainType.CaveHighland -> MapImagePainter.RedGreenBlueColor(128, 138, 106),
+        PrimaryTerrainType.CaveMountain -> MapImagePainter.RedGreenBlueColor(102, 102, 112),
+        PrimaryTerrainType.CaveWater -> MapImagePainter.RedGreenBlueColor(62, 96, 138),
         PrimaryTerrainType.Forest -> MapImagePainter.RedGreenBlueColor(36, 122, 56),
         PrimaryTerrainType.Farm -> MapImagePainter.RedGreenBlueColor(228, 206, 92),
         PrimaryTerrainType.Swamp -> MapImagePainter.RedGreenBlueColor(82, 102, 52),
         PrimaryTerrainType.Waste -> MapImagePainter.RedGreenBlueColor(191, 122, 64),
         PrimaryTerrainType.Highland -> MapImagePainter.RedGreenBlueColor(142, 170, 112),
         PrimaryTerrainType.Mountain -> MapImagePainter.RedGreenBlueColor(126, 126, 126),
-        PrimaryTerrainType.Cave -> MapImagePainter.RedGreenBlueColor(96, 86, 130),
         PrimaryTerrainType.Plain -> MapImagePainter.RedGreenBlueColor(196, 174, 122)
       ),
       backgroundColor = MapImagePainter.RedGreenBlueColor(56, 126, 202),
@@ -56,8 +70,17 @@ object PrimaryTerrainColorMapTerrainPainter:
     )
 
   def resolvePrimaryTerrainType(terrainMask: TerrainMask): PrimaryTerrainType =
-    if terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea) then PrimaryTerrainType.Sea
-    else if terrainMask.hasFlag(TerrainFlag.Cave) then PrimaryTerrainType.Cave
+    if terrainMask.hasFlag(TerrainFlag.Cave) then
+      if terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea) || terrainMask.hasFlag(TerrainFlag.FreshWater) then
+        PrimaryTerrainType.CaveWater
+      else if terrainMask.hasFlag(TerrainFlag.Mountains) then PrimaryTerrainType.CaveMountain
+      else if terrainMask.hasFlag(TerrainFlag.Forest) then PrimaryTerrainType.CaveForest
+      else if terrainMask.hasFlag(TerrainFlag.Farm) then PrimaryTerrainType.CaveFarm
+      else if terrainMask.hasFlag(TerrainFlag.Swamp) then PrimaryTerrainType.CaveSwamp
+      else if terrainMask.hasFlag(TerrainFlag.Waste) then PrimaryTerrainType.CaveWaste
+      else if terrainMask.hasFlag(TerrainFlag.Highlands) then PrimaryTerrainType.CaveHighland
+      else PrimaryTerrainType.CavePlain
+    else if terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea) then PrimaryTerrainType.Sea
     else if terrainMask.hasFlag(TerrainFlag.Mountains) then PrimaryTerrainType.Mountain
     else if terrainMask.hasFlag(TerrainFlag.Forest) then PrimaryTerrainType.Forest
     else if terrainMask.hasFlag(TerrainFlag.Farm) then PrimaryTerrainType.Farm
