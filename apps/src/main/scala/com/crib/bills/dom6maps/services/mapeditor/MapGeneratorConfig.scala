@@ -4,8 +4,6 @@ package apps.services.mapeditor
 import pureconfig.ConfigReader
 import pureconfig.generic.derivation.default.*
 import java.nio.file.Path as NioPath
-import model.map.ThronePlacement
-import apps.services.mapeditor.ThroneConfiguration.given
 
 final case class MapGeneratorConfig(
     output: NioPath,
@@ -73,8 +71,8 @@ final case class MapGeneratorThronesConfig(
     randomCornerLevel: Int,
     includeSurface: Boolean,
     includeUnderground: Boolean,
-    surfaceOverrides: Vector[ThronePlacement],
-    undergroundOverrides: Vector[ThronePlacement],
+    surfaceOverrides: Vector[MapGeneratorThronePlacementConfig],
+    undergroundOverrides: Vector[MapGeneratorThronePlacementConfig],
     defenderSetPieces: Option[Vector[MapGeneratorThroneDefenderSetPieceConfig]]
 ) derives ConfigReader
 
@@ -99,6 +97,14 @@ final case class MapGeneratorThroneDefenderSetPieceConfig(
     level: Int,
     commanderType: String,
     units: Vector[MapGeneratorThroneDefenderUnitConfig]
+) derives ConfigReader
+
+final case class MapGeneratorThronePlacementConfig(
+    provinceId: Option[Int],
+    x: Option[Int],
+    y: Option[Int],
+    level: Option[Int],
+    id: Option[Int]
 ) derives ConfigReader
 
 final case class MapGeneratorConnectionBordersConfig(

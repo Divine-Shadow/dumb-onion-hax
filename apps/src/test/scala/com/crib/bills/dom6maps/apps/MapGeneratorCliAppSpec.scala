@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.map.{ThroneLevel, WrapState}
 import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -141,6 +141,27 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
           )
         )
       )
+    )
+
+    IO(expect(parsed.isRight))
+  }
+
+  test("parses configured throne overrides by province id") {
+    val parsed = MapGeneratorCliApp.parseThroneGenerationModeForTest(
+      MapGeneratorThronesConfig.disabled.copy(
+        mode = "configured",
+        surfaceOverrides = Vector(
+          MapGeneratorThronePlacementConfig(
+            provinceId = Some(41),
+            x = None,
+            y = None,
+            level = Some(1),
+            id = None
+          )
+        ),
+        undergroundOverrides = Vector.empty
+      ),
+      UndergroundGenerationMode.MirroredPlane("The Underworld", true)
     )
 
     IO(expect(parsed.isRight))

@@ -11,7 +11,8 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 
 import apps.services.mapeditor.*
 import apps.util.PathUtils
-import model.map.{MapSize, ThroneLevel, WrapState}
+import model.{ProvinceId}
+import model.map.{FeatureId, MapSize, ProvinceLocation, ThroneLevel, WrapState, XCell, YCell}
 import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainDistributionPolicy, TerrainImageVariantPolicy}
 
 /**
@@ -250,14 +251,71 @@ connection-borders {
         if config.undergroundOverrides.nonEmpty && undergroundGenerationMode == UndergroundGenerationMode.Disabled then
           Left(IllegalArgumentException("thrones.undergroundOverrides requires underground generation to be enabled"))
         else
-          Right(
+          for
+            parsedSurfaceTargets <- parseConfiguredThronePlacementTargetsForTest(config.surfaceOverrides)
+            parsedUndergroundTargets <- parseConfiguredThronePlacementTargetsForTest(config.undergroundOverrides)
+          yield
             ThroneGenerationMode.Configured(
-              surfaceThrones = config.surfaceOverrides,
-              undergroundThrones = config.undergroundOverrides
+              surfaceThrones = parsedSurfaceTargets,
+              undergroundThrones = parsedUndergroundTargets
             )
-          )
       case other =>
         Left(IllegalArgumentException(s"Unsupported thrones.mode value: $other"))
+
+  private[apps] def parseConfiguredThronePlacementTargetsForTest(
+      configs: Vector[MapGeneratorThronePlacementConfig]
+  ): Either[Throwable, Vector[ConfiguredThronePlacementTarget]] =
+    configs.traverse { config =>
+      val locationEither: Either[Throwable, Option[ProvinceLocation]] =
+        (config.x, config.y) match
+          case (Some(xValue), Some(yValue)) =>
+            Right(Some(ProvinceLocation(XCell(xValue), YCell(yValue))))
+          case (None, None) =>
+            Right(None)
+          case _ =>
+            Left(IllegalArgumentException("thrones overrides require both x and y when either is provided"))
+
+      val provinceEither: Either[Throwable, Option[ProvinceId]] =
+        config.provinceId match
+          case Some(provinceIdentifier) if provinceIdentifier > 0 => Right(Some(ProvinceId(provinceIdentifier)))
+          case Some(_) => Left(IllegalArgumentException("thrones overrides provinceId must be positive"))
+          case None => Right(None)
+
+      val levelEither: Either[Throwable, Option[ThroneLevel]] =
+        config.level match
+          case Some(levelValue) if levelValue > 0 => Right(Some(ThroneLevel(levelValue)))
+          case Some(_) => Left(IllegalArgumentException("thrones overrides level must be positive"))
+          case None => Right(None)
+
+      val featureEither: Either[Throwable, Option[FeatureId]] =
+        config.id match
+          case Some(featureIdentifier) if featureIdentifier > 0 => Right(Some(FeatureId(featureIdentifier)))
+          case Some(_) => Left(IllegalArgumentException("thrones overrides id must be positive"))
+          case None => Right(None)
+
+      for
+        location <- locationEither
+        provinceId <- provinceEither
+        throneLevel <- levelEither
+        throneFeatureId <- featureEither
+        _ <-
+          if location.isEmpty && provinceId.isEmpty then
+            Left(IllegalArgumentException("thrones overrides require either (x,y) or provinceId"))
+          else if location.nonEmpty && provinceId.nonEmpty then
+            Left(IllegalArgumentException("thrones overrides must not specify both (x,y) and provinceId"))
+          else if throneLevel.isEmpty && throneFeatureId.isEmpty then
+            Left(IllegalArgumentException("thrones overrides require either level or id"))
+          else if throneLevel.nonEmpty && throneFeatureId.nonEmpty then
+            Left(IllegalArgumentException("thrones overrides must not specify both level and id"))
+          else Right(())
+      yield
+        ConfiguredThronePlacementTarget(
+          provinceId = provinceId,
+          location = location,
+          throneLevel = throneLevel,
+          throneFeatureId = throneFeatureId
+        )
+    }
 
   private[apps] def parseThroneDefenderSetPiecesForTest(
       configs: Vector[MapGeneratorThroneDefenderSetPieceConfig]

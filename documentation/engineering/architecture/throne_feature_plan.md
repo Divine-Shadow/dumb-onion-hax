@@ -39,6 +39,14 @@ This plan describes how to apply throne placements to a map layer using existing
 ## Implementation
 - `ThroneFeatureService` orchestrates the above workflow by loading the map layer, applying throne placements, and writing the result.
 
+## Generator Integration Notes
+- `MapGenerationService` now supports two throne generation modes:
+  - `random-corners`: applies only the `GoodThrone` terrain bit at selected provinces (no explicit `#feature` directives).
+  - `configured`: applies explicit throne placements and may emit optional defender set-piece directives.
+- Configured overrides support:
+  - cell coordinates (`x`, `y`)
+  - explicit `province-id` for precise placement on sparse generated grids.
+
 ## Defender Considerations
 Specific thrones applied through `#feature` do not automatically receive their standard defenders. Populate guardians manually after selecting the province. See [Province Feature Commands](../../domain/dominions/province_features.md#throne-defenders) for details.
 

@@ -6,7 +6,7 @@ import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, Terrain, ThroneLevel, ThronePlacement, Units, WrapState, WinterImageFile, XCell, YCell}
+import model.map.{Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, Terrain, ThroneLevel, Units, WrapState, WinterImageFile, XCell, YCell}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -217,7 +217,14 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       ),
       terrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
       throneGenerationMode = ThroneGenerationMode.Configured(
-        surfaceThrones = Vector(ThronePlacement(ProvinceLocation(XCell(0), YCell(0)), ThroneLevel(1))),
+        surfaceThrones = Vector(
+          ConfiguredThronePlacementTarget(
+            provinceId = None,
+            location = Some(ProvinceLocation(XCell(0), YCell(0))),
+            throneLevel = Some(ThroneLevel(1)),
+            throneFeatureId = None
+          )
+        ),
         undergroundThrones = Vector.empty
       ),
       throneDefenderSetPieces = Vector(

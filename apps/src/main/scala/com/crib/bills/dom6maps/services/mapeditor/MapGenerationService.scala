@@ -25,13 +25,16 @@ import model.map.{
   NoDeepCaves,
   NoDeepChoice,
   PlaneName,
+  ProvinceLocation,
   ProvinceLocations,
   SetLand,
   Terrain,
   ThroneLevel,
   ThronePlacement,
   Units,
-  WinterImageFile
+  WinterImageFile,
+  XCell,
+  YCell
 }
 import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
@@ -53,9 +56,16 @@ enum ThroneGenerationMode:
       includeUnderground: Boolean = true
     )
   case Configured(
-      surfaceThrones: Vector[ThronePlacement],
-      undergroundThrones: Vector[ThronePlacement]
+      surfaceThrones: Vector[ConfiguredThronePlacementTarget],
+      undergroundThrones: Vector[ConfiguredThronePlacementTarget]
     )
+
+final case class ConfiguredThronePlacementTarget(
+    provinceId: Option[ProvinceId],
+    location: Option[ProvinceLocation],
+    throneLevel: Option[ThroneLevel],
+    throneFeatureId: Option[FeatureId]
+)
 
 final case class ThroneDefenderUnit(
     count: Int,
@@ -456,7 +466,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
       case ThroneGenerationMode.Disabled => Vector.empty
-      case ThroneGenerationMode.Configured(surfaceThrones, _) => surfaceThrones
+      case ThroneGenerationMode.Configured(surfaceThrones, _) =>
+        resolveConfiguredThronePlacements(state, surfaceThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, includeSurface, _) =>
         if includeSurface then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
         else Vector.empty
@@ -468,10 +479,27 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
       case ThroneGenerationMode.Disabled => Vector.empty
-      case ThroneGenerationMode.Configured(_, undergroundThrones) => undergroundThrones
+      case ThroneGenerationMode.Configured(_, undergroundThrones) =>
+        resolveConfiguredThronePlacements(state, undergroundThrones)
       case ThroneGenerationMode.RandomCorners(throneLevel, _, includeUnderground) =>
         if includeUnderground then randomCornerThronePlacements(request.geometryInput.mapSize, generatedGeometry.provincePixelRuns, state, throneLevel)
         else Vector.empty
+
+  private def resolveConfiguredThronePlacements(
+      state: MapState,
+      targets: Vector[ConfiguredThronePlacementTarget]
+  ): Vector[ThronePlacement] =
+    targets.map { target =>
+      val resolvedLocation =
+        target.location
+          .orElse(target.provinceId.flatMap(state.provinceLocations.locationOf))
+          .getOrElse(ProvinceLocation(XCell(-1), YCell(-1)))
+      ThronePlacement(
+        location = resolvedLocation,
+        level = target.throneLevel,
+        id = target.throneFeatureId
+      )
+    }
 
   private def randomCornerThronePlacements(
       mapSize: MapSize,
