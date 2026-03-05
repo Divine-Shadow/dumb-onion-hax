@@ -143,14 +143,25 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
             val surfaceThrones =
               resolveSurfaceThronePlacements(
                 request,
-                terrainBorderConsistentGeometry.provincePixelRuns,
                 generatedLayer.state
               )
+            val surfaceRandomCornerProvinceIds =
+              resolveSurfaceRandomCornerProvinceIds(
+                request,
+                terrainBorderConsistentGeometry.provincePixelRuns
+              )
             for
-              surfacedStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, generatedLayer.state, surfaceThrones)
+              surfacedStateResult <- applyThrones[ErrorChannel](
+                request.throneGenerationMode,
+                generatedLayer.state,
+                surfaceThrones,
+                surfaceRandomCornerProvinceIds
+              )
               nestedImage <- surfacedStateResult.traverse { surfacedState =>
                 val surfaceDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
+                  request.throneGenerationMode,
                   surfaceThrones,
+                  surfaceRandomCornerProvinceIds,
                   surfacedState,
                   request.throneDefenderSetPieces
                 )
@@ -184,14 +195,25 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                             val undergroundThrones =
                               resolveUndergroundThronePlacements(
                                 request,
-                                terrainBorderConsistentGeometry.provincePixelRuns,
                                 undergroundLayerBase.state
                               )
+                            val undergroundRandomCornerProvinceIds =
+                              resolveUndergroundRandomCornerProvinceIds(
+                                request,
+                                terrainBorderConsistentGeometry.provincePixelRuns
+                              )
                             for
-                              undergroundStateResult <- applyThrones[ErrorChannel](request.throneGenerationMode, undergroundLayerBase.state, undergroundThrones)
+                              undergroundStateResult <- applyThrones[ErrorChannel](
+                                request.throneGenerationMode,
+                                undergroundLayerBase.state,
+                                undergroundThrones,
+                                undergroundRandomCornerProvinceIds
+                              )
                               undergroundWriteResult <- undergroundStateResult.traverse { undergroundState =>
                                 val undergroundDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
+                                  request.throneGenerationMode,
                                   undergroundThrones,
+                                  undergroundRandomCornerProvinceIds,
                                   undergroundState,
                                   request.throneDefenderSetPieces
                                 )
@@ -392,27 +414,28 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
   private def applyThrones[ErrorChannel[_]](
       throneGenerationMode: ThroneGenerationMode,
       state: MapState,
-      thronePlacements: Vector[ThronePlacement]
+      thronePlacements: Vector[ThronePlacement],
+      randomCornerProvinceIds: Vector[ProvinceId]
   )(using
       errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
   ): Sequencer[ErrorChannel[MapState]] =
-    if thronePlacements.isEmpty then summon[Async[Sequencer]].pure(errorChannel.pure(state))
-    else
-      throneGenerationMode match
-        case ThroneGenerationMode.RandomCorners(_, _, _) =>
-          summon[Async[Sequencer]].pure(errorChannel.pure(applyThroneTerrainFlagsOnly(state, thronePlacements)))
-        case _ =>
-          thronePlacementService.update[ErrorChannel](state, thronePlacements)
+    throneGenerationMode match
+      case ThroneGenerationMode.RandomCorners(_, _, _) =>
+        if randomCornerProvinceIds.isEmpty then summon[Async[Sequencer]].pure(errorChannel.pure(state))
+        else summon[Async[Sequencer]].pure(errorChannel.pure(applyThroneTerrainFlagsOnly(state, randomCornerProvinceIds)))
+      case _ =>
+        if thronePlacements.isEmpty then summon[Async[Sequencer]].pure(errorChannel.pure(state))
+        else thronePlacementService.update[ErrorChannel](state, thronePlacements)
 
   private def applyThroneTerrainFlagsOnly(
       state: MapState,
-      thronePlacements: Vector[ThronePlacement]
+      throneProvinces: Vector[ProvinceId]
   ): MapState =
-    val throneProvinces = thronePlacements.flatMap(tp => state.provinceLocations.provinceIdAt(tp.location)).toSet
+    val throneProvinceSet = throneProvinces.toSet
     val updatedTerrains = state.terrains.map {
       case terrain @ Terrain(province, mask) =>
         val updatedMask =
-          if throneProvinces.contains(province) then TerrainMask(mask).withFlag(TerrainFlag.GoodThrone)
+          if throneProvinceSet.contains(province) then TerrainMask(mask).withFlag(TerrainFlag.GoodThrone)
           else TerrainMask(mask).withoutFlag(TerrainFlag.GoodThrone)
         terrain.copy(mask = updatedMask.value)
     }
@@ -426,23 +449,33 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     else layer.copy(passThrough = layer.passThrough ++ Stream.emits(directives).covary[Sequencer])
 
   private def buildDefenderSetPieceDirectives(
+      throneGenerationMode: ThroneGenerationMode,
       thronePlacements: Vector[ThronePlacement],
+      randomCornerProvinceIds: Vector[ProvinceId],
       state: MapState,
       throneDefenderSetPieces: Vector[ThroneDefenderSetPiece]
   ): Vector[model.map.MapDirective] =
     val setPieceByLevel = throneDefenderSetPieces.map(setPiece => setPiece.throneLevel.value -> setPiece).toMap
-    thronePlacements.flatMap { placement =>
-      val maybeProvince = state.provinceLocations.provinceIdAt(placement.location)
-      val maybeLevel =
-        placement.level.map(_.value)
-          .orElse(placement.id.flatMap(resolveThroneLevelForFeatureId).map(_.value))
-      (maybeProvince, maybeLevel) match
-        case (Some(province), Some(level)) =>
-          setPieceByLevel.get(level).map { setPiece =>
-            Vector(Land(province), Commander(setPiece.commanderType)) ++
-              setPiece.units.map(unit => Units(unit.count, unit.unitType))
-          }.getOrElse(Vector.empty)
-        case _ => Vector.empty
+    val provinceLevels =
+      throneGenerationMode match
+        case ThroneGenerationMode.RandomCorners(throneLevel, _, _) =>
+          randomCornerProvinceIds.map(provinceId => (provinceId, throneLevel.value))
+        case _ =>
+          thronePlacements.flatMap { placement =>
+            val maybeProvince = state.provinceLocations.provinceIdAt(placement.location)
+            val maybeLevel =
+              placement.level.map(_.value)
+                .orElse(placement.id.flatMap(resolveThroneLevelForFeatureId).map(_.value))
+            (maybeProvince, maybeLevel) match
+              case (Some(province), Some(level)) => Some((province, level))
+              case _ => None
+          }
+
+    provinceLevels.flatMap { case (province, level) =>
+      setPieceByLevel.get(level).map { setPiece =>
+        Vector(Land(province), Commander(setPiece.commanderType)) ++
+          setPiece.units.map(unit => Units(unit.count, unit.unitType))
+      }.getOrElse(Vector.empty)
     }
 
   private def resolveThroneLevelForFeatureId(featureId: FeatureId): Option[ThroneLevel] =
@@ -453,29 +486,47 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
 
   private def resolveSurfaceThronePlacements(
       request: MapGenerationRequest,
-      provinceRuns: Vector[Pb],
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
       case ThroneGenerationMode.Disabled => Vector.empty
       case ThroneGenerationMode.Configured(surfaceThrones, _) =>
         resolveConfiguredThronePlacements(state, surfaceThrones)
-      case ThroneGenerationMode.RandomCorners(throneLevel, includeSurface, _) =>
-        if includeSurface then randomCornerThronePlacements(provinceRuns, state, throneLevel)
+      case ThroneGenerationMode.RandomCorners(_, _, _) =>
+        Vector.empty
+
+  private def resolveSurfaceRandomCornerProvinceIds(
+      request: MapGenerationRequest,
+      provinceRuns: Vector[Pb]
+  ): Vector[ProvinceId] =
+    request.throneGenerationMode match
+      case ThroneGenerationMode.RandomCorners(_, includeSurface, _) =>
+        if includeSurface then randomCornerThroneProvinceIds(provinceRuns)
         else Vector.empty
+      case _ =>
+        Vector.empty
 
   private def resolveUndergroundThronePlacements(
       request: MapGenerationRequest,
-      provinceRuns: Vector[Pb],
       state: MapState
   ): Vector[ThronePlacement] =
     request.throneGenerationMode match
       case ThroneGenerationMode.Disabled => Vector.empty
       case ThroneGenerationMode.Configured(_, undergroundThrones) =>
         resolveConfiguredThronePlacements(state, undergroundThrones)
-      case ThroneGenerationMode.RandomCorners(throneLevel, _, includeUnderground) =>
-        if includeUnderground then randomCornerThronePlacements(provinceRuns, state, throneLevel)
+      case ThroneGenerationMode.RandomCorners(_, _, _) =>
+        Vector.empty
+
+  private def resolveUndergroundRandomCornerProvinceIds(
+      request: MapGenerationRequest,
+      provinceRuns: Vector[Pb]
+  ): Vector[ProvinceId] =
+    request.throneGenerationMode match
+      case ThroneGenerationMode.RandomCorners(_, _, includeUnderground) =>
+        if includeUnderground then randomCornerThroneProvinceIds(provinceRuns)
         else Vector.empty
+      case _ =>
+        Vector.empty
 
   private def resolveConfiguredThronePlacements(
       state: MapState,
@@ -493,11 +544,9 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       )
     }
 
-  private def randomCornerThronePlacements(
-      provinceRuns: Vector[Pb],
-      state: MapState,
-      throneLevel: ThroneLevel
-  ): Vector[ThronePlacement] =
+  private def randomCornerThroneProvinceIds(
+      provinceRuns: Vector[Pb]
+  ): Vector[ProvinceId] =
     if provinceRuns.isEmpty then Vector.empty
     else
       val (minX, maxX, minY, maxY) = provinceRuns.foldLeft((Int.MaxValue, Int.MinValue, Int.MaxValue, Int.MinValue)) {
@@ -532,9 +581,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
               case _ => accumulator
       }
 
-      selectedProvinceIds.flatMap { provinceId =>
-        state.provinceLocations.locationOf(provinceId).map(location => ThronePlacement(location, throneLevel))
-      }
+      selectedProvinceIds
 
   private def rankProvincesByDistanceToPixel(
       provinceRuns: Vector[Pb],
