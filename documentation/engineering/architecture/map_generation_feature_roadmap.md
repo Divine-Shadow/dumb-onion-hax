@@ -92,6 +92,20 @@ This roadmap coordinates the next generator features and keeps decisions explici
 3. Phase 3 (painting contract) is independent of 1/2 and can run in parallel.
 4. Phase 4 depends on reliable throne placement output from Phase 2.
 
+## Implemented Status (March 2026)
+- Random-corner throne placement now resolves by `provinceId` from pixel-run footprint corners, avoiding `ProvinceLocation` cell collisions on dense maps.
+- Random-corner throne terrain flags and throne defender set-piece directives now target the same selected province ids (surface and underground).
+- Nation-based generation input now supports fixed nation starts through generator config:
+  - `nations.starts = [{ nation-id = <id>, surface-start-province-id = <province> }, ...]`
+  - Emits `#allowedplayer` on both layers.
+  - Emits `#specstart` on surface layer.
+- Validation in CLI config parsing now rejects:
+  - unknown `nation-id`
+  - non-positive `surface-start-province-id`
+- Coverage added in app/service tests for:
+  - nation start parsing and rejection behavior
+  - directive emission across both layers
+
 ## Testing Plan by Phase
 - Phase 1: parser golden tests + mapping tests + malformed input diagnostics.
 - Phase 2: override precedence/validation tests + end-to-end map generation tests.
