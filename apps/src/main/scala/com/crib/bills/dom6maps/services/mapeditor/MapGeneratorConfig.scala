@@ -15,7 +15,17 @@ final case class MapGeneratorConfig(
     terrainImages: MapGeneratorTerrainImagesConfig,
     connectionBorders: Option[MapGeneratorConnectionBordersConfig],
     underground: Option[MapGeneratorUndergroundConfig],
-    thrones: Option[MapGeneratorThronesConfig]
+    thrones: Option[MapGeneratorThronesConfig],
+    nations: Option[MapGeneratorNationsConfig]
+) derives ConfigReader
+
+final case class MapGeneratorNationsConfig(
+    starts: Vector[MapGeneratorNationStartConfig]
+) derives ConfigReader
+
+final case class MapGeneratorNationStartConfig(
+    nationId: Int,
+    surfaceStartProvinceId: Int
 ) derives ConfigReader
 
 final case class MapGeneratorGeometryConfig(

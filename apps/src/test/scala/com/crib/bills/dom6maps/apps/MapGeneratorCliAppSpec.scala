@@ -2,7 +2,8 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorNationStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, PlayerNationStart, ThroneGenerationMode, UndergroundGenerationMode}
+import model.{Nation, ProvinceId}
 import model.map.{ThroneLevel, WrapState}
 import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
@@ -165,4 +166,30 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     )
 
     IO(expect(parsed.isRight))
+  }
+
+  test("parses player nation starts by nation id") {
+    val parsed = MapGeneratorCliApp.parsePlayerNationStartsForTest(
+      Vector(
+        MapGeneratorNationStartConfig(
+          nationId = 56,
+          surfaceStartProvinceId = 9
+        )
+      )
+    )
+
+    IO(expect(parsed == Right(Vector(PlayerNationStart(Nation.Pythium_Middle, ProvinceId(9))))))
+  }
+
+  test("rejects unknown nation id in player nation starts") {
+    val parsed = MapGeneratorCliApp.parsePlayerNationStartsForTest(
+      Vector(
+        MapGeneratorNationStartConfig(
+          nationId = 9999,
+          surfaceStartProvinceId = 9
+        )
+      )
+    )
+
+    IO(expect(parsed.isLeft))
   }

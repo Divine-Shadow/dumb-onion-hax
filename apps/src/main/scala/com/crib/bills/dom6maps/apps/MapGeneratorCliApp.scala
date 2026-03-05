@@ -11,7 +11,7 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 
 import apps.services.mapeditor.*
 import apps.util.PathUtils
-import model.{ProvinceId}
+import model.{Nation, ProvinceId}
 import model.map.{FeatureId, MapSize, ProvinceLocation, ThroneLevel, WrapState, XCell, YCell}
 import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainDistributionPolicy, TerrainImageVariantPolicy}
 
@@ -85,6 +85,10 @@ thrones {
   defender-set-pieces=[]
 }
 
+nations {
+  starts=[]
+}
+
 connection-borders {
   non-highland-river-percent=0.20
   non-highland-road-percent=0.20
@@ -149,6 +153,9 @@ connection-borders {
           .defenderSetPieces
           .getOrElse(Vector.empty)
       )
+      playerNationStarts <- parsePlayerNationStartsForTest(
+        config.nations.map(_.starts).getOrElse(Vector.empty)
+      )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
       )
@@ -172,7 +179,8 @@ connection-borders {
         terrainImageVariantPolicy = terrainPolicy,
         undergroundGenerationMode = undergroundGenerationMode,
         throneGenerationMode = throneGenerationMode,
-        throneDefenderSetPieces = throneDefenderSetPieces
+        throneDefenderSetPieces = throneDefenderSetPieces,
+        playerNationStarts = playerNationStarts
       )
 
   private[apps] def parseWrapStateForTest(value: String): Either[Throwable, WrapState] =
@@ -333,4 +341,22 @@ connection-borders {
             units = config.units.map(unit => ThroneDefenderUnit(unit.count, unit.unitType))
           )
         )
+    }
+
+  private[apps] def parsePlayerNationStartsForTest(
+      configs: Vector[MapGeneratorNationStartConfig]
+  ): Either[Throwable, Vector[PlayerNationStart]] =
+    configs.traverse { config =>
+      if config.surfaceStartProvinceId <= 0 then
+        Left(IllegalArgumentException("nations.starts.surfaceStartProvinceId must be positive"))
+      else
+        Nation.byId
+          .get(config.nationId)
+          .toRight(IllegalArgumentException(s"nations.starts.nationId is unknown: ${config.nationId}"))
+          .map { nation =>
+            PlayerNationStart(
+              nation = nation,
+              surfaceStartProvince = ProvinceId(config.surfaceStartProvinceId)
+            )
+          }
     }

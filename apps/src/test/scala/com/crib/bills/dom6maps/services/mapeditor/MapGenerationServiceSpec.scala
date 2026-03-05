@@ -5,8 +5,8 @@ import cats.effect.IO
 import cats.instances.either.*
 import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
-import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, Terrain, ThroneLevel, Units, WrapState, WinterImageFile, XCell, YCell}
+import model.{BorderFlag, Nation, ProvinceId, TerrainFlag, TerrainMask}
+import model.map.{AllowedPlayer, Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, SpecStart, Terrain, ThroneLevel, Units, WrapState, WinterImageFile, XCell, YCell}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -245,6 +245,59 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       countEncodedThroneFeatures(directives) == 1,
       directives.exists { case Commander("Indie Commander") => true; case _ => false },
       directives.exists { case Units(20, "Militia") => true; case _ => false }
+    )
+  }
+
+  test("writes allowed players on both layers and surface specstarts from nation starts") {
+    val service = new MapGenerationServiceImpl[IO](
+      new GridNoiseMapGeometryGeneratorImpl[IO],
+      new GeneratedBorderSpecServiceImpl,
+      new MapWriterImpl[IO],
+      new MapImageWriterImpl[IO],
+      new TerrainImageVariantServiceImpl[IO],
+      new ThronePlacementServiceImpl[IO]
+    )
+
+    val request = MapGenerationRequest(
+      mapName = "generated_nations",
+      mapTitle = "Generated Nations",
+      mapDescription = Some("Nation start directives"),
+      geometryInput = GeometryGenerationInput(
+        mapSize = MapSize.from(2).toOption.get,
+        provinceCount = 10,
+        wrapState = WrapState.NoWrap,
+        seed = 91L,
+        seaRatio = 0.3,
+        noiseScale = 1.0,
+        gridJitter = 0.5
+      ),
+      terrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
+      undergroundGenerationMode = UndergroundGenerationMode.MirroredPlane(
+        planeName = "The Underworld",
+        connectEveryProvinceWithTunnel = true
+      ),
+      playerNationStarts = Vector(
+        PlayerNationStart(Nation.Pythium_Middle, ProvinceId(3)),
+        PlayerNationStart(Nation.Sceleria_Middle, ProvinceId(8))
+      )
+    )
+
+    for
+      outputDirectory <- IO(JavaFiles.createTempDirectory("map-generation-nations"))
+      result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
+      outputMapPath <- IO.fromEither(result)
+      surfaceDirectives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
+      undergroundPath = outputDirectory.resolve("generated_nations_plane2.map")
+      undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
+    yield expect.all(
+      surfaceDirectives.contains(AllowedPlayer(Nation.Pythium_Middle)),
+      surfaceDirectives.contains(AllowedPlayer(Nation.Sceleria_Middle)),
+      undergroundDirectives.contains(AllowedPlayer(Nation.Pythium_Middle)),
+      undergroundDirectives.contains(AllowedPlayer(Nation.Sceleria_Middle)),
+      surfaceDirectives.contains(SpecStart(Nation.Pythium_Middle, ProvinceId(3))),
+      surfaceDirectives.contains(SpecStart(Nation.Sceleria_Middle, ProvinceId(8))),
+      !undergroundDirectives.contains(SpecStart(Nation.Pythium_Middle, ProvinceId(3))),
+      !undergroundDirectives.contains(SpecStart(Nation.Sceleria_Middle, ProvinceId(8)))
     )
   }
 

@@ -7,6 +7,7 @@ import cats.syntax.all.*
 import fs2.Stream
 import fs2.io.file.{Files, Path}
 import model.map.{
+  AllowedPlayer,
   Commander,
   ColorComponent,
   DomVersion,
@@ -27,6 +28,7 @@ import model.map.{
   PlaneName,
   ProvinceLocation,
   ProvinceLocations,
+  SpecStart,
   Terrain,
   ThroneLevel,
   ThronePlacement,
@@ -35,7 +37,7 @@ import model.map.{
   XCell,
   YCell
 }
-import model.{BorderFlag, ProvinceId, TerrainFlag, TerrainMask}
+import model.{BorderFlag, Nation, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
 import model.map.generation.BorderSpecGenerationPolicy
 import model.dominions.{Feature as DomFeature}
@@ -77,6 +79,11 @@ final case class ThroneDefenderSetPiece(
     units: Vector[ThroneDefenderUnit]
 )
 
+final case class PlayerNationStart(
+    nation: Nation,
+    surfaceStartProvince: ProvinceId
+)
+
 final case class MapGenerationRequest(
     mapName: String,
     mapTitle: String,
@@ -86,7 +93,8 @@ final case class MapGenerationRequest(
     terrainImageVariantPolicy: TerrainImageVariantPolicy = TerrainImageVariantPolicy.BaseOnly,
     undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled,
     throneGenerationMode: ThroneGenerationMode = ThroneGenerationMode.Disabled,
-    throneDefenderSetPieces: Vector[ThroneDefenderSetPiece] = Vector.empty
+    throneDefenderSetPieces: Vector[ThroneDefenderSetPiece] = Vector.empty,
+    playerNationStarts: Vector[PlayerNationStart] = Vector.empty
 )
 
 trait MapGenerationService[Sequencer[_]]:
@@ -266,6 +274,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       wrap = request.geometryInput.wrapState,
       title = Some(MapTitle(request.mapTitle)),
       description = request.mapDescription.map(MapDescription.apply),
+      allowedPlayers = request.playerNationStarts.map(start => AllowedPlayer(start.nation)),
+      startingPositions = request.playerNationStarts.map(start => SpecStart(start.nation, start.surfaceStartProvince)),
       terrains = sanitizedSurfaceTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
@@ -323,6 +333,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       wrap = request.geometryInput.wrapState,
       title = None,
       description = request.mapDescription.map(MapDescription.apply),
+      allowedPlayers = request.playerNationStarts.map(start => AllowedPlayer(start.nation)),
       terrains = undergroundTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
