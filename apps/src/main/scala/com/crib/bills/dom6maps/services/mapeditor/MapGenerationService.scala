@@ -15,16 +15,16 @@ import model.map.{
   FloatColor,
   Gate,
   ImageFile,
+  Land,
   MapDescription,
   MapDomColor,
   MapLayer,
   MapState,
   MapTextColor,
-  Pb,
-  Land,
   MapTitle,
   NoDeepCaves,
   NoDeepChoice,
+  Pb,
   PlaneName,
   ProvinceLocation,
   ProvinceLocations,
@@ -37,9 +37,18 @@ import model.map.{
   XCell,
   YCell
 }
+import model.map.generation.{
+  AllocationGenerationPolicy,
+  AllocationLayer,
+  BorderSpecGenerationPolicy,
+  DistanceTiePolicy,
+  GeometryGenerationInput,
+  PlayerStartAssignment,
+  ProfileEnvironment,
+  RegionOwner,
+  TerrainImageVariantPolicy
+}
 import model.{BorderFlag, Nation, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
-import model.map.generation.BorderSpecGenerationPolicy
 import model.dominions.{Feature as DomFeature}
 
 enum UndergroundGenerationMode:
@@ -79,11 +88,6 @@ final case class ThroneDefenderSetPiece(
     units: Vector[ThroneDefenderUnit]
 )
 
-final case class PlayerNationStart(
-    nation: Nation,
-    surfaceStartProvince: ProvinceId
-)
-
 final case class MapGenerationRequest(
     mapName: String,
     mapTitle: String,
@@ -94,7 +98,8 @@ final case class MapGenerationRequest(
     undergroundGenerationMode: UndergroundGenerationMode = UndergroundGenerationMode.Disabled,
     throneGenerationMode: ThroneGenerationMode = ThroneGenerationMode.Disabled,
     throneDefenderSetPieces: Vector[ThroneDefenderSetPiece] = Vector.empty,
-    playerNationStarts: Vector[PlayerNationStart] = Vector.empty
+    playerStarts: Vector[PlayerStartAssignment] = Vector.empty,
+    allocationGenerationPolicy: AllocationGenerationPolicy = AllocationGenerationPolicy.Disabled
 )
 
 trait MapGenerationService[Sequencer[_]]:
@@ -112,7 +117,10 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     mapWriter: MapWriter[Sequencer],
     mapImageWriter: MapImageWriter[Sequencer],
     terrainImageVariantService: TerrainImageVariantService[Sequencer],
-    thronePlacementService: ThronePlacementService[Sequencer]
+    thronePlacementService: ThronePlacementService[Sequencer],
+    allocationPartitionService: AllocationPartitionService = new AllocationPartitionServiceImpl,
+    allottedProvinceService: AllottedProvinceService = new AllottedProvinceServiceImpl,
+    allocationTerrainService: AllocationTerrainService = new AllocationTerrainServiceImpl
 ) extends MapGenerationService[Sequencer]:
   override def generate[ErrorChannel[_]](
       request: MapGenerationRequest,
@@ -148,24 +156,38 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                 case mode: UndergroundGenerationMode.MirroredPlane => Some(mode)
                 case UndergroundGenerationMode.Disabled => None
             val generatedLayer = buildLayer(request, terrainBorderConsistentGeometry, mirroredUndergroundMode)
-            val surfaceThrones =
-              resolveSurfaceThronePlacements(
-                request,
-                generatedLayer.state
-              )
-            val surfaceRandomCornerProvinceIds =
-              resolveSurfaceRandomCornerProvinceIds(
-                request,
-                terrainBorderConsistentGeometry.provincePixelRuns
-              )
+
             for
-              surfacedStateResult <- applyThrones[ErrorChannel](
-                request.throneGenerationMode,
+              surfaceAllocatedStateResult <- applyAllocationForLayer[ErrorChannel](
+                request,
                 generatedLayer.state,
-                surfaceThrones,
-                surfaceRandomCornerProvinceIds
+                AllocationLayer.Surface
               )
-              nestedImage <- surfacedStateResult.traverse { surfacedState =>
+              surfacedAfterAllocation <- surfaceAllocatedStateResult.traverse { surfaceAllocatedState =>
+                val surfaceThrones =
+                  resolveSurfaceThronePlacements(
+                    request,
+                    surfaceAllocatedState
+                  )
+                val surfaceRandomCornerProvinceIds =
+                  resolveSurfaceRandomCornerProvinceIds(
+                    request,
+                    terrainBorderConsistentGeometry.provincePixelRuns
+                  )
+                applyThrones[ErrorChannel](
+                  request.throneGenerationMode,
+                  surfaceAllocatedState,
+                  surfaceThrones,
+                  surfaceRandomCornerProvinceIds
+                )
+              }
+              nestedImage <- surfacedAfterAllocation.flatMap(identity).flatTraverse { surfacedState =>
+                val surfaceThrones = resolveSurfaceThronePlacements(request, surfacedState)
+                val surfaceRandomCornerProvinceIds =
+                  resolveSurfaceRandomCornerProvinceIds(
+                    request,
+                    terrainBorderConsistentGeometry.provincePixelRuns
+                  )
                 val surfaceDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
                   request.throneGenerationMode,
                   surfaceThrones,
@@ -200,24 +222,41 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                                 terrainBorderConsistentGeometry,
                                 undergroundMode
                               )
-                            val undergroundThrones =
-                              resolveUndergroundThronePlacements(
-                                request,
-                                undergroundLayerBase.state
-                              )
-                            val undergroundRandomCornerProvinceIds =
-                              resolveUndergroundRandomCornerProvinceIds(
-                                request,
-                                terrainBorderConsistentGeometry.provincePixelRuns
-                              )
                             for
-                              undergroundStateResult <- applyThrones[ErrorChannel](
-                                request.throneGenerationMode,
+                              undergroundAllocatedStateResult <- applyAllocationForLayer[ErrorChannel](
+                                request,
                                 undergroundLayerBase.state,
-                                undergroundThrones,
-                                undergroundRandomCornerProvinceIds
+                                AllocationLayer.Underground
                               )
-                              undergroundWriteResult <- undergroundStateResult.traverse { undergroundState =>
+                              undergroundAfterAllocation <- undergroundAllocatedStateResult.traverse { undergroundAllocatedState =>
+                                val undergroundThrones =
+                                  resolveUndergroundThronePlacements(
+                                    request,
+                                    undergroundAllocatedState
+                                  )
+                                val undergroundRandomCornerProvinceIds =
+                                  resolveUndergroundRandomCornerProvinceIds(
+                                    request,
+                                    terrainBorderConsistentGeometry.provincePixelRuns
+                                  )
+                                applyThrones[ErrorChannel](
+                                  request.throneGenerationMode,
+                                  undergroundAllocatedState,
+                                  undergroundThrones,
+                                  undergroundRandomCornerProvinceIds
+                                )
+                              }
+                              undergroundWriteResult <- undergroundAfterAllocation.flatMap(identity).traverse { undergroundState =>
+                                val undergroundThrones =
+                                  resolveUndergroundThronePlacements(
+                                    request,
+                                    undergroundState
+                                  )
+                                val undergroundRandomCornerProvinceIds =
+                                  resolveUndergroundRandomCornerProvinceIds(
+                                    request,
+                                    terrainBorderConsistentGeometry.provincePixelRuns
+                                  )
                                 val undergroundDefenderSetPieceDirectives = buildDefenderSetPieceDirectives(
                                   request.throneGenerationMode,
                                   undergroundThrones,
@@ -242,14 +281,17 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                   }
                 yield nestedWrite.flatMap(identity).as(outputMapPath)
               }
-            yield nestedImage.flatMap(identity)
+            yield nestedImage
           }
         yield nestedResult.flatMap(identity)
 
   private def validateRequest(request: MapGenerationRequest): Either[Throwable, Unit] =
     if request.mapName.trim.isEmpty then Left(IllegalArgumentException("mapName must not be empty"))
     else if request.mapTitle.trim.isEmpty then Left(IllegalArgumentException("mapTitle must not be empty"))
-    else Right(())
+    else if request.playerStarts.exists(start => start.surfaceStart.isEmpty && start.undergroundStart.isEmpty) then
+      Left(IllegalArgumentException("Each player start assignment must define at least one layer start"))
+    else
+      Right(())
 
   private def buildLayer(
       request: MapGenerationRequest,
@@ -266,6 +308,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         .map(_ => provinceIds.map(provinceId => Gate(provinceId, provinceId)))
         .getOrElse(Vector.empty)
 
+    val allPlayers = request.playerStarts.map(_.nation).distinct.sortBy(_.id).map(AllowedPlayer.apply)
+    val surfaceStarts = request.playerStarts.flatMap { start =>
+      start.surfaceStart.map(provinceId => SpecStart(start.nation, provinceId))
+    }
+
     val state = MapState.empty.copy(
       size = Some(request.geometryInput.mapSize),
       adjacency = generatedGeometry.adjacency,
@@ -274,8 +321,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       wrap = request.geometryInput.wrapState,
       title = Some(MapTitle(request.mapTitle)),
       description = request.mapDescription.map(MapDescription.apply),
-      allowedPlayers = request.playerNationStarts.map(start => AllowedPlayer(start.nation)),
-      startingPositions = request.playerNationStarts.map(start => SpecStart(start.nation, start.surfaceStartProvince)),
+      allowedPlayers = allPlayers,
+      startingPositions = surfaceStarts,
       terrains = sanitizedSurfaceTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
@@ -325,6 +372,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         provinceIds.map(provinceId => Gate(provinceId, provinceId))
       else Vector.empty
 
+    val allPlayers = request.playerStarts.map(_.nation).distinct.sortBy(_.id).map(AllowedPlayer.apply)
+    val undergroundStarts = request.playerStarts.flatMap { start =>
+      start.undergroundStart.map(provinceId => SpecStart(start.nation, provinceId))
+    }
+
     val state = MapState.empty.copy(
       size = Some(request.geometryInput.mapSize),
       adjacency = generatedGeometry.adjacency,
@@ -333,7 +385,8 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       wrap = request.geometryInput.wrapState,
       title = None,
       description = request.mapDescription.map(MapDescription.apply),
-      allowedPlayers = request.playerNationStarts.map(start => AllowedPlayer(start.nation)),
+      allowedPlayers = allPlayers,
+      startingPositions = undergroundStarts,
       terrains = undergroundTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
@@ -357,6 +410,78 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       ) ++ generatedGeometry.provincePixelRuns
 
     MapLayer(state, Stream.emits(passThrough).covary[Sequencer])
+
+  private def applyAllocationForLayer[ErrorChannel[_]](
+      request: MapGenerationRequest,
+      state: MapState,
+      layer: AllocationLayer
+  )(using
+      errorChannel: MonadError[ErrorChannel, Throwable] & Traverse[ErrorChannel]
+  ): Sequencer[ErrorChannel[MapState]] =
+    request.allocationGenerationPolicy match
+      case AllocationGenerationPolicy.Disabled =>
+        summon[Async[Sequencer]].pure(errorChannel.pure(state))
+      case enabledPolicy: AllocationGenerationPolicy.Enabled =>
+        val startsByNation = collectStartsForLayer(request.playerStarts, layer)
+        if startsByNation.isEmpty then
+          summon[Async[Sequencer]].pure(errorChannel.pure(state))
+        else
+          val provinceIds = state.terrains.map(_.province).distinct.sortBy(_.value)
+          val resolved = for
+            partition <- allocationPartitionService.partition(
+              adjacency = state.adjacency,
+              allProvinceIds = provinceIds,
+              startsByNation = startsByNation,
+              tiePolicy = enabledPolicy.tiePolicy
+            )
+            playerAllotments <- startsByNation.toVector.sortBy { case (nation, _) => nation.id }.traverse { case (nation, startProvince) =>
+              for
+                profile <- enabledPolicy.profileCatalog
+                  .resolve(nation, layer)
+                  .toRight(
+                    IllegalArgumentException(
+                      s"Missing allocation profile for nation ${nation.id} on layer ${layer.toString} (exact or any environment)"
+                    )
+                  )
+                allotted <- allottedProvinceService.resolve(
+                  nation = nation,
+                  startProvince = startProvince,
+                  capRingSize = profile.capRingSize,
+                  adjacency = state.adjacency,
+                  partition = partition
+                )
+              yield allotted -> profile
+            }
+          yield
+            val neutralProvinceIds = partition.ownerByProvince.collect {
+              case (provinceId, RegionOwner.Neutral) => provinceId
+            }.toVector.sortBy(_.value)
+            val updatedTerrains = allocationTerrainService.applyAllocation(
+              terrains = state.terrains,
+              playerAllotments = playerAllotments,
+              neutralProvinceIds = neutralProvinceIds,
+              neutralProfile = enabledPolicy.neutralProfile,
+              defaultTerrainDistributionPolicy = request.geometryInput.terrainDistributionPolicy,
+              layer = layer,
+              seed = request.geometryInput.seed + enabledPolicy.seedSalt
+            )
+            state.copy(terrains = updatedTerrains)
+
+          summon[Async[Sequencer]].pure(
+            resolved match
+              case Left(error) => errorChannel.raiseError(error)
+              case Right(value) => errorChannel.pure(value)
+          )
+
+  private def collectStartsForLayer(
+      playerStarts: Vector[PlayerStartAssignment],
+      layer: AllocationLayer
+  ): Map[Nation, ProvinceId] =
+    layer match
+      case AllocationLayer.Surface =>
+        playerStarts.flatMap(start => start.surfaceStart.map(start.nation -> _)).toMap
+      case AllocationLayer.Underground =>
+        playerStarts.flatMap(start => start.undergroundStart.map(start.nation -> _)).toMap
 
   private def sanitizeSurfaceTerrainMask(maskValue: Long): Long =
     TerrainMask(maskValue)
@@ -583,7 +708,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
           rankProvincesByDistanceToPixel(provinceRuns, xPixel, yPixel)
         }
 
-      val selectedProvinceIds = provinceIdsByCorner.foldLeft(Vector.empty[ProvinceId]) { (accumulator, rankedProvinceIds) =>
+      provinceIdsByCorner.foldLeft(Vector.empty[ProvinceId]) { (accumulator, rankedProvinceIds) =>
         rankedProvinceIds.find(provinceId => !accumulator.contains(provinceId)) match
           case Some(provinceId) => accumulator :+ provinceId
           case None =>
@@ -591,8 +716,6 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
               case Some(provinceId) if !accumulator.contains(provinceId) => accumulator :+ provinceId
               case _ => accumulator
       }
-
-      selectedProvinceIds
 
   private def rankProvincesByDistanceToPixel(
       provinceRuns: Vector[Pb],

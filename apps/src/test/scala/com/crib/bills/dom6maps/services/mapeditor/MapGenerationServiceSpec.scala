@@ -7,7 +7,7 @@ import fs2.io.file.Path
 import java.nio.file.{Files => JavaFiles}
 import model.{BorderFlag, Nation, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.{AllowedPlayer, Commander, Feature, Gate, ImageFile, MapDirective, MapFileParser, MapSize, NeighbourSpec, Pb, PlaneName, ProvinceLocation, SetLand, SpecStart, Terrain, ThroneLevel, Units, WrapState, WinterImageFile, XCell, YCell}
-import model.map.generation.{GeometryGenerationInput, TerrainImageVariantPolicy}
+import model.map.generation.{GeometryGenerationInput, PlayerStartAssignment, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
 object MapGenerationServiceSpec extends SimpleIOSuite:
@@ -276,9 +276,9 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
         planeName = "The Underworld",
         connectEveryProvinceWithTunnel = true
       ),
-      playerNationStarts = Vector(
-        PlayerNationStart(Nation.Pythium_Middle, ProvinceId(3)),
-        PlayerNationStart(Nation.Sceleria_Middle, ProvinceId(8))
+      playerStarts = Vector(
+        PlayerStartAssignment(Nation.Pythium_Middle, surfaceStart = Some(ProvinceId(3)), undergroundStart = None),
+        PlayerStartAssignment(Nation.Sceleria_Middle, surfaceStart = Some(ProvinceId(8)), undergroundStart = None)
       )
     )
 

@@ -2,10 +2,10 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorConnectionBordersConfig, MapGeneratorNationStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, PlayerNationStart, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.{Nation, ProvinceId}
 import model.map.{ThroneLevel, WrapState}
-import model.map.generation.{BorderSpecGenerationPolicy, TerrainImageVariantPolicy}
+import model.map.generation.{AllocationGenerationPolicy, BorderSpecGenerationPolicy, PlayerStartAssignment, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
 object MapGeneratorCliAppSpec extends SimpleIOSuite:
@@ -168,28 +168,42 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     IO(expect(parsed.isRight))
   }
 
-  test("parses player nation starts by nation id") {
-    val parsed = MapGeneratorCliApp.parsePlayerNationStartsForTest(
+  test("parses player start assignments by nation id") {
+    val parsed = MapGeneratorCliApp.parsePlayerStartAssignmentsForTest(
       Vector(
-        MapGeneratorNationStartConfig(
+        MapGeneratorPlayerStartConfig(
           nationId = 56,
-          surfaceStartProvinceId = 9
+          surfaceStartProvinceId = Some(9),
+          undergroundStartProvinceId = None
         )
       )
     )
 
-    IO(expect(parsed == Right(Vector(PlayerNationStart(Nation.Pythium_Middle, ProvinceId(9))))))
+    IO(expect(parsed == Right(Vector(PlayerStartAssignment(Nation.Pythium_Middle, Some(ProvinceId(9)), None)))))
   }
 
-  test("rejects unknown nation id in player nation starts") {
-    val parsed = MapGeneratorCliApp.parsePlayerNationStartsForTest(
+  test("rejects unknown nation id in player starts") {
+    val parsed = MapGeneratorCliApp.parsePlayerStartAssignmentsForTest(
       Vector(
-        MapGeneratorNationStartConfig(
+        MapGeneratorPlayerStartConfig(
           nationId = 9999,
-          surfaceStartProvinceId = 9
+          surfaceStartProvinceId = Some(9),
+          undergroundStartProvinceId = None
         )
       )
     )
 
     IO(expect(parsed.isLeft))
   }
+
+  test("parses disabled allocation policy") {
+    val parsed = MapGeneratorCliApp.parseAllocationGenerationPolicyForTest(
+      MapGeneratorAllocationConfig.disabled,
+      parseDefaultTerrainDistribution()
+    )
+
+    IO(expect(parsed == Right(AllocationGenerationPolicy.Disabled)))
+  }
+
+  private def parseDefaultTerrainDistribution() =
+    MapGeneratorCliApp.parseTerrainDistributionPolicyForTest(MapGeneratorTerrainDistributionConfig.default).toOption.get

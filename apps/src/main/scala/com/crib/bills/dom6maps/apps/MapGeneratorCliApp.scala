@@ -6,14 +6,31 @@ import cats.instances.either.*
 import cats.syntax.all.*
 import fs2.io.file.Path
 import pureconfig.*
+import pureconfig.generic.derivation.default.*
 
 import java.nio.file.{Files as JavaFiles, Path as NioPath}
 
 import apps.services.mapeditor.*
 import apps.util.PathUtils
-import model.{Nation, ProvinceId}
+import model.{Nation, ProvinceId, TerrainFlag, TerrainMask}
 import model.map.{FeatureId, MapSize, ProvinceLocation, ThroneLevel, WrapState, XCell, YCell}
-import model.map.generation.{BorderSpecGenerationPolicy, GeometryGenerationInput, TerrainDistributionPolicy, TerrainImageVariantPolicy}
+import model.map.generation.{
+  AllocationGenerationPolicy,
+  AllocationLayer,
+  AllocationProfileCatalog,
+  BorderSpecGenerationPolicy,
+  CapRingSize,
+  DistanceTiePolicy,
+  GeometryGenerationInput,
+  NeutralAllocationProfile,
+  Percent,
+  PlayerAllocationProfile,
+  PlayerStartAssignment,
+  ProfileEnvironment,
+  TerrainDistributionPolicy,
+  TerrainImageVariantPolicy,
+  WaterPercentage
+}
 
 /**
  * CLI entry point that generates a new map set from a generator configuration file.
@@ -86,7 +103,25 @@ thrones {
 }
 
 nations {
-  starts=[]
+  players=[]
+}
+
+allocation {
+  enabled=false
+  profile-catalog-path="data/map-generation/allocation-profiles.conf"
+  tie-policy="neutral"
+  seed-salt=0
+  neutral {
+    water-percentage=0.0
+    terrain-distribution {
+      swamp-percent=0.16
+      waste-percent=0.18
+      highland-percent=0.16
+      forest-percent=0.18
+      farm-percent=0.16
+      extra-lake-percent=0.0
+    }
+  }
 }
 
 connection-borders {
@@ -98,6 +133,21 @@ connection-borders {
   highland-road-percent=0.15
 }
 """
+
+  final case class MapGeneratorAllocationProfileCatalogConfig(
+      profiles: Vector[MapGeneratorAllocationProfileConfig]
+  ) derives ConfigReader
+
+  final case class MapGeneratorAllocationProfileConfig(
+      nationId: Int,
+      environment: String,
+      capRingSize: Int,
+      capTerrain: String,
+      terrainData: Vector[String],
+      waterPercentage: Double,
+      startsUnderground: Option[Boolean],
+      hasCaveEntranceInCapRing: Option[Boolean]
+  ) derives ConfigReader
 
   override def run(args: List[String]): IO[ExitCode] =
     val configPath = resolveConfigPath()
@@ -153,8 +203,12 @@ connection-borders {
           .defenderSetPieces
           .getOrElse(Vector.empty)
       )
-      playerNationStarts <- parsePlayerNationStartsForTest(
-        config.nations.map(_.starts).getOrElse(Vector.empty)
+      playerStarts <- parsePlayerStartAssignmentsForTest(
+        config.nations.map(_.players).getOrElse(Vector.empty)
+      )
+      allocationGenerationPolicy <- parseAllocationGenerationPolicyForTest(
+        config.allocation.getOrElse(MapGeneratorAllocationConfig.disabled),
+        terrainDistributionPolicy
       )
       borderPolicy <- parseBorderSpecGenerationPolicyForTest(
         config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
@@ -180,14 +234,15 @@ connection-borders {
         undergroundGenerationMode = undergroundGenerationMode,
         throneGenerationMode = throneGenerationMode,
         throneDefenderSetPieces = throneDefenderSetPieces,
-        playerNationStarts = playerNationStarts
+        playerStarts = playerStarts,
+        allocationGenerationPolicy = allocationGenerationPolicy
       )
 
   private[apps] def parseWrapStateForTest(value: String): Either[Throwable, WrapState] =
     value.trim.toLowerCase match
       case "none" | "nowrap" | "no-wrap" => Right(WrapState.NoWrap)
-      case "hwrap" | "horizontal"         => Right(WrapState.HorizontalWrap)
-      case "vwrap" | "vertical"           => Right(WrapState.VerticalWrap)
+      case "hwrap" | "horizontal" => Right(WrapState.HorizontalWrap)
+      case "vwrap" | "vertical" => Right(WrapState.VerticalWrap)
       case "full" | "fullwrap" | "full-wrap" => Right(WrapState.FullWrap)
       case other => Left(IllegalArgumentException(s"Unsupported wrapState value: $other"))
 
@@ -343,20 +398,149 @@ connection-borders {
         )
     }
 
-  private[apps] def parsePlayerNationStartsForTest(
-      configs: Vector[MapGeneratorNationStartConfig]
-  ): Either[Throwable, Vector[PlayerNationStart]] =
+  private[apps] def parsePlayerStartAssignmentsForTest(
+      configs: Vector[MapGeneratorPlayerStartConfig]
+  ): Either[Throwable, Vector[PlayerStartAssignment]] =
     configs.traverse { config =>
-      if config.surfaceStartProvinceId <= 0 then
-        Left(IllegalArgumentException("nations.starts.surfaceStartProvinceId must be positive"))
-      else
-        Nation.byId
+      val surfaceStart =
+        config.surfaceStartProvinceId match
+          case Some(value) if value <= 0 => Left(IllegalArgumentException("nations.players.surfaceStartProvinceId must be positive"))
+          case Some(value) => Right(Some(ProvinceId(value)))
+          case None => Right(None)
+
+      val undergroundStart =
+        config.undergroundStartProvinceId match
+          case Some(value) if value <= 0 => Left(IllegalArgumentException("nations.players.undergroundStartProvinceId must be positive"))
+          case Some(value) => Right(Some(ProvinceId(value)))
+          case None => Right(None)
+
+      for
+        nation <- Nation.byId
           .get(config.nationId)
-          .toRight(IllegalArgumentException(s"nations.starts.nationId is unknown: ${config.nationId}"))
-          .map { nation =>
-            PlayerNationStart(
-              nation = nation,
-              surfaceStartProvince = ProvinceId(config.surfaceStartProvinceId)
-            )
-          }
+          .toRight(IllegalArgumentException(s"nations.players.nationId is unknown: ${config.nationId}"))
+        surface <- surfaceStart
+        underground <- undergroundStart
+        _ <-
+          if surface.isEmpty && underground.isEmpty then
+            Left(IllegalArgumentException("nations.players requires at least one of surfaceStartProvinceId or undergroundStartProvinceId"))
+          else Right(())
+      yield
+        PlayerStartAssignment(
+          nation = nation,
+          surfaceStart = surface,
+          undergroundStart = underground
+        )
     }
+
+  private[apps] def parseAllocationGenerationPolicyForTest(
+      config: MapGeneratorAllocationConfig,
+      defaultTerrainDistributionPolicy: TerrainDistributionPolicy
+  ): Either[Throwable, AllocationGenerationPolicy] =
+    if !config.enabled then Right(AllocationGenerationPolicy.Disabled)
+    else
+      for
+        profileCatalogPath <- config.profileCatalogPath
+          .toRight(IllegalArgumentException("allocation.profileCatalogPath is required when allocation is enabled"))
+        profileCatalog <- loadAllocationProfileCatalogForTest(profileCatalogPath)
+        tiePolicy <- parseDistanceTiePolicyForTest(config.tiePolicy)
+        neutralConfig = config.neutral.getOrElse(MapGeneratorNeutralAllocationConfig.default)
+        neutralTerrainDistribution <- parseTerrainDistributionPolicyForTest(
+          neutralConfig.terrainDistribution.getOrElse(MapGeneratorTerrainDistributionConfig.default)
+        )
+        neutralWaterPercentage <- WaterPercentage.from[ErrorOr](neutralConfig.waterPercentage)
+      yield
+        AllocationGenerationPolicy.Enabled(
+          tiePolicy = tiePolicy,
+          profileCatalog = profileCatalog,
+          neutralProfile = NeutralAllocationProfile(
+            waterPercentage = neutralWaterPercentage,
+            terrainDistributionPolicy = neutralTerrainDistribution
+          ),
+          seedSalt = config.seedSalt.getOrElse(0L)
+        )
+
+  private[apps] def parseDistanceTiePolicyForTest(
+      value: String
+  ): Either[Throwable, DistanceTiePolicy] =
+    value.trim.toLowerCase match
+      case "neutral" | "neutral-tie" | "neutralties" => Right(DistanceTiePolicy.NeutralTie)
+      case other => Left(IllegalArgumentException(s"Unsupported allocation.tiePolicy value: $other"))
+
+  private[apps] def loadAllocationProfileCatalogForTest(
+      path: NioPath
+  ): Either[Throwable, AllocationProfileCatalog] =
+    Either.catchNonFatal(ConfigSource.file(PathUtils.normalizeForWSL(path)).loadOrThrow[MapGeneratorAllocationProfileCatalogConfig])
+      .flatMap(parseAllocationProfileCatalogForTest)
+
+  private[apps] def parseAllocationProfileCatalogForTest(
+      config: MapGeneratorAllocationProfileCatalogConfig
+  ): Either[Throwable, AllocationProfileCatalog] =
+    config.profiles
+      .traverse { profile =>
+        for
+          nation <- Nation.byId
+            .get(profile.nationId)
+            .toRight(IllegalArgumentException(s"allocation profile nationId is unknown: ${profile.nationId}"))
+          environment <- parseProfileEnvironmentForTest(profile.environment)
+          capRingSize <- CapRingSize.from[ErrorOr](profile.capRingSize)
+          capitalTerrainMask <- parseTerrainMaskForTest(profile.capTerrain)
+          capRingTerrainMasks <- profile.terrainData.traverse(parseTerrainMaskForTest)
+          waterPercentage <- WaterPercentage.from[ErrorOr](profile.waterPercentage)
+        yield
+          ((nation, environment),
+            PlayerAllocationProfile(
+              capRingSize = capRingSize,
+              capitalTerrainMask = capitalTerrainMask,
+              capRingTerrainMasks = capRingTerrainMasks,
+              waterPercentageOutsideCapitalRing = waterPercentage,
+              startsUnderground = profile.startsUnderground.getOrElse(false),
+              hasCaveEntranceInCapRing = profile.hasCaveEntranceInCapRing.getOrElse(false)
+            ))
+      }
+      .map(entries => AllocationProfileCatalog(entries.toMap))
+
+  private[apps] def parseProfileEnvironmentForTest(
+      value: String
+  ): Either[Throwable, ProfileEnvironment] =
+    value.trim.toLowerCase match
+      case "surface" => Right(ProfileEnvironment.Surface)
+      case "underground" | "cave" => Right(ProfileEnvironment.Underground)
+      case "any" | "all" => Right(ProfileEnvironment.Any)
+      case other => Left(IllegalArgumentException(s"Unsupported allocation profile environment value: $other"))
+
+  private[apps] def parseTerrainMaskForTest(
+      value: String
+  ): Either[Throwable, TerrainMask] =
+    val normalized = value.trim
+    if normalized.isEmpty then Left(IllegalArgumentException("Terrain mask text must not be empty"))
+    else
+      normalized
+        .split("\\s+")
+        .toVector
+        .traverse(parseTerrainFlagTokenForTest)
+        .map { flags =>
+          flags.foldLeft(TerrainMask(0L)) { (mask, flag) =>
+            if flag == TerrainFlag.Plains then mask
+            else mask.withFlag(flag)
+          }
+        }
+
+  private[apps] def parseTerrainFlagTokenForTest(
+      token: String
+  ): Either[Throwable, TerrainFlag] =
+    token.trim.toUpperCase match
+      case "PLAINS" => Right(TerrainFlag.Plains)
+      case "HIGHLAND" | "HIGHLANDS" => Right(TerrainFlag.Highlands)
+      case "SWAMP" => Right(TerrainFlag.Swamp)
+      case "WASTE" | "WASTELAND" => Right(TerrainFlag.Waste)
+      case "FOREST" => Right(TerrainFlag.Forest)
+      case "FARM" | "FARMLAND" => Right(TerrainFlag.Farm)
+      case "MOUNTAINS" | "MOUNTAIN" => Right(TerrainFlag.Mountains)
+      case "SEA" => Right(TerrainFlag.Sea)
+      case "DEEPSEA" => Right(TerrainFlag.DeepSea)
+      case "SMALLPROV" | "SMALLPROVINCE" => Right(TerrainFlag.SmallProvince)
+      case "LARGEPROV" | "LARGEPROVINCE" => Right(TerrainFlag.LargeProvince)
+      case "WARMER" => Right(TerrainFlag.Warmer)
+      case "COLDER" => Right(TerrainFlag.Colder)
+      case "FRESHWATER" | "LAKE" => Right(TerrainFlag.FreshWater)
+      case other => Left(IllegalArgumentException(s"Unsupported terrain flag token: $other"))

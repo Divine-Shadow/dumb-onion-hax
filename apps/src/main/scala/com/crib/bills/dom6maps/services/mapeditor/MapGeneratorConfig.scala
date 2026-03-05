@@ -16,17 +16,49 @@ final case class MapGeneratorConfig(
     connectionBorders: Option[MapGeneratorConnectionBordersConfig],
     underground: Option[MapGeneratorUndergroundConfig],
     thrones: Option[MapGeneratorThronesConfig],
-    nations: Option[MapGeneratorNationsConfig]
+    nations: Option[MapGeneratorNationsConfig],
+    allocation: Option[MapGeneratorAllocationConfig]
 ) derives ConfigReader
 
 final case class MapGeneratorNationsConfig(
-    starts: Vector[MapGeneratorNationStartConfig]
+    players: Vector[MapGeneratorPlayerStartConfig]
 ) derives ConfigReader
 
-final case class MapGeneratorNationStartConfig(
+final case class MapGeneratorPlayerStartConfig(
     nationId: Int,
-    surfaceStartProvinceId: Int
+    surfaceStartProvinceId: Option[Int],
+    undergroundStartProvinceId: Option[Int]
 ) derives ConfigReader
+
+final case class MapGeneratorAllocationConfig(
+    enabled: Boolean,
+    profileCatalogPath: Option[NioPath],
+    tiePolicy: String,
+    seedSalt: Option[Long],
+    neutral: Option[MapGeneratorNeutralAllocationConfig]
+) derives ConfigReader
+
+object MapGeneratorAllocationConfig:
+  val disabled: MapGeneratorAllocationConfig =
+    MapGeneratorAllocationConfig(
+      enabled = false,
+      profileCatalogPath = None,
+      tiePolicy = "neutral",
+      seedSalt = Some(0L),
+      neutral = Some(MapGeneratorNeutralAllocationConfig.default)
+    )
+
+final case class MapGeneratorNeutralAllocationConfig(
+    waterPercentage: Double,
+    terrainDistribution: Option[MapGeneratorTerrainDistributionConfig]
+) derives ConfigReader
+
+object MapGeneratorNeutralAllocationConfig:
+  val default: MapGeneratorNeutralAllocationConfig =
+    MapGeneratorNeutralAllocationConfig(
+      waterPercentage = 0.0,
+      terrainDistribution = Some(MapGeneratorTerrainDistributionConfig.default)
+    )
 
 final case class MapGeneratorGeometryConfig(
     mapSize: Int,
