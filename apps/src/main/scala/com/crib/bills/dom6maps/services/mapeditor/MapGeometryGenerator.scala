@@ -187,8 +187,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       noiseScale: Double
   ): Array[Int] =
     val clampedNoiseScale = math.max(0.25, math.min(4.0, noiseScale))
-    val warpAmplitudePixels = 18.0 * clampedNoiseScale
-    val frequencyBase = 0.005 / clampedNoiseScale
+    val warpAmplitudePixels = 36.0 * clampedNoiseScale
     val phaseA = (splitMix64(seed ^ 0x9e3779b97f4a7c15L) & 0xffff).toDouble / 32768.0
     val phaseB = (splitMix64(seed ^ 0xbf58476d1ce4e5b9L) & 0xffff).toDouble / 32768.0
     val phaseC = (splitMix64(seed ^ 0x94d049bb133111ebL) & 0xffff).toDouble / 32768.0
@@ -199,14 +198,16 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
     ): (Double, Double) =
       val x = xPixel.toDouble
       val y = yPixel.toDouble
+      val angleX = 2.0 * math.Pi * x / widthPixels.toDouble
+      val angleY = 2.0 * math.Pi * y / heightPixels.toDouble
       val warpX =
-        math.sin(y * frequencyBase + phaseA) * 0.60 +
-          math.sin((x + y) * (frequencyBase * 0.63) + phaseB) * 0.30 +
-          math.sin(y * (frequencyBase * 1.37) + phaseC) * 0.10
+        math.sin(3.0 * angleY + phaseA) * 0.55 +
+          math.sin(5.0 * angleX + 2.0 * angleY + phaseB) * 0.30 +
+          math.sin(11.0 * angleY + phaseC) * 0.15
       val warpY =
-        math.sin(x * (frequencyBase * 0.89) + phaseB) * 0.60 +
-          math.sin((x - y) * (frequencyBase * 0.71) + phaseC) * 0.30 +
-          math.sin(x * (frequencyBase * 1.41) + phaseA) * 0.10
+        math.sin(3.0 * angleX + phaseB) * 0.55 +
+          math.sin(4.0 * angleY + 2.0 * angleX + phaseC) * 0.30 +
+          math.sin(9.0 * angleX + phaseA) * 0.15
       (
         x + warpX * warpAmplitudePixels,
         y + warpY * warpAmplitudePixels
