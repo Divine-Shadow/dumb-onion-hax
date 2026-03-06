@@ -164,9 +164,10 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       if seedsInRow > 0 then
         val rowCellWidth = widthPixels.toDouble / seedsInRow.toDouble
         val centerY = (rowIndex + 0.5) * rowHeight
+        val rowOffsetX = (random.nextDouble() - 0.5) * rowCellWidth * 0.8
         var columnIndex = 0
         while columnIndex < seedsInRow do
-          val centerX = (columnIndex + 0.5) * rowCellWidth
+          val centerX = (columnIndex + 0.5) * rowCellWidth + rowOffsetX
           val jitterX = (random.nextDouble() - 0.5) * rowCellWidth * jitterFactor
           val jitterY = (random.nextDouble() - 0.5) * rowHeight * jitterFactor
           val boundedX = math.max(0.0, math.min(widthPixels - 1.0, centerX + jitterX))
@@ -187,7 +188,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       noiseScale: Double
   ): Array[Int] =
     val clampedNoiseScale = math.max(0.25, math.min(4.0, noiseScale))
-    val warpAmplitudePixels = 36.0 * clampedNoiseScale
+    val warpAmplitudePixels = 14.0 * clampedNoiseScale
     val phaseA = (splitMix64(seed ^ 0x9e3779b97f4a7c15L) & 0xffff).toDouble / 32768.0
     val phaseB = (splitMix64(seed ^ 0xbf58476d1ce4e5b9L) & 0xffff).toDouble / 32768.0
     val phaseC = (splitMix64(seed ^ 0x94d049bb133111ebL) & 0xffff).toDouble / 32768.0
@@ -201,13 +202,13 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       val angleX = 2.0 * math.Pi * x / widthPixels.toDouble
       val angleY = 2.0 * math.Pi * y / heightPixels.toDouble
       val warpX =
-        math.sin(3.0 * angleY + phaseA) * 0.55 +
-          math.sin(5.0 * angleX + 2.0 * angleY + phaseB) * 0.30 +
-          math.sin(11.0 * angleY + phaseC) * 0.15
+        math.sin(3.0 * angleY + phaseA) * 0.40 +
+          math.sin(7.0 * angleX + 5.0 * angleY + phaseB) * 0.40 +
+          math.sin(13.0 * angleX - 2.0 * angleY + phaseC) * 0.20
       val warpY =
-        math.sin(3.0 * angleX + phaseB) * 0.55 +
-          math.sin(4.0 * angleY + 2.0 * angleX + phaseC) * 0.30 +
-          math.sin(9.0 * angleX + phaseA) * 0.15
+        math.sin(3.0 * angleX + phaseB) * 0.40 +
+          math.sin(5.0 * angleY + 4.0 * angleX + phaseC) * 0.40 +
+          math.sin(11.0 * angleY - 3.0 * angleX + phaseA) * 0.20
       (
         x + warpX * warpAmplitudePixels,
         y + warpY * warpAmplitudePixels
