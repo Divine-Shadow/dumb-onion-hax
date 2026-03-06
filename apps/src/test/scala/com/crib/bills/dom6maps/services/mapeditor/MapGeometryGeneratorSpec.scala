@@ -4,7 +4,7 @@ package apps.services.mapeditor
 import cats.effect.IO
 import cats.instances.either.*
 import model.TerrainFlag
-import model.map.{MapSize, WrapState}
+import model.map.{MapDimensions, MapSize, WrapState}
 import model.map.generation.{GeometryGenerationInput, TerrainDistributionPolicy}
 import weaver.SimpleIOSuite
 
@@ -14,7 +14,7 @@ object MapGeometryGeneratorSpec extends SimpleIOSuite:
   test("grid noise generator produces geometry with expected shape") {
     val generator = new GridNoiseMapGeometryGeneratorImpl[IO]
     val input = GeometryGenerationInput(
-      mapSize = MapSize.from(2).toOption.get,
+      mapDimensions = model.map.MapDimensions.square(MapSize.from(2).toOption.get),
       provinceCount = 8,
       wrapState = WrapState.NoWrap,
       seed = 12345L,
@@ -37,7 +37,7 @@ object MapGeometryGeneratorSpec extends SimpleIOSuite:
   test("grid noise generator is deterministic for the same seed") {
     val generator = new GridNoiseMapGeometryGeneratorImpl[IO]
     val input = GeometryGenerationInput(
-      mapSize = MapSize.from(2).toOption.get,
+      mapDimensions = model.map.MapDimensions.square(MapSize.from(2).toOption.get),
       provinceCount = 8,
       wrapState = WrapState.HorizontalWrap,
       seed = 777L,
@@ -71,7 +71,7 @@ object MapGeometryGeneratorSpec extends SimpleIOSuite:
     ).toOption.get
 
     val input = GeometryGenerationInput(
-      mapSize = MapSize.from(2).toOption.get,
+      mapDimensions = model.map.MapDimensions.square(MapSize.from(2).toOption.get),
       provinceCount = 12,
       wrapState = WrapState.NoWrap,
       seed = 98765L,
@@ -86,5 +86,27 @@ object MapGeometryGeneratorSpec extends SimpleIOSuite:
       generatedGeometry <- IO.fromEither(result)
     yield expect(
       generatedGeometry.terrainByProvince.forall(terrain => terrain.mask == TerrainFlag.Waste.mask)
+    )
+  }
+
+  test("grid noise generator preserves configured map height rows for anti-kaiju dimensions") {
+    val generator = new GridNoiseMapGeometryGeneratorImpl[IO]
+    val input = GeometryGenerationInput(
+      mapDimensions = MapDimensions.from(18, 5).toOption.get,
+      provinceCount = 90,
+      wrapState = WrapState.HorizontalWrap,
+      seed = 42L,
+      seaRatio = 0.30,
+      noiseScale = 1.0,
+      gridJitter = 0.5
+    )
+
+    for
+      result <- generator.generate[ErrorOr](input)
+      generatedGeometry <- IO.fromEither(result)
+      yValues = generatedGeometry.provinceCentroids.values.map(_.y.value).toSet
+    yield expect.all(
+      yValues.contains(0),
+      yValues.contains(4)
     )
   }

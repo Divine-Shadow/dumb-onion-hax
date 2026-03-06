@@ -4,6 +4,7 @@ package model.map.generation
 import cats.ApplicativeError
 import cats.syntax.all.*
 import model.{Nation, TerrainMask}
+import model.map.ProvinceLocation
 
 enum AllocationLayer:
   case Surface
@@ -51,6 +52,12 @@ final case class PlayerStartAssignment(
     nation: Nation,
     surfaceStart: Option[model.ProvinceId],
     undergroundStart: Option[model.ProvinceId]
+)
+
+final case class PlayerStartLocationAssignment(
+    nation: Nation,
+    surfaceStart: Option[ProvinceLocation],
+    undergroundStart: Option[ProvinceLocation]
 )
 
 final case class AllocationPartition(

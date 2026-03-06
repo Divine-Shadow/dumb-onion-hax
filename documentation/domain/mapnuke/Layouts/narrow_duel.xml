@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NodeLayoutCollection
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Layout>
+    <Name>Narrow Duel Torus</Name>
+    <XSize>8</XSize>
+    <YSize>5</YSize>
+
+    <!-- Player Spawns (Equator at Y=2) -->
+    <Spawn><X>0</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Throne Spawns (Midpoints at top and bottom, closer due to reduced YSize) -->
+    <Spawn><X>2</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>2</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+<Layout>
+    <Name>Anti-Kaiju</Name>
+    <XSize>12</XSize>
+    <YSize>5</YSize>
+
+    <!-- Player Spawns (Equator at Y=2) -->
+    <Spawn><X>0</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Throne Spawns (Shifted 3 tiles from capitals, symmetric top and bottom) -->
+    <Spawn><X>3</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>9</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>3</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>9</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+<Layout>
+    <Name>Anti-Kaiju (3-Player)</Name>
+    <XSize>18</XSize>
+    <YSize>5</YSize>
+
+    <!-- Player Spawns (Evenly spaced along equator) -->
+    <Spawn><X>0</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>12</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Throne Spawns (Shifted 3 tiles from each capital, symmetric top and bottom) -->
+    <Spawn><X>3</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>9</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>15</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+
+    <Spawn><X>3</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>9</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>15</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+
+<Layout>
+    <Name>Four Player Horizontal Wrap with Gaps</Name>
+    <XSize>16</XSize>
+    <YSize>7</YSize>
+
+    <!-- Player Spawns (Spaced every 4 tiles on the equator) -->
+    <Spawn><X>0</X><Y>3</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>3</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>8</X><Y>3</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>12</X><Y>3</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Thrones (Offset 2 tiles from each capital, symmetric on top and bottom) -->
+    <Spawn><X>2</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>10</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>14</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+
+    <Spawn><X>2</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>10</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>14</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+<Layout>
+    <Name>Cave Surface Duel</Name>
+    <XSize>5</XSize>
+    <YSize>5</YSize>
+
+    <!-- Both capitals on the center tile -->
+    <Spawn><X>2</X><Y>1</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>2</X><Y>2</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Corner thrones -->
+    <Spawn><X>0</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>0</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+<Layout>
+    <Name>8x8 Torus — 4 Players, 12 Thrones (Full Cosets)</Name>
+    <XSize>8</XSize>
+    <YSize>8</YSize>
+
+    <!-- Players: (c±2, c±2) with c=(2,2) -->
+    <Spawn><X>0</X><Y>0</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>0</X><Y>4</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>0</Y><SpawnType>PLAYER</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>4</Y><SpawnType>PLAYER</SpawnType></Spawn>
+
+    <!-- Thrones: center coset -->
+    <Spawn><X>2</X><Y>2</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>2</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>2</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+
+    <!-- Thrones: x-axis coset (midpoints in x) -->
+    <Spawn><X>4</X><Y>2</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>0</X><Y>2</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>4</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>0</X><Y>6</Y><SpawnType>THRONE</SpawnType></Spawn>
+
+    <!-- Thrones: y-axis coset (midpoints in y) -->
+    <Spawn><X>2</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>4</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>2</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+    <Spawn><X>6</X><Y>0</Y><SpawnType>THRONE</SpawnType></Spawn>
+</Layout>
+
+
+
+</NodeLayoutCollection>

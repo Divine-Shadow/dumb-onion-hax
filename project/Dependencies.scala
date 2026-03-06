@@ -9,6 +9,7 @@ object Dependencies {
   private val weaverVersion     = "0.8.3"
   private val mcpVersion        = "0.2.0"
   private val pureconfigVersion = "0.17.7"
+  private val scalaXmlVersion   = "2.3.0"
 
   lazy val core = Seq(
     "org.typelevel" %% "cats-core"     % catsVersion,
@@ -31,5 +32,6 @@ object Dependencies {
     "ch.linkyard.mcp" %% "jsonrpc2-stdio" % mcpVersion,
     "com.github.pureconfig" %% "pureconfig-core"           % pureconfigVersion,
     "com.github.pureconfig" %% "pureconfig-generic-scala3" % pureconfigVersion,
+    "org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion,
   )
 }

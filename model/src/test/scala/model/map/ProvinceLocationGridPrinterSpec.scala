@@ -17,8 +17,8 @@ object ProvinceLocationGridPrinterSpec extends SimpleIOSuite with Checkers:
 
       val locations = ProvinceLocations.fromLocationMap(g.locations)
       ProvinceLocationGridPrinter.render(g.size, locations, printer).map { _ =>
-        val expected = (0 until g.size.value).toVector.map { y =>
-          (0 until g.size.value)
+        val expected = (0 until g.size.height.value).toVector.map { y =>
+          (0 until g.size.width.value)
             .map { x =>
               val loc = ProvinceLocation(XCell(x), YCell(y))
               g.locations.get(loc).fold(".")(_.value.toString)

@@ -16,12 +16,12 @@ object MapDirectiveCodecs:
 
   import Encoder.*
 
-  given Encoder[MapSize] with
-    def encode(value: MapSize): Vector[MapDirective] =
+  given Encoder[MapDimensions] with
+    def encode(value: MapDimensions): Vector[MapDirective] =
       Vector(
         MapSizePixels(
-          MapWidthPixels(value.value * 256),
-          MapHeightPixels(value.value * 160)
+          MapWidthPixels(value.width.value * 256),
+          MapHeightPixels(value.height.value * 160)
         )
       )
 
@@ -73,7 +73,7 @@ object MapDirectiveCodecs:
 
   given Encoder[MapState] with
     def encode(value: MapState): Vector[MapDirective] =
-      val size = value.size.toVector.flatMap(Encoder[MapSize].encode)
+      val size = value.size.toVector.flatMap(Encoder[MapDimensions].encode)
       val wrap = Encoder[WrapState].encode(value.wrap)
       val title = value.title.toVector.flatMap(Encoder[MapTitle].encode)
       val description = value.description.toVector.flatMap(Encoder[MapDescription].encode)

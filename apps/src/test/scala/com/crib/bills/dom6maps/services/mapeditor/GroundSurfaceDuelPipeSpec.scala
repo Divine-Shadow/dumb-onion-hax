@@ -111,7 +111,7 @@ object GroundSurfaceDuelPipeSpec extends SimpleIOSuite:
       )
     )
     val base = MapState.empty.copy(
-      size = Some(size),
+      size = Some(MapDimensions.square(size)),
       adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
       wrap = WrapState.FullWrap,
       provinceLocations = locations

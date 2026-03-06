@@ -53,7 +53,7 @@ object MapImageWriterSpec extends SimpleIOSuite:
   test("writeMainImage prefers dimensions inferred from #pb runs over #mapsize/state size") {
     val writer = new MapImageWriterImpl[IO]
     val mapState = MapState.empty.copy(
-      size = Some(MapSize.from(6).toOption.get),
+      size = Some(MapDimensions.square(MapSize.from(6).toOption.get)),
       terrains = Vector(Terrain(ProvinceId(1), TerrainFlag.Plains.mask))
     )
     val passThrough = Vector(

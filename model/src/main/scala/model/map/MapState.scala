@@ -15,7 +15,7 @@ final case class MapTitle(value: String) extends AnyVal
 final case class MapDescription(value: String) extends AnyVal
 
 final case class MapState(
-    size: Option[MapSize],
+    size: Option[MapDimensions],
     adjacency: Vector[(ProvinceId, ProvinceId)],
     borders: Vector[Border],
     wrap: WrapState,
@@ -69,10 +69,12 @@ object MapState:
   private def accumulate(state: MapState, directive: MapDirective): MapState =
     directive match
       case m: MapSizePixels =>
-        val width = m.toProvinceSize.width.value
-        MapSize.from(width).toOption match
-          case Some(sz) => state.copy(size = Some(sz))
-          case None     => state
+        MapDimensions.from(
+          width = m.width.value / 256,
+          height = m.height.value / 160
+        ).toOption match
+          case Some(dimensions) => state.copy(size = Some(dimensions))
+          case None => state
       case Dom2Title(t) =>
         state.copy(title = Some(MapTitle(t)))
       case Description(d) =>

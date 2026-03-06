@@ -17,7 +17,62 @@ final case class MapGeneratorConfig(
     underground: Option[MapGeneratorUndergroundConfig],
     thrones: Option[MapGeneratorThronesConfig],
     nations: Option[MapGeneratorNationsConfig],
-    allocation: Option[MapGeneratorAllocationConfig]
+    allocation: Option[MapGeneratorAllocationConfig],
+    scenarioSelection: Option[MapScenarioSelectionConfig]
+) derives ConfigReader
+
+final case class MapScenarioSelectionConfig(
+    catalogPath: NioPath,
+    scenarioId: String
+) derives ConfigReader
+
+final case class MapScenarioCatalogConfig(
+    scenarios: Vector[MapScenarioConfig]
+) derives ConfigReader
+
+final case class MapScenarioConfig(
+    scenarioId: String,
+    name: String,
+    dimensions: MapScenarioDimensionsConfig,
+    wrapState: String,
+    layers: MapScenarioLayersConfig,
+    players: Vector[MapScenarioPlayerConfig],
+    placements: MapScenarioPlacementsConfig,
+    allocationProfileCatalogPath: NioPath
+) derives ConfigReader
+
+final case class MapScenarioDimensionsConfig(
+    xSize: Int,
+    ySize: Int
+) derives ConfigReader
+
+final case class MapScenarioLayersConfig(
+    surfaceEnabled: Boolean,
+    undergroundEnabled: Boolean,
+    undergroundPlaneName: Option[String]
+) derives ConfigReader
+
+final case class MapScenarioPlayerConfig(
+    nationId: Int,
+    profileEnvironment: Option[String],
+    surfaceStart: Option[MapScenarioPointConfig],
+    undergroundStart: Option[MapScenarioPointConfig]
+) derives ConfigReader
+
+final case class MapScenarioPlacementsConfig(
+    surfaceThrones: Vector[MapGeneratorThronePlacementConfig],
+    undergroundThrones: Vector[MapGeneratorThronePlacementConfig],
+    gates: Vector[MapScenarioGatePairConfig]
+) derives ConfigReader
+
+final case class MapScenarioPointConfig(
+    x: Int,
+    y: Int
+) derives ConfigReader
+
+final case class MapScenarioGatePairConfig(
+    surface: MapScenarioPointConfig,
+    underground: MapScenarioPointConfig
 ) derives ConfigReader
 
 final case class MapGeneratorNationsConfig(
@@ -61,7 +116,9 @@ object MapGeneratorNeutralAllocationConfig:
     )
 
 final case class MapGeneratorGeometryConfig(
-    mapSize: Int,
+    mapSize: Option[Int],
+    xSize: Option[Int],
+    ySize: Option[Int],
     provinceCount: Int,
     wrapState: String,
     seed: Option[Long],

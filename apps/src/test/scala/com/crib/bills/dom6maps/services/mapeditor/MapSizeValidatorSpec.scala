@@ -13,8 +13,8 @@ object MapSizeValidatorSpec extends SimpleIOSuite:
     val validator = new MapSizeValidatorImpl[IO]
     for
       size <- IO.fromEither(MapSize.from(5))
-      surface = MapState.empty.copy(size = Some(size))
-      cave = MapState.empty.copy(size = Some(size))
+      surface = MapState.empty.copy(size = Some(MapDimensions.square(size)))
+      cave = MapState.empty.copy(size = Some(MapDimensions.square(size)))
       result <- validator.validate[EC](surface, cave)
       (returnedSize, _, _) <- IO.fromEither(result)
     yield expect(returnedSize == size)
@@ -25,8 +25,8 @@ object MapSizeValidatorSpec extends SimpleIOSuite:
     for
       surfSize <- IO.fromEither(MapSize.from(5))
       caveSize <- IO.fromEither(MapSize.from(7))
-      surface = MapState.empty.copy(size = Some(surfSize))
-      cave = MapState.empty.copy(size = Some(caveSize))
+      surface = MapState.empty.copy(size = Some(MapDimensions.square(surfSize)))
+      cave = MapState.empty.copy(size = Some(MapDimensions.square(caveSize)))
       result <- validator.validate[EC](surface, cave)
     yield expect(result match
       case Left(_: IllegalArgumentException) => true
@@ -39,7 +39,7 @@ object MapSizeValidatorSpec extends SimpleIOSuite:
     for
       size <- IO.fromEither(MapSize.from(5))
       surface = MapState.empty
-      cave = MapState.empty.copy(size = Some(size))
+      cave = MapState.empty.copy(size = Some(MapDimensions.square(size)))
       result <- validator.validate[EC](surface, cave)
     yield expect(result match
       case Left(_: IllegalArgumentException) => true

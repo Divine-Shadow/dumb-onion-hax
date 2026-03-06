@@ -28,8 +28,8 @@ object WrapConversionServiceSpec extends SimpleIOSuite:
     for
       state <- MapState.fromDirectives(MapFileParser.parseFile[IO](Path("data/five-by-twelve.map")))
       size <- IO.fromOption(state.size)(new NoSuchElementException("#mapsize not found"))
-      w = MapWidth(size.value)
-      h = MapHeight(size.value)
+      w = MapWidth(size.width.value)
+      h = MapHeight(size.height.value)
     yield (state, w, h)
 
   test("convert to hwrap") {

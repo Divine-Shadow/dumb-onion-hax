@@ -6,6 +6,7 @@ import fs2.io.file.Path
 import model.ProvinceId
 import model.map.{
   MapFileParser,
+  MapDimensions,
   MapSize,
   MapWidth,
   MapHeight,
@@ -21,8 +22,8 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       state <- MapState.fromDirectives(MapFileParser.parseFile[IO](Path("data/five-by-twelve.map")))
       result = WrapSeverService.severVertically(state)
       size <- IO.fromOption(result.size)(new NoSuchElementException("#mapsize not found"))
-      w = MapWidth(size.value)
-      h = MapHeight(size.value)
+      w = MapWidth(size.width.value)
+      h = MapHeight(size.height.value)
       index = result.provinceLocations
       hasTopBottom = result.adjacency.exists((a, b) => WrapSeverService.isTopBottom(a, b, index, h))
       hasMiddle = result.adjacency.exists { case (a, b) => a.value == 6 && b.value == 7 }
@@ -34,7 +35,7 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       state <- MapState.fromDirectives(MapFileParser.parseFile[IO](Path("data/five-by-twelve-horizontal.map")))
       result = WrapSeverService.severHorizontally(state)
       size <- IO.fromOption(result.size)(new NoSuchElementException("#mapsize not found"))
-      w = MapWidth(size.value)
+      w = MapWidth(size.width.value)
       index = result.provinceLocations
       hasLeftRight = result.adjacency.exists((a, b) => WrapSeverService.isLeftRight(a, b, index, w))
       hasMiddle = result.adjacency.exists { case (a, b) => a.value == 6 && b.value == 7 }
@@ -87,7 +88,7 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       )
     )
     val state = MapState.empty.copy(
-      size = size,
+      size = size.map(MapDimensions.square),
       adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
       wrap = WrapState.FullWrap,
       provinceLocations = locations
@@ -108,7 +109,7 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       )
     )
     val state = MapState.empty.copy(
-      size = size,
+      size = size.map(MapDimensions.square),
       adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
       wrap = WrapState.HorizontalWrap,
       provinceLocations = locations
@@ -129,7 +130,7 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       )
     )
     val state = MapState.empty.copy(
-      size = size,
+      size = size.map(MapDimensions.square),
       adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
       wrap = WrapState.VerticalWrap,
       provinceLocations = locations
@@ -150,7 +151,7 @@ object WrapSeverServiceSpec extends SimpleIOSuite:
       )
     )
     val state = MapState.empty.copy(
-      size = size,
+      size = size.map(MapDimensions.square),
       adjacency = Vector((ProvinceId(5), ProvinceId(6)), (ProvinceId(6), ProvinceId(7))),
       wrap = WrapState.NoWrap,
       provinceLocations = locations

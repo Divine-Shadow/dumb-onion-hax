@@ -23,9 +23,14 @@ class MapSizeValidatorImpl[Sequencer[_]: Sync] extends MapSizeValidator[Sequence
     ): Sequencer[ErrorChannel[(MapSize, MapState, MapState)]] =
     val result = (surface.size, cave.size) match
       case (Some(surf), Some(caveSize)) =>
-        if surf.value != caveSize.value then
+        if surf.width.value != caveSize.width.value || surf.height.value != caveSize.height.value then
           Left(IllegalArgumentException("Map dimensions must be equal"))
-        else Right((surf, surface, cave))
+        else if surf.width.value != surf.height.value then
+          Left(IllegalArgumentException("GroundSurfaceDuel requires square map dimensions"))
+        else
+          MapSize
+            .from(surf.width.value)
+            .map(size => (size, surface, cave))
       case _ => Left(IllegalArgumentException("Map size directive missing"))
     val ec = result match
       case Left(e)      => errorChannel.raiseError[(MapSize, MapState, MapState)](e)

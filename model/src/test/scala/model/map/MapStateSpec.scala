@@ -35,7 +35,7 @@ object MapStateSpec extends SimpleIOSuite:
         oldState <- MapState.fromDirectives(Stream.emits(directives).covary[IO])
       yield
         val expected = MapState(
-        size = MapSize.from(5).toOption,
+        size = MapDimensions.from(5, 5).toOption,
         adjacency = Vector(
           (ProvinceId(3), ProvinceId(4)),
           (ProvinceId(5), ProvinceId(6))

@@ -13,7 +13,7 @@ import java.nio.file.{Files as JavaFiles, Path as NioPath}
 import apps.services.mapeditor.*
 import apps.util.PathUtils
 import model.{Nation, ProvinceId, TerrainFlag, TerrainMask}
-import model.map.{FeatureId, MapSize, ProvinceLocation, ThroneLevel, WrapState, XCell, YCell}
+import model.map.{FeatureId, MapDimensions, MapSize, ProvinceLocation, ThroneLevel, WrapState, XCell, YCell}
 import model.map.generation.{
   AllocationGenerationPolicy,
   AllocationLayer,
@@ -26,6 +26,7 @@ import model.map.generation.{
   Percent,
   PlayerAllocationProfile,
   PlayerStartAssignment,
+  PlayerStartLocationAssignment,
   ProfileEnvironment,
   TerrainDistributionPolicy,
   TerrainImageVariantPolicy,
@@ -183,8 +184,13 @@ connection-borders {
     yield ExitCode.Success
 
   private def toGenerationRequest(config: MapGeneratorConfig): Either[Throwable, MapGenerationRequest] =
+    config.scenarioSelection match
+      case Some(selection) => toScenarioGenerationRequest(config, selection)
+      case None => toDirectGenerationRequest(config)
+
+  private def toDirectGenerationRequest(config: MapGeneratorConfig): Either[Throwable, MapGenerationRequest] =
     for
-      mapSize <- MapSize.from(config.geometry.mapSize)
+      mapDimensions <- parseMapDimensionsForTest(config.geometry)
       wrapState <- parseWrapStateForTest(config.geometry.wrapState)
       terrainPolicy <- parseTerrainImagePolicyForTest(config.terrainImages.policy)
       terrainDistributionPolicy <- parseTerrainDistributionPolicyForTest(
@@ -220,7 +226,7 @@ connection-borders {
         mapTitle = config.mapTitle,
         mapDescription = config.mapDescription,
         geometryInput = GeometryGenerationInput(
-          mapSize = mapSize,
+          mapDimensions = mapDimensions,
           provinceCount = config.geometry.provinceCount,
           wrapState = wrapState,
           seed = seed,
@@ -245,6 +251,147 @@ connection-borders {
       case "vwrap" | "vertical" => Right(WrapState.VerticalWrap)
       case "full" | "fullwrap" | "full-wrap" => Right(WrapState.FullWrap)
       case other => Left(IllegalArgumentException(s"Unsupported wrapState value: $other"))
+
+  private[apps] def parseMapDimensionsForTest(
+      config: MapGeneratorGeometryConfig
+  ): Either[Throwable, MapDimensions] =
+    (config.xSize, config.ySize, config.mapSize) match
+      case (Some(xSize), Some(ySize), _) =>
+        MapDimensions.from(xSize, ySize)
+      case (None, None, Some(mapSize)) =>
+        MapSize.from(mapSize).map(MapDimensions.square)
+      case (None, None, None) =>
+        Left(IllegalArgumentException("geometry requires either mapSize or both xSize/ySize"))
+      case _ =>
+        Left(IllegalArgumentException("geometry.xSize and geometry.ySize must be provided together"))
+
+  private def toScenarioGenerationRequest(
+      config: MapGeneratorConfig,
+      selection: MapScenarioSelectionConfig
+  ): Either[Throwable, MapGenerationRequest] =
+    for
+      scenarioCatalog <- loadScenarioCatalogForTest(selection.catalogPath)
+      scenario <- scenarioCatalog.scenarios
+        .find(_.scenarioId == selection.scenarioId)
+        .toRight(IllegalArgumentException(s"Scenario not found: ${selection.scenarioId}"))
+      _ <- validateScenarioPrecedenceForTest(config)
+      mapDimensions <- MapDimensions.from(scenario.dimensions.xSize, scenario.dimensions.ySize)
+      wrapState <- parseWrapStateForTest(scenario.wrapState)
+      terrainPolicy <- parseTerrainImagePolicyForTest(config.terrainImages.policy)
+      terrainDistributionPolicy <- parseTerrainDistributionPolicyForTest(
+        config.terrainDistribution.getOrElse(MapGeneratorTerrainDistributionConfig.default)
+      )
+      borderPolicy <- parseBorderSpecGenerationPolicyForTest(
+        config.connectionBorders.getOrElse(MapGeneratorConnectionBordersConfig.default)
+      )
+      playerStartLocations <- parseScenarioPlayerStartLocationsForTest(scenario.players)
+      throneGenerationMode <- parseScenarioThroneGenerationModeForTest(
+        scenario.placements.surfaceThrones,
+        scenario.placements.undergroundThrones,
+        scenario.layers.undergroundEnabled
+      )
+      undergroundGenerationMode <- parseScenarioUndergroundModeForTest(scenario.layers)
+      allocationGenerationPolicy <- parseAllocationGenerationPolicyForTest(
+        config.allocation.getOrElse(MapGeneratorAllocationConfig.disabled).copy(
+          enabled = true,
+          profileCatalogPath = Some(scenario.allocationProfileCatalogPath)
+        ),
+        terrainDistributionPolicy
+      )
+      seed = config.geometry.seed.getOrElse(0L)
+      mapTitle = if config.mapTitle.trim.isEmpty then scenario.name else config.mapTitle
+    yield
+      MapGenerationRequest(
+        mapName = config.mapName,
+        mapTitle = mapTitle,
+        mapDescription = config.mapDescription.orElse(Some(scenario.name)),
+        geometryInput = GeometryGenerationInput(
+          mapDimensions = mapDimensions,
+          provinceCount = config.geometry.provinceCount,
+          wrapState = wrapState,
+          seed = seed,
+          seaRatio = config.geometry.seaRatio,
+          noiseScale = config.geometry.noiseScale,
+          gridJitter = config.geometry.gridJitter,
+          terrainDistributionPolicy = terrainDistributionPolicy
+        ),
+        borderSpecGenerationPolicy = borderPolicy,
+        terrainImageVariantPolicy = terrainPolicy,
+        undergroundGenerationMode = undergroundGenerationMode,
+        throneGenerationMode = throneGenerationMode,
+        throneDefenderSetPieces = Vector.empty,
+        playerStarts = Vector.empty,
+        playerStartLocations = playerStartLocations,
+        allocationGenerationPolicy = allocationGenerationPolicy
+      )
+
+  private[apps] def loadScenarioCatalogForTest(
+      path: NioPath
+  ): Either[Throwable, MapScenarioCatalogConfig] =
+    Either.catchNonFatal(
+      ConfigSource
+        .file(PathUtils.normalizeForWSL(path))
+        .loadOrThrow[MapScenarioCatalogConfig]
+    )
+
+  private[apps] def validateScenarioPrecedenceForTest(
+      config: MapGeneratorConfig
+  ): Either[Throwable, Unit] =
+    if config.nations.exists(_.players.nonEmpty) then
+      Left(IllegalArgumentException("Scenario mode does not allow nations.players; define players inside scenario"))
+    else if config.thrones.exists(throneConfig =>
+      throneConfig.surfaceOverrides.nonEmpty || throneConfig.undergroundOverrides.nonEmpty || throneConfig.mode.trim.toLowerCase != "disabled"
+    ) then
+      Left(IllegalArgumentException("Scenario mode does not allow thrones overrides; define thrones inside scenario"))
+    else Right(())
+
+  private[apps] def parseScenarioPlayerStartLocationsForTest(
+      players: Vector[MapScenarioPlayerConfig]
+  ): Either[Throwable, Vector[PlayerStartLocationAssignment]] =
+    players.traverse { player =>
+      for
+        nation <- Nation.byId
+          .get(player.nationId)
+          .toRight(IllegalArgumentException(s"scenario.players.nationId is unknown: ${player.nationId}"))
+        _ <- if player.surfaceStart.isEmpty && player.undergroundStart.isEmpty then
+          Left(IllegalArgumentException(s"scenario player ${player.nationId} must define at least one start location"))
+        else Right(())
+      yield
+        PlayerStartLocationAssignment(
+          nation = nation,
+          surfaceStart = player.surfaceStart.map(point => ProvinceLocation(XCell(point.x), YCell(point.y))),
+          undergroundStart = player.undergroundStart.map(point => ProvinceLocation(XCell(point.x), YCell(point.y)))
+        )
+    }
+
+  private[apps] def parseScenarioThroneGenerationModeForTest(
+      surfaceThrones: Vector[MapGeneratorThronePlacementConfig],
+      undergroundThrones: Vector[MapGeneratorThronePlacementConfig],
+      undergroundEnabled: Boolean
+  ): Either[Throwable, ThroneGenerationMode] =
+    if undergroundThrones.nonEmpty && !undergroundEnabled then
+      Left(IllegalArgumentException("scenario.placements.undergroundThrones requires layers.undergroundEnabled=true"))
+    else
+      for
+        parsedSurfaceTargets <- parseConfiguredThronePlacementTargetsForTest(surfaceThrones)
+        parsedUndergroundTargets <- parseConfiguredThronePlacementTargetsForTest(undergroundThrones)
+      yield
+        ThroneGenerationMode.Configured(
+          surfaceThrones = parsedSurfaceTargets,
+          undergroundThrones = parsedUndergroundTargets
+        )
+
+  private[apps] def parseScenarioUndergroundModeForTest(
+      layers: MapScenarioLayersConfig
+  ): Either[Throwable, UndergroundGenerationMode] =
+    if !layers.undergroundEnabled then Right(UndergroundGenerationMode.Disabled)
+    else
+      Right(
+        UndergroundGenerationMode.MirroredPlane(
+          planeName = layers.undergroundPlaneName.getOrElse("The Underworld"),
+          connectEveryProvinceWithTunnel = true
+        )
+      )
 
   private[apps] def parseTerrainImagePolicyForTest(value: String): Either[Throwable, TerrainImageVariantPolicy] =
     value.trim.toLowerCase match

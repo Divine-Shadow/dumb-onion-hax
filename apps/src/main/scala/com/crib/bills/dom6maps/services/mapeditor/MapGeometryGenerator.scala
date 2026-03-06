@@ -44,12 +44,13 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
     else if input.seaRatio < 0.0 || input.seaRatio > 1.0 then
       Left(IllegalArgumentException("seaRatio must be in range [0.0, 1.0]"))
     else
-      val widthPixels = input.mapSize.value * 256
-      val heightPixels = input.mapSize.value * 160
+      val widthPixels = input.mapDimensions.width.value * 256
+      val heightPixels = input.mapDimensions.height.value * 160
       val random = Random(input.seed)
       val provinceSeeds = generateSeeds(
         widthPixels,
         heightPixels,
+        input.mapDimensions.height.value,
         input.provinceCount,
         input.gridJitter,
         random
@@ -58,7 +59,9 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         widthPixels,
         heightPixels,
         provinceSeeds,
-        input.wrapState
+        input.wrapState,
+        input.seed,
+        input.noiseScale
       )
       val remap = remapProvinceIdentifiersByFirstPixelScanOrder(
         widthPixels,
@@ -139,48 +142,90 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
   private def generateSeeds(
       widthPixels: Int,
       heightPixels: Int,
+      mapHeightInCells: Int,
       provinceCount: Int,
       gridJitter: Double,
       random: Random
   ): Vector[ProvinceSeed] =
     val jitterFactor = math.max(0.0, math.min(1.0, gridJitter))
     val aspectRatio = widthPixels.toDouble / heightPixels.toDouble
-    val columnCount = math.max(1, math.ceil(math.sqrt(provinceCount.toDouble * aspectRatio)).toInt)
-    val rowCount = math.max(1, math.ceil(provinceCount.toDouble / columnCount.toDouble).toInt)
-    val cellWidth = widthPixels.toDouble / columnCount.toDouble
-    val cellHeight = heightPixels.toDouble / rowCount.toDouble
+    val computedRowCount = math.max(1, math.ceil(math.sqrt(provinceCount.toDouble / aspectRatio)).toInt)
+    val minimumRowCount = math.max(1, math.min(mapHeightInCells, provinceCount))
+    val rowCount = math.max(minimumRowCount, computedRowCount)
+    val rowHeight = heightPixels.toDouble / rowCount.toDouble
+    val baseSeedsPerRow = provinceCount / rowCount
+    val extraSeedRows = provinceCount % rowCount
 
-    Vector.tabulate(provinceCount) { index =>
-      val rowIndex = index / columnCount
-      val columnIndex = index % columnCount
-      val centerX = (columnIndex + 0.5) * cellWidth
-      val centerY = (rowIndex + 0.5) * cellHeight
-      val jitterX = (random.nextDouble() - 0.5) * cellWidth * jitterFactor
-      val jitterY = (random.nextDouble() - 0.5) * cellHeight * jitterFactor
-      val boundedX = math.max(0.0, math.min(widthPixels - 1.0, centerX + jitterX))
-      val boundedY = math.max(0.0, math.min(heightPixels - 1.0, centerY + jitterY))
-      ProvinceSeed(ProvinceId(index + 1), boundedX, boundedY)
-    }
+    val result = Vector.newBuilder[ProvinceSeed]
+    var provinceIdentifier = 1
+    var rowIndex = 0
+    while rowIndex < rowCount do
+      val seedsInRow = baseSeedsPerRow + (if rowIndex < extraSeedRows then 1 else 0)
+      if seedsInRow > 0 then
+        val rowCellWidth = widthPixels.toDouble / seedsInRow.toDouble
+        val centerY = (rowIndex + 0.5) * rowHeight
+        var columnIndex = 0
+        while columnIndex < seedsInRow do
+          val centerX = (columnIndex + 0.5) * rowCellWidth
+          val jitterX = (random.nextDouble() - 0.5) * rowCellWidth * jitterFactor
+          val jitterY = (random.nextDouble() - 0.5) * rowHeight * jitterFactor
+          val boundedX = math.max(0.0, math.min(widthPixels - 1.0, centerX + jitterX))
+          val boundedY = math.max(0.0, math.min(heightPixels - 1.0, centerY + jitterY))
+          result += ProvinceSeed(ProvinceId(provinceIdentifier), boundedX, boundedY)
+          provinceIdentifier += 1
+          columnIndex += 1
+      rowIndex += 1
+
+    result.result()
   
   private def rasterizeOwnership(
       widthPixels: Int,
       heightPixels: Int,
       provinceSeeds: Vector[ProvinceSeed],
-      wrapState: WrapState
+      wrapState: WrapState,
+      seed: Long,
+      noiseScale: Double
   ): Array[Int] =
+    val clampedNoiseScale = math.max(0.25, math.min(4.0, noiseScale))
+    val warpAmplitudePixels = 18.0 * clampedNoiseScale
+    val frequencyBase = 0.005 / clampedNoiseScale
+    val phaseA = (splitMix64(seed ^ 0x9e3779b97f4a7c15L) & 0xffff).toDouble / 32768.0
+    val phaseB = (splitMix64(seed ^ 0xbf58476d1ce4e5b9L) & 0xffff).toDouble / 32768.0
+    val phaseC = (splitMix64(seed ^ 0x94d049bb133111ebL) & 0xffff).toDouble / 32768.0
+
+    def warpedCoordinate(
+        xPixel: Int,
+        yPixel: Int
+    ): (Double, Double) =
+      val x = xPixel.toDouble
+      val y = yPixel.toDouble
+      val warpX =
+        math.sin(y * frequencyBase + phaseA) * 0.60 +
+          math.sin((x + y) * (frequencyBase * 0.63) + phaseB) * 0.30 +
+          math.sin(y * (frequencyBase * 1.37) + phaseC) * 0.10
+      val warpY =
+        math.sin(x * (frequencyBase * 0.89) + phaseB) * 0.60 +
+          math.sin((x - y) * (frequencyBase * 0.71) + phaseC) * 0.30 +
+          math.sin(x * (frequencyBase * 1.41) + phaseA) * 0.10
+      (
+        x + warpX * warpAmplitudePixels,
+        y + warpY * warpAmplitudePixels
+      )
+
     val provinceIdentifierByPixel = Array.ofDim[Int](widthPixels * heightPixels)
     var yPixel = 0
     while yPixel < heightPixels do
       var xPixel = 0
       while xPixel < widthPixels do
+        val (warpedX, warpedY) = warpedCoordinate(xPixel, yPixel)
         var bestDistance = Double.MaxValue
         var bestProvinceIdentifier = 0
         var seedIndex = 0
         while seedIndex < provinceSeeds.length do
           val provinceSeed = provinceSeeds(seedIndex)
           val distance = wrappedSquaredDistance(
-            xPixel.toDouble,
-            yPixel.toDouble,
+            warpedX,
+            warpedY,
             provinceSeed.xPixel,
             provinceSeed.yPixel,
             widthPixels,

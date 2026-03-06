@@ -83,8 +83,8 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
       .orElse(passThroughDirectives.collectFirst { case mapSizePixels: MapSizePixels => mapSizePixels })
       .orElse(layer.state.size.map { stateSize =>
         MapSizePixels(
-          MapWidthPixels(stateSize.value * 256),
-          MapHeightPixels(stateSize.value * 160)
+          MapWidthPixels(stateSize.width.value * 256),
+          MapHeightPixels(stateSize.height.value * 160)
         )
       })
       .orElse(inferMapSizePixelsFromProvinceRuns(provinceRuns))

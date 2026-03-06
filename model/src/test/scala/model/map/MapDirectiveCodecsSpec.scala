@@ -10,7 +10,7 @@ import MapDirectiveCodecs.Encoder
 object MapDirectiveCodecsSpec extends SimpleIOSuite:
   test("encodes map state to directives") {
     val state = MapState(
-      size = MapSize.from(5).toOption,
+      size = MapDimensions.from(5, 5).toOption,
       adjacency = Vector(
         (ProvinceId(3), ProvinceId(4)),
         (ProvinceId(5), ProvinceId(6)),

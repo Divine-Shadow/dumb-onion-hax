@@ -19,10 +19,11 @@ object ProvinceLocationGridPrinter:
           case None       => concurrent.unit
       }
 
-  def render[F[_]: Applicative](size: MapSize, locations: ProvinceLocations, printer: Printer[F]): F[Unit] =
-    val side = size.value
-    val lines = (0 until side).toVector.map { y =>
-      (0 until side).toVector
+  def render[F[_]: Applicative](size: MapDimensions, locations: ProvinceLocations, printer: Printer[F]): F[Unit] =
+    val width = size.width.value
+    val height = size.height.value
+    val lines = (0 until height).toVector.map { y =>
+      (0 until width).toVector
         .map { x =>
           val loc = ProvinceLocation(XCell(x), YCell(y))
           locations.provinceIdAt(loc).fold(".")(_.value.toString)

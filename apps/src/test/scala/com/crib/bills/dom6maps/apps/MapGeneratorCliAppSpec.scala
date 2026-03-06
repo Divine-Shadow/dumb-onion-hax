@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorGeometryConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, MapScenarioPlayerConfig, MapScenarioPointConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.{Nation, ProvinceId}
 import model.map.{ThroneLevel, WrapState}
 import model.map.generation.{AllocationGenerationPolicy, BorderSpecGenerationPolicy, PlayerStartAssignment, TerrainImageVariantPolicy}
@@ -203,6 +203,39 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     )
 
     IO(expect(parsed == Right(AllocationGenerationPolicy.Disabled)))
+  }
+
+  test("parses map dimensions from square map-size") {
+    val parsed = MapGeneratorCliApp.parseMapDimensionsForTest(
+      MapGeneratorGeometryConfig(
+        mapSize = Some(8),
+        xSize = None,
+        ySize = None,
+        provinceCount = 80,
+        wrapState = "full",
+        seed = Some(42L),
+        seaRatio = 0.3,
+        noiseScale = 1.0,
+        gridJitter = 0.5
+      )
+    )
+
+    IO(expect(parsed.exists(dimensions => dimensions.width.value == 8 && dimensions.height.value == 8)))
+  }
+
+  test("parses scenario player start locations") {
+    val parsed = MapGeneratorCliApp.parseScenarioPlayerStartLocationsForTest(
+      Vector(
+        MapScenarioPlayerConfig(
+          nationId = 56,
+          profileEnvironment = Some("surface"),
+          surfaceStart = Some(MapScenarioPointConfig(3, 2)),
+          undergroundStart = None
+        )
+      )
+    )
+
+    IO(expect(parsed.isRight))
   }
 
   private def parseDefaultTerrainDistribution() =
