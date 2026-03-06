@@ -20,7 +20,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO],
-      new ThronePlacementServiceImpl[IO]
+      new ThronePlacementServiceImpl[IO],
+      new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -44,9 +45,10 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
       outputMapPath <- IO.fromEither(result)
       directives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
+      bundleDirectory = outputDirectory.resolve("generated_example")
     yield expect.all(
-      JavaFiles.exists(outputDirectory.resolve("generated_example.map")),
-      JavaFiles.exists(outputDirectory.resolve("generated_example.tga")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_example.map")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_example.tga")),
       directives.exists { case ImageFile("generated_example.tga") => true; case _ => false },
       directives.exists { case _: Pb => true; case _ => false },
       directives.exists { case _: NeighbourSpec => true; case _ => false }
@@ -60,7 +62,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO],
-      new ThronePlacementServiceImpl[IO]
+      new ThronePlacementServiceImpl[IO],
+      new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -84,9 +87,10 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
       outputMapPath <- IO.fromEither(result)
       directives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
+      bundleDirectory = outputDirectory.resolve("generated_winter")
     yield expect.all(
       directives.exists { case WinterImageFile("generated_winter_winter.tga") => true; case _ => false },
-      JavaFiles.exists(outputDirectory.resolve("generated_winter_winter.tga"))
+      JavaFiles.exists(bundleDirectory.resolve("generated_winter_winter.tga"))
     )
   }
 
@@ -97,7 +101,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO],
-      new ThronePlacementServiceImpl[IO]
+      new ThronePlacementServiceImpl[IO],
+      new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -130,7 +135,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
       outputMapPath <- IO.fromEither(result)
       surfaceDirectives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
-      undergroundPath = outputDirectory.resolve("generated_pair_plane2.map")
+      bundleDirectory = outputDirectory.resolve("generated_pair")
+      undergroundPath = bundleDirectory.resolve("generated_pair_plane2.map")
       undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
       undergroundTerrains = undergroundDirectives.collect { case terrain: Terrain => terrain }
       undergroundHasFreshWater = undergroundTerrains.exists(terrain => (terrain.mask & TerrainFlag.FreshWater.mask) != 0L)
@@ -167,10 +173,10 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
         (terrain.mask & TerrainFlag.Cave.mask) != 0L || (terrain.mask & TerrainFlag.CaveWall.mask) != 0L
       }
     yield expect.all(
-      JavaFiles.exists(outputDirectory.resolve("generated_pair.map")),
-      JavaFiles.exists(outputDirectory.resolve("generated_pair.tga")),
-      JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.map")),
-      JavaFiles.exists(outputDirectory.resolve("generated_pair_plane2.tga")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_pair.map")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_pair.tga")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_pair_plane2.map")),
+      JavaFiles.exists(bundleDirectory.resolve("generated_pair_plane2.tga")),
       undergroundDirectives.exists { case PlaneName("The Underworld") => true; case _ => false },
       undergroundTerrains.nonEmpty,
       surfaceThroneFeatures == 0,
@@ -199,7 +205,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO],
-      new ThronePlacementServiceImpl[IO]
+      new ThronePlacementServiceImpl[IO],
+      new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -255,7 +262,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       new MapWriterImpl[IO],
       new MapImageWriterImpl[IO],
       new TerrainImageVariantServiceImpl[IO],
-      new ThronePlacementServiceImpl[IO]
+      new ThronePlacementServiceImpl[IO],
+      new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     val request = MapGenerationRequest(
@@ -287,7 +295,8 @@ object MapGenerationServiceSpec extends SimpleIOSuite:
       result <- service.generate[ErrorOr](request, Path.fromNioPath(outputDirectory))
       outputMapPath <- IO.fromEither(result)
       surfaceDirectives <- MapFileParser.parseFile[IO](outputMapPath).compile.toVector
-      undergroundPath = outputDirectory.resolve("generated_nations_plane2.map")
+      bundleDirectory = outputDirectory.resolve("generated_nations")
+      undergroundPath = bundleDirectory.resolve("generated_nations_plane2.map")
       undergroundDirectives <- MapFileParser.parseFile[IO](Path.fromNioPath(undergroundPath)).compile.toVector
     yield expect.all(
       surfaceDirectives.contains(AllowedPlayer(Nation.Pythium_Middle)),

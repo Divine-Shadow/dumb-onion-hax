@@ -120,6 +120,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     mapImageWriter: MapImageWriter[Sequencer],
     terrainImageVariantService: TerrainImageVariantService[Sequencer],
     thronePlacementService: ThronePlacementService[Sequencer],
+    mapGenerationDiagnosticsWriter: MapGenerationDiagnosticsWriter[Sequencer],
     allocationPartitionService: AllocationPartitionService = new AllocationPartitionServiceImpl,
     allottedProvinceService: AllottedProvinceService = new AllottedProvinceServiceImpl,
     allocationTerrainService: AllocationTerrainService = new AllocationTerrainServiceImpl
@@ -135,10 +136,11 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       case Left(error) =>
         summon[Async[Sequencer]].pure(errorChannel.raiseError[Path](error))
       case Right(_) =>
-        val outputMapPath = outputDirectory / s"${request.mapName}.map"
-        val outputImagePath = outputDirectory / s"${request.mapName}.tga"
-        val outputUndergroundMapPath = outputDirectory / s"${request.mapName}_plane2.map"
-        val outputUndergroundImagePath = outputDirectory / s"${request.mapName}_plane2.tga"
+        val outputBundleDirectory = resolveOutputBundleDirectory(outputDirectory, request.mapName)
+        val outputMapPath = outputBundleDirectory / s"${request.mapName}.map"
+        val outputImagePath = outputBundleDirectory / s"${request.mapName}.tga"
+        val outputUndergroundMapPath = outputBundleDirectory / s"${request.mapName}_plane2.map"
+        val outputUndergroundImagePath = outputBundleDirectory / s"${request.mapName}_plane2.tga"
         for
           generatedGeometryErrorChannel <- mapGeometryGenerator.generate[ErrorChannel](request.geometryInput)
           nestedResult <- generatedGeometryErrorChannel.traverse { generatedGeometry =>
@@ -157,7 +159,10 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
               terrainBorderConsistentGeometry.provincePixelRuns,
               request.geometryInput.mapDimensions
             )
-            resolveCombinedPlayerStarts(request, generatedGeometry.provinceCentroids, provinceIdByCell) match
+            val terrainMaskByProvince = terrainBorderConsistentGeometry.terrainByProvince
+              .map(terrain => terrain.province -> terrain.mask)
+              .toMap
+            resolveCombinedPlayerStarts(request, generatedGeometry.provinceCentroids, provinceIdByCell, terrainMaskByProvince) match
               case Left(error) =>
                 summon[Async[Sequencer]].pure(errorChannel.raiseError(error))
               case Right(playerStartsResolved) =>
@@ -216,7 +221,14 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                   nestedWrite <- mapWriteResult.traverse { _ =>
                     for
                       imageWriteResult <- mapImageWriter.writeMainImage[ErrorChannel](surfacedLayer, outputImagePath)
-                      nestedVariants <- imageWriteResult.traverse { _ =>
+                      diagnosticsWriteResult <- imageWriteResult.traverse { _ =>
+                        mapGenerationDiagnosticsWriter.write[ErrorChannel](
+                          surfacedLayer,
+                          request.mapName,
+                          outputBundleDirectory
+                        )
+                      }
+                      nestedVariants <- diagnosticsWriteResult.flatMap(identity).traverse { _ =>
                         terrainImageVariantService.writeVariants[ErrorChannel](
                           surfacedLayer,
                           outputImagePath,
@@ -300,6 +312,16 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
                 yield nestedImage
           }
         yield nestedResult.flatMap(identity)
+
+  private def resolveOutputBundleDirectory(
+      configuredOutputDirectory: Path,
+      mapName: String
+  ): Path =
+    val configuredName = Option(configuredOutputDirectory.toNioPath.getFileName)
+      .map(_.toString)
+      .getOrElse("")
+    if configuredName == mapName then configuredOutputDirectory
+    else configuredOutputDirectory / mapName
 
   private def validateRequest(request: MapGenerationRequest): Either[Throwable, Unit] =
     if request.mapName.trim.isEmpty then Left(IllegalArgumentException("mapName must not be empty"))
@@ -507,20 +529,25 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
   private def resolveCombinedPlayerStarts(
       request: MapGenerationRequest,
       provinceCentroids: Map[ProvinceId, ProvinceLocation],
-      provinceIdByCell: Map[ProvinceLocation, ProvinceId]
+      provinceIdByCell: Map[ProvinceLocation, ProvinceId],
+      terrainMaskByProvince: Map[ProvinceId, Long]
   ): Either[Throwable, Vector[PlayerStartAssignment]] =
     val resolvedFromLocations = request.playerStartLocations.traverse { start =>
       for
         resolvedSurface <- resolveStartProvinceByLocation(
+          start.nation,
           start.surfaceStart,
           provinceIdByCell,
           provinceCentroids,
+          terrainMaskByProvince,
           s"surface start for nation ${start.nation.id}"
         )
         resolvedUnderground <- resolveStartProvinceByLocation(
+          start.nation,
           start.undergroundStart,
           provinceIdByCell,
           provinceCentroids,
+          terrainMaskByProvince,
           s"underground start for nation ${start.nation.id}"
         )
       yield PlayerStartAssignment(
@@ -539,17 +566,22 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     }
 
   private def resolveStartProvinceByLocation(
+      nation: Nation,
       location: Option[ProvinceLocation],
       provinceIdByCell: Map[ProvinceLocation, ProvinceId],
       provinceCentroids: Map[ProvinceId, ProvinceLocation],
+      terrainMaskByProvince: Map[ProvinceId, Long],
       label: String
   ): Either[Throwable, Option[ProvinceId]] =
     location match
       case None => Right(None)
       case Some(value) =>
+        val preferSeaStart = isSeaStartNation(nation)
         provinceIdByCell
           .get(value)
-          .orElse(nearestProvinceIdForLocation(value, provinceCentroids))
+          .filter(provinceId => isProvinceTerrainCompatible(provinceId, terrainMaskByProvince, preferSeaStart))
+          .orElse(nearestCompatibleProvinceIdByCell(value, provinceIdByCell, terrainMaskByProvince, preferSeaStart))
+          .orElse(nearestProvinceIdForLocation(value, provinceCentroids, terrainMaskByProvince, preferSeaStart))
           .map(Some(_))
           .toRight(IllegalArgumentException(s"Could not resolve $label at (${value.x.value}, ${value.y.value}) to a province"))
 
@@ -578,9 +610,14 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
 
   private def nearestProvinceIdForLocation(
       target: ProvinceLocation,
-      provinceCentroids: Map[ProvinceId, ProvinceLocation]
+      provinceCentroids: Map[ProvinceId, ProvinceLocation],
+      terrainMaskByProvince: Map[ProvinceId, Long],
+      preferSeaStart: Boolean
   ): Option[ProvinceId] =
     provinceCentroids.toVector
+      .filter { case (provinceId, _) =>
+        isProvinceTerrainCompatible(provinceId, terrainMaskByProvince, preferSeaStart)
+      }
       .sortBy(_._1.value)
       .minByOption { case (_, location) =>
         val deltaX = location.x.value - target.x.value
@@ -588,6 +625,54 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         (deltaX.toLong * deltaX.toLong) + (deltaY.toLong * deltaY.toLong)
       }
       .map(_._1)
+
+  private def nearestCompatibleProvinceIdByCell(
+      target: ProvinceLocation,
+      provinceIdByCell: Map[ProvinceLocation, ProvinceId],
+      terrainMaskByProvince: Map[ProvinceId, Long],
+      preferSeaStart: Boolean
+  ): Option[ProvinceId] =
+    provinceIdByCell.toVector
+      .filter { case (_, provinceId) =>
+        isProvinceTerrainCompatible(provinceId, terrainMaskByProvince, preferSeaStart)
+      }
+      .sortBy { case (location, provinceId) =>
+        val deltaX = location.x.value - target.x.value
+        val deltaY = location.y.value - target.y.value
+        val manhattan = math.abs(deltaX) + math.abs(deltaY)
+        val squared = (deltaX.toLong * deltaX.toLong) + (deltaY.toLong * deltaY.toLong)
+        (manhattan, squared, provinceId.value)
+      }
+      .headOption
+      .map(_._2)
+
+  private def isProvinceTerrainCompatible(
+      provinceId: ProvinceId,
+      terrainMaskByProvince: Map[ProvinceId, Long],
+      preferSeaStart: Boolean
+  ): Boolean =
+    val terrainMask = TerrainMask(terrainMaskByProvince.getOrElse(provinceId, 0L))
+    val isSea = terrainMask.hasFlag(TerrainFlag.Sea) || terrainMask.hasFlag(TerrainFlag.DeepSea)
+    if preferSeaStart then isSea else !isSea
+
+  private def isSeaStartNation(
+      nation: Nation
+  ): Boolean =
+    nation match
+      case Nation.Pelagia_Early
+          | Nation.Oceania_Early
+          | Nation.Therodos_Early
+          | Nation.Atlantis_Early
+          | Nation.Rlyeh_Early
+          | Nation.Ys_Middle
+          | Nation.Pelagia_Middle
+          | Nation.Oceania_Middle
+          | Nation.Atlantis_Middle
+          | Nation.Rlyeh_Middle
+          | Nation.Atlantis_Late
+          | Nation.Rlyeh_Late
+          | Nation.BantayTubig_Early => true
+      case _ => false
 
   private def nearestProvinceLocation(
       target: ProvinceLocation,

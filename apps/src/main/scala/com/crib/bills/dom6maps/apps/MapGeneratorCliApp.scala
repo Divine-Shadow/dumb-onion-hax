@@ -165,7 +165,8 @@ connection-borders {
       mapWriter,
       mapImageWriter,
       terrainVariants,
-      thronePlacementService
+      thronePlacementService,
+      mapGenerationDiagnosticsWriter = new MapGenerationDiagnosticsWriterImpl[IO]
     )
 
     for
@@ -292,9 +293,9 @@ connection-borders {
       )
       undergroundGenerationMode <- parseScenarioUndergroundModeForTest(scenario.layers)
       allocationGenerationPolicy <- parseAllocationGenerationPolicyForTest(
-        config.allocation.getOrElse(MapGeneratorAllocationConfig.disabled).copy(
-          enabled = true,
-          profileCatalogPath = Some(scenario.allocationProfileCatalogPath)
+        scenarioAllocationConfig(
+          config.allocation.getOrElse(MapGeneratorAllocationConfig.disabled),
+          scenario.allocationProfileCatalogPath
         ),
         terrainDistributionPolicy
       )
@@ -324,6 +325,13 @@ connection-borders {
         playerStartLocations = playerStartLocations,
         allocationGenerationPolicy = allocationGenerationPolicy
       )
+
+  private def scenarioAllocationConfig(
+      config: MapGeneratorAllocationConfig,
+      scenarioCatalogPath: NioPath
+  ): MapGeneratorAllocationConfig =
+    if config.enabled then config.copy(profileCatalogPath = Some(scenarioCatalogPath))
+    else config
 
   private[apps] def loadScenarioCatalogForTest(
       path: NioPath

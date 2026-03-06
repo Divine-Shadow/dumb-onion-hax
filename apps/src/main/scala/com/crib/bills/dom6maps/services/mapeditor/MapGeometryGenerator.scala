@@ -63,13 +63,19 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         input.seed,
         input.noiseScale
       )
-      val remap = remapProvinceIdentifiersByFirstPixelScanOrder(
+      val smoothedProvinceIdentifierByPixel = smoothOwnership(
         widthPixels,
         heightPixels,
         provinceIdentifierByPixel,
+        provinceSeeds,
+        input.wrapState
+      )
+      val remap = remapProvinceIdentifiersByFirstPixelScanOrder(
+        widthPixels,
+        heightPixels,
+        smoothedProvinceIdentifierByPixel,
         input.provinceCount
       )
-      val provinceRuns = buildProvinceRuns(widthPixels, heightPixels, remap.provinceIdentifierByPixel)
       val adjacency = deriveAdjacency(widthPixels, heightPixels, remap.provinceIdentifierByPixel, input.wrapState)
       val terrainByProvince = assignTerrainMasks(input, provinceSeeds, remap.oldIdentifierToNewIdentifier)
       val centroids = deriveCentroids(
@@ -80,9 +86,23 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         provinceSeeds,
         remap.oldIdentifierToNewIdentifier
       )
+      val provinceRuns = buildProvinceRuns(widthPixels, heightPixels, remap.provinceIdentifierByPixel)
+      val ownership = ProvincePixelRasterizer.ProvincePixelOwnership(
+        widthPixels = widthPixels,
+        heightPixels = heightPixels,
+        provinceIdentifierByPixel = remap.provinceIdentifierByPixel
+      )
+      val anchorPixelByProvince = ProvinceAnchorLocator
+        .locateAnchorPixelByProvince(ownership)
+        .map { case (provinceIdentifier, pixelIndex) =>
+          val xPixel = pixelIndex % widthPixels
+          val yPixelTopOrigin = pixelIndex / widthPixels
+          val yPixelBottomOrigin = (heightPixels - 1) - yPixelTopOrigin
+          ProvinceId(provinceIdentifier) -> (xPixel, yPixelBottomOrigin)
+        }
       Right(
         GeneratedGeometry(
-          provincePixelRuns = provinceRuns,
+          provincePixelRuns = prependAnchorPixels(provinceRuns, anchorPixelByProvince),
           adjacency = adjacency,
           borders = Vector.empty[Border],
           terrainByProvince = terrainByProvince,
@@ -188,52 +208,50 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       noiseScale: Double
   ): Array[Int] =
     val clampedNoiseScale = math.max(0.25, math.min(4.0, noiseScale))
-    val warpAmplitudePixels = 14.0 * clampedNoiseScale
-    val phaseA = (splitMix64(seed ^ 0x9e3779b97f4a7c15L) & 0xffff).toDouble / 32768.0
-    val phaseB = (splitMix64(seed ^ 0xbf58476d1ce4e5b9L) & 0xffff).toDouble / 32768.0
-    val phaseC = (splitMix64(seed ^ 0x94d049bb133111ebL) & 0xffff).toDouble / 32768.0
-
-    def warpedCoordinate(
-        xPixel: Int,
-        yPixel: Int
-    ): (Double, Double) =
-      val x = xPixel.toDouble
-      val y = yPixel.toDouble
-      val angleX = 2.0 * math.Pi * x / widthPixels.toDouble
-      val angleY = 2.0 * math.Pi * y / heightPixels.toDouble
-      val warpX =
-        math.sin(3.0 * angleY + phaseA) * 0.40 +
-          math.sin(7.0 * angleX + 5.0 * angleY + phaseB) * 0.40 +
-          math.sin(13.0 * angleX - 2.0 * angleY + phaseC) * 0.20
-      val warpY =
-        math.sin(3.0 * angleX + phaseB) * 0.40 +
-          math.sin(5.0 * angleY + 4.0 * angleX + phaseC) * 0.40 +
-          math.sin(11.0 * angleY - 3.0 * angleX + phaseA) * 0.20
-      (
-        x + warpX * warpAmplitudePixels,
-        y + warpY * warpAmplitudePixels
-      )
+    val boundaryNoiseAmplitude = 70.0 * clampedNoiseScale
+    val boundaryNoiseFrequency = 0.14 / clampedNoiseScale
 
     val provinceIdentifierByPixel = Array.ofDim[Int](widthPixels * heightPixels)
     var yPixel = 0
     while yPixel < heightPixels do
       var xPixel = 0
       while xPixel < widthPixels do
-        val (warpedX, warpedY) = warpedCoordinate(xPixel, yPixel)
         var bestDistance = Double.MaxValue
         var bestProvinceIdentifier = 0
         var seedIndex = 0
         while seedIndex < provinceSeeds.length do
           val provinceSeed = provinceSeeds(seedIndex)
-          val distance = wrappedSquaredDistance(
-            warpedX,
-            warpedY,
+          val baseDistance = wrappedSquaredDistance(
+            xPixel.toDouble,
+            yPixel.toDouble,
             provinceSeed.xPixel,
             provinceSeed.yPixel,
             widthPixels,
             heightPixels,
             wrapState
           )
+          val relativeDeltaX = wrappedDeltaSigned(
+            xPixel.toDouble,
+            provinceSeed.xPixel,
+            widthPixels,
+            wrapState == WrapState.HorizontalWrap || wrapState == WrapState.FullWrap
+          )
+          val relativeDeltaY = wrappedDeltaSigned(
+            yPixel.toDouble,
+            provinceSeed.yPixel,
+            heightPixels,
+            wrapState == WrapState.VerticalWrap || wrapState == WrapState.FullWrap
+          )
+          val relativeRadius = math.sqrt(relativeDeltaX * relativeDeltaX + relativeDeltaY * relativeDeltaY)
+          val relativeAngle = math.atan2(relativeDeltaY, relativeDeltaX)
+          val provincePhase = (splitMix64(seed + provinceSeed.provinceId.value.toLong * 0x9e3779b97f4a7c15L) & 0xffff).toDouble / 4096.0
+          val radiusFactor = math.min(1.0, relativeRadius / 72.0)
+          val boundaryNoise =
+            (math.sin(relativeAngle * 7.0 + relativeRadius * boundaryNoiseFrequency + provincePhase) * 0.60 +
+              math.sin(relativeAngle * 11.0 - relativeRadius * boundaryNoiseFrequency * 0.7 + provincePhase * 1.7) * 0.40) *
+              boundaryNoiseAmplitude *
+              radiusFactor
+          val distance = baseDistance + boundaryNoise
           if distance < bestDistance then
             bestDistance = distance
             bestProvinceIdentifier = provinceSeed.provinceId.value
@@ -264,6 +282,19 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         case _ => deltaY
     wrappedDeltaX * wrappedDeltaX + wrappedDeltaY * wrappedDeltaY
 
+  private def wrappedDeltaSigned(
+      source: Double,
+      target: Double,
+      sizePixels: Int,
+      wrapEnabled: Boolean
+  ): Double =
+    val direct = source - target
+    if !wrapEnabled then direct
+    else
+      val minusWrap = direct - sizePixels.toDouble
+      val plusWrap = direct + sizePixels.toDouble
+      Vector(direct, minusWrap, plusWrap).minBy(delta => math.abs(delta))
+
   private def buildProvinceRuns(
       widthPixels: Int,
       heightPixels: Int,
@@ -293,6 +324,362 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         xPixel += 1
       yPixel += 1
     result.result()
+
+  private def buildAnchorPreludeRuns(
+      provinceRuns: Vector[Pb]
+  ): Vector[Pb] =
+    provinceRuns
+      .groupBy(_.province)
+      .toVector
+      .sortBy(_._1.value)
+      .flatMap { case (provinceId, runsForProvince) =>
+        runsForProvince
+          .sortBy(run => (-run.length, run.y, run.x))
+          .headOption
+          .map { run =>
+            val anchorX = run.x + (run.length / 2)
+            Pb(anchorX, run.y, 1, provinceId)
+          }
+      }
+
+  private def prependAnchorPixels(
+      provinceRuns: Vector[Pb],
+      anchorPixelByProvince: Map[ProvinceId, (Int, Int)]
+  ): Vector[Pb] =
+    val anchorRuns =
+      anchorPixelByProvince.toVector
+        .sortBy(_._1.value)
+        .map { case (provinceId, (xPixel, yPixelBottomOrigin)) =>
+          Pb(xPixel, yPixelBottomOrigin, 1, provinceId)
+        }
+    anchorRuns ++ provinceRuns
+
+  private def selectAnchorPixelByProvince(
+      widthPixels: Int,
+      heightPixels: Int,
+      provinceIdentifierByPixel: Array[Int],
+      centroids: Map[ProvinceId, ProvinceLocation],
+      wrapState: WrapState
+  ): Map[ProvinceId, (Int, Int)] =
+    final case class Candidate(xPixel: Int, yPixelBottomOrigin: Int, distanceScore: Long)
+
+    def centroidPixelFor(provinceId: ProvinceId): (Int, Int) =
+      centroids.get(provinceId) match
+        case Some(location) =>
+          (location.x.value * 256 + 128, location.y.value * 160 + 80)
+        case None =>
+          (widthPixels / 2, heightPixels / 2)
+
+    def wrapX(xPixel: Int): Option[Int] =
+      if xPixel >= 0 && xPixel < widthPixels then Some(xPixel)
+      else if wrapState == WrapState.HorizontalWrap || wrapState == WrapState.FullWrap then
+        Some((xPixel % widthPixels + widthPixels) % widthPixels)
+      else None
+
+    def wrapY(yPixel: Int): Option[Int] =
+      if yPixel >= 0 && yPixel < heightPixels then Some(yPixel)
+      else if wrapState == WrapState.VerticalWrap || wrapState == WrapState.FullWrap then
+        Some((yPixel % heightPixels + heightPixels) % heightPixels)
+      else None
+
+    def ownerAt(xPixel: Int, yPixel: Int): Option[Int] =
+      for
+        resolvedX <- wrapX(xPixel)
+        resolvedY <- wrapY(yPixel)
+      yield provinceIdentifierByPixel(resolvedY * widthPixels + resolvedX)
+
+    def isInteriorPixel(xPixel: Int, yPixel: Int, provinceIdentifier: Int): Boolean =
+      val neighborOffsets = Vector((0, -1), (0, 1), (-1, 0), (1, 0))
+      neighborOffsets.forall { case (xOffset, yOffset) =>
+        ownerAt(xPixel + xOffset, yPixel + yOffset).contains(provinceIdentifier)
+      }
+
+    val bestInterior = mutable.HashMap.empty[Int, Candidate]
+    val bestAny = mutable.HashMap.empty[Int, Candidate]
+
+    var yPixel = 0
+    while yPixel < heightPixels do
+      var xPixel = 0
+      while xPixel < widthPixels do
+        val provinceIdentifier = provinceIdentifierByPixel(yPixel * widthPixels + xPixel)
+        val provinceId = ProvinceId(provinceIdentifier)
+        val (centroidXPixel, centroidYPixel) = centroidPixelFor(provinceId)
+        val deltaX = xPixel - centroidXPixel
+        val deltaY = yPixel - centroidYPixel
+        val distanceScore = deltaX.toLong * deltaX.toLong + deltaY.toLong * deltaY.toLong
+        val yBottom = (heightPixels - 1) - yPixel
+        val candidate = Candidate(xPixel, yBottom, distanceScore)
+
+        val existingAny = bestAny.get(provinceIdentifier)
+        if existingAny.forall(_.distanceScore > distanceScore) then
+          bestAny.update(provinceIdentifier, candidate)
+
+        if isInteriorPixel(xPixel, yPixel, provinceIdentifier) then
+          val existingInterior = bestInterior.get(provinceIdentifier)
+          if existingInterior.forall(_.distanceScore > distanceScore) then
+            bestInterior.update(provinceIdentifier, candidate)
+        xPixel += 1
+      yPixel += 1
+
+    centroids.keys.toVector.flatMap { provinceId =>
+      val identifier = provinceId.value
+      bestInterior
+        .get(identifier)
+        .orElse(bestAny.get(identifier))
+        .map(candidate => provinceId -> (candidate.xPixel, candidate.yPixelBottomOrigin))
+    }.toMap
+
+  private def enforceSeedCoreOwnership(
+      widthPixels: Int,
+      heightPixels: Int,
+      ownershipByPixel: Array[Int],
+      provinceSeeds: Vector[ProvinceSeed],
+      wrapState: WrapState
+  ): Array[Int] =
+    val result = ownershipByPixel.clone()
+    val coreRadiusPixels = 20
+    val coreRadiusSquared = coreRadiusPixels * coreRadiusPixels
+
+    def wrapCoordinate(value: Int, size: Int): Int =
+      ((value % size) + size) % size
+
+    def resolveX(xPixel: Int): Option[Int] =
+      if xPixel >= 0 && xPixel < widthPixels then Some(xPixel)
+      else if wrapState == WrapState.HorizontalWrap || wrapState == WrapState.FullWrap then
+        Some(wrapCoordinate(xPixel, widthPixels))
+      else None
+
+    def resolveY(yPixel: Int): Option[Int] =
+      if yPixel >= 0 && yPixel < heightPixels then Some(yPixel)
+      else if wrapState == WrapState.VerticalWrap || wrapState == WrapState.FullWrap then
+        Some(wrapCoordinate(yPixel, heightPixels))
+      else None
+
+    def ownerAt(xPixel: Int, yPixel: Int): Option[Int] =
+      for
+        resolvedX <- resolveX(xPixel)
+        resolvedY <- resolveY(yPixel)
+      yield result(resolvedY * widthPixels + resolvedX)
+
+    def localInteriorDepth(xPixel: Int, yPixel: Int, provinceIdentifier: Int): Int =
+      val maxRadius = 12
+      var radius = 1
+      var accepted = 0
+      while radius <= maxRadius do
+        val checks = Vector(
+          (xPixel - radius, yPixel),
+          (xPixel + radius, yPixel),
+          (xPixel, yPixel - radius),
+          (xPixel, yPixel + radius),
+          (xPixel - radius, yPixel - radius),
+          (xPixel + radius, yPixel - radius),
+          (xPixel - radius, yPixel + radius),
+          (xPixel + radius, yPixel + radius)
+        )
+        val allSameProvince = checks.forall { case (candidateX, candidateY) =>
+          ownerAt(candidateX, candidateY).contains(provinceIdentifier)
+        }
+        if allSameProvince then
+          accepted = radius
+          radius += 1
+        else
+          radius = maxRadius + 1
+      accepted
+
+    def climbToInteriorAnchor(
+        seedX: Int,
+        seedY: Int,
+        provinceIdentifier: Int
+    ): (Int, Int) =
+      val candidateOffsets = Vector(
+        (-1, -1), (0, -1), (1, -1),
+        (-1, 0),           (1, 0),
+        (-1, 1),  (0, 1),  (1, 1)
+      )
+      var currentX = seedX
+      var currentY = seedY
+      var steps = 0
+      while steps < 64 do
+        val currentDepth = localInteriorDepth(currentX, currentY, provinceIdentifier)
+        var bestX = currentX
+        var bestY = currentY
+        var bestDepth = currentDepth
+        candidateOffsets.foreach { case (xOffset, yOffset) =>
+          val neighborX = currentX + xOffset
+          val neighborY = currentY + yOffset
+          val resolvedNeighbor =
+            for
+              resolvedX <- resolveX(neighborX)
+              resolvedY <- resolveY(neighborY)
+            yield (resolvedX, resolvedY)
+          resolvedNeighbor match
+            case Some((resolvedX, resolvedY)) if ownerAt(resolvedX, resolvedY).contains(provinceIdentifier) =>
+              val neighborDepth = localInteriorDepth(resolvedX, resolvedY, provinceIdentifier)
+              if neighborDepth > bestDepth then
+                bestX = resolvedX
+                bestY = resolvedY
+                bestDepth = neighborDepth
+            case _ => ()
+        }
+        if bestX == currentX && bestY == currentY then
+          steps = 64
+        else
+          currentX = bestX
+          currentY = bestY
+          steps += 1
+      (currentX, currentY)
+
+    provinceSeeds.foreach { provinceSeed =>
+      val centerX = math.max(0, math.min(widthPixels - 1, math.round(provinceSeed.xPixel).toInt))
+      val centerY = math.max(0, math.min(heightPixels - 1, math.round(provinceSeed.yPixel).toInt))
+      val (anchorX, anchorY) = climbToInteriorAnchor(centerX, centerY, provinceSeed.provinceId.value)
+      var yOffset = -coreRadiusPixels
+      while yOffset <= coreRadiusPixels do
+        var xOffset = -coreRadiusPixels
+        while xOffset <= coreRadiusPixels do
+          if xOffset * xOffset + yOffset * yOffset <= coreRadiusSquared then
+            val candidateX = anchorX + xOffset
+            val candidateY = anchorY + yOffset
+            val resolvedX = resolveX(candidateX)
+            val resolvedY = resolveY(candidateY)
+            (resolvedX, resolvedY) match
+              case (Some(xPixel), Some(yPixel)) =>
+                result(yPixel * widthPixels + xPixel) = provinceSeed.provinceId.value
+              case _ => ()
+          xOffset += 1
+        yOffset += 1
+    }
+    result
+
+  private def enforceCentroidCoreOwnership(
+      widthPixels: Int,
+      heightPixels: Int,
+      ownershipByPixel: Array[Int],
+      wrapState: WrapState
+  ): Array[Int] =
+    val result = ownershipByPixel.clone()
+    val maxProvinceIdentifier = result.foldLeft(0)(math.max)
+    if maxProvinceIdentifier <= 0 then result
+    else
+      val counts = Array.fill[Long](maxProvinceIdentifier + 1)(0L)
+      val sumX = Array.fill[Long](maxProvinceIdentifier + 1)(0L)
+      val sumY = Array.fill[Long](maxProvinceIdentifier + 1)(0L)
+
+      var yPixel = 0
+      while yPixel < heightPixels do
+        var xPixel = 0
+        while xPixel < widthPixels do
+          val provinceIdentifier = result(yPixel * widthPixels + xPixel)
+          if provinceIdentifier > 0 then
+            counts(provinceIdentifier) += 1L
+            sumX(provinceIdentifier) += xPixel.toLong
+            sumY(provinceIdentifier) += yPixel.toLong
+          xPixel += 1
+        yPixel += 1
+
+      val coreRadiusPixels = 12
+      val coreRadiusSquared = coreRadiusPixels * coreRadiusPixels
+
+      def wrapCoordinate(value: Int, size: Int): Int =
+        ((value % size) + size) % size
+
+      def resolveX(xPixel: Int): Option[Int] =
+        if xPixel >= 0 && xPixel < widthPixels then Some(xPixel)
+        else if wrapState == WrapState.HorizontalWrap || wrapState == WrapState.FullWrap then
+          Some(wrapCoordinate(xPixel, widthPixels))
+        else None
+
+      def resolveY(yPixel: Int): Option[Int] =
+        if yPixel >= 0 && yPixel < heightPixels then Some(yPixel)
+        else if wrapState == WrapState.VerticalWrap || wrapState == WrapState.FullWrap then
+          Some(wrapCoordinate(yPixel, heightPixels))
+        else None
+
+      var provinceIdentifier = 1
+      while provinceIdentifier <= maxProvinceIdentifier do
+        val count = counts(provinceIdentifier)
+        if count > 0 then
+          val centerX = math.round(sumX(provinceIdentifier).toDouble / count.toDouble).toInt
+          val centerY = math.round(sumY(provinceIdentifier).toDouble / count.toDouble).toInt
+          var yOffset = -coreRadiusPixels
+          while yOffset <= coreRadiusPixels do
+            var xOffset = -coreRadiusPixels
+            while xOffset <= coreRadiusPixels do
+              if xOffset * xOffset + yOffset * yOffset <= coreRadiusSquared then
+                val candidateX = centerX + xOffset
+                val candidateY = centerY + yOffset
+                val resolvedX = resolveX(candidateX)
+                val resolvedY = resolveY(candidateY)
+                (resolvedX, resolvedY) match
+                  case (Some(xResolved), Some(yResolved)) =>
+                    result(yResolved * widthPixels + xResolved) = provinceIdentifier
+                  case _ => ()
+              xOffset += 1
+            yOffset += 1
+        provinceIdentifier += 1
+
+      result
+
+  private def smoothOwnership(
+      widthPixels: Int,
+      heightPixels: Int,
+      ownershipByPixel: Array[Int],
+      provinceSeeds: Vector[ProvinceSeed],
+      wrapState: WrapState
+  ): Array[Int] =
+    val seedCoordinates = provinceSeeds.map { provinceSeed =>
+      val xPixel = math.max(0, math.min(widthPixels - 1, math.round(provinceSeed.xPixel).toInt))
+      val yPixel = math.max(0, math.min(heightPixels - 1, math.round(provinceSeed.yPixel).toInt))
+      (xPixel, yPixel)
+    }.toSet
+
+    def wrapX(xPixel: Int): Option[Int] =
+      if xPixel >= 0 && xPixel < widthPixels then Some(xPixel)
+      else if wrapState == WrapState.HorizontalWrap || wrapState == WrapState.FullWrap then
+        Some((xPixel % widthPixels + widthPixels) % widthPixels)
+      else None
+
+    def wrapY(yPixel: Int): Option[Int] =
+      if yPixel >= 0 && yPixel < heightPixels then Some(yPixel)
+      else if wrapState == WrapState.VerticalWrap || wrapState == WrapState.FullWrap then
+        Some((yPixel % heightPixels + heightPixels) % heightPixels)
+      else None
+
+    var current = ownershipByPixel.clone()
+    val neighborOffsets = Vector(
+      (-1, -1), (0, -1), (1, -1),
+      (-1, 0),           (1, 0),
+      (-1, 1),  (0, 1),  (1, 1)
+    )
+    var pass = 0
+    while pass < 2 do
+      val next = current.clone()
+      var yPixel = 0
+      while yPixel < heightPixels do
+        var xPixel = 0
+        while xPixel < widthPixels do
+          if !seedCoordinates.contains((xPixel, yPixel)) then
+            val centerOwner = current(yPixel * widthPixels + xPixel)
+            val neighborCounts = scala.collection.mutable.HashMap.empty[Int, Int]
+            neighborOffsets.foreach { case (xOffset, yOffset) =>
+              val wrappedX = wrapX(xPixel + xOffset)
+              val wrappedY = wrapY(yPixel + yOffset)
+              (wrappedX, wrappedY) match
+                case (Some(resolvedX), Some(resolvedY)) =>
+                  val owner = current(resolvedY * widthPixels + resolvedX)
+                  neighborCounts.update(owner, neighborCounts.getOrElse(owner, 0) + 1)
+                case _ => ()
+            }
+            val bestNeighborOwner = neighborCounts.toVector.sortBy { case (owner, count) => (-count, owner) }.headOption
+            bestNeighborOwner match
+              case Some((owner, count)) if owner != centerOwner && count >= 5 =>
+                next(yPixel * widthPixels + xPixel) = owner
+              case _ => ()
+          xPixel += 1
+        yPixel += 1
+      current = next
+      pass += 1
+    current
 
   private def deriveAdjacency(
       widthPixels: Int,
