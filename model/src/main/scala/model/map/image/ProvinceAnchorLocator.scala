@@ -3,7 +3,7 @@ package model.map.image
 
 object ProvinceAnchorLocator:
   private final case class Candidate(
-      preferInterior: Int,
+      boundaryClearance: Int,
       squaredDistance: Double,
       pixelIndex: Int
   )
@@ -50,7 +50,7 @@ object ProvinceAnchorLocator:
             val deltaY = yPixel.toDouble - centroidY(identifier)
             val squaredDistance = deltaX * deltaX + deltaY * deltaY
             val candidate = Candidate(
-              preferInterior = if isInteriorPixel(ownership, xPixel, yPixel, identifier) then 0 else 1,
+              boundaryClearance = boundaryClearance(ownership, xPixel, yPixel, identifier),
               squaredDistance = squaredDistance,
               pixelIndex = yPixel * ownership.widthPixels + xPixel
             )
@@ -68,20 +68,36 @@ object ProvinceAnchorLocator:
         .toMap
 
   private def isBetter(candidate: Candidate, existing: Candidate): Boolean =
-    if candidate.preferInterior != existing.preferInterior then candidate.preferInterior < existing.preferInterior
+    if candidate.boundaryClearance != existing.boundaryClearance then candidate.boundaryClearance > existing.boundaryClearance
     else if candidate.squaredDistance != existing.squaredDistance then candidate.squaredDistance < existing.squaredDistance
     else candidate.pixelIndex < existing.pixelIndex
 
-  private def isInteriorPixel(
+  private def boundaryClearance(
       ownership: ProvincePixelRasterizer.ProvincePixelOwnership,
       xPixel: Int,
       yPixel: Int,
       provinceIdentifier: Int
-  ): Boolean =
-    sameProvinceAt(ownership, xPixel - 1, yPixel, provinceIdentifier) &&
-      sameProvinceAt(ownership, xPixel + 1, yPixel, provinceIdentifier) &&
-      sameProvinceAt(ownership, xPixel, yPixel - 1, provinceIdentifier) &&
-      sameProvinceAt(ownership, xPixel, yPixel + 1, provinceIdentifier)
+  ): Int =
+    val directions = Vector(
+      (-1, 0), (1, 0), (0, -1), (0, 1),
+      (-1, -1), (1, -1), (-1, 1), (1, 1)
+    )
+    val maxRadius = 12
+    var radius = 0
+    var continue = true
+    while continue && radius < maxRadius do
+      val nextRadius = radius + 1
+      val nextRingInside = directions.forall { case (xDirection, yDirection) =>
+        sameProvinceAt(
+          ownership,
+          xPixel + xDirection * nextRadius,
+          yPixel + yDirection * nextRadius,
+          provinceIdentifier
+        )
+      }
+      if nextRingInside then radius = nextRadius
+      else continue = false
+    radius
 
   private def sameProvinceAt(
       ownership: ProvincePixelRasterizer.ProvincePixelOwnership,
