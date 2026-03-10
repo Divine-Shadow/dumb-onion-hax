@@ -47,6 +47,10 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       val widthPixels = input.mapDimensions.width.value * 256
       val heightPixels = input.mapDimensions.height.value * 160
       val random = Random(input.seed)
+      // Generate province ownership in unwrapped raster space to avoid seam-split provinces
+      // on wrapped maps. Dominions center placement behaves poorly when a province is split
+      // into disjoint components across the wrap seam.
+      val ownershipWrapState = WrapState.NoWrap
       val provinceSeeds = generateSeeds(
         widthPixels,
         heightPixels,
@@ -59,7 +63,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         widthPixels,
         heightPixels,
         provinceSeeds,
-        input.wrapState,
+        ownershipWrapState,
         input.seed,
         input.noiseScale
       )
@@ -68,7 +72,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
         heightPixels,
         provinceIdentifierByPixel,
         provinceSeeds,
-        input.wrapState
+        ownershipWrapState
       )
       val remap = remapProvinceIdentifiersByFirstPixelScanOrder(
         widthPixels,
