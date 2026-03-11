@@ -656,7 +656,7 @@ class GridNoiseMapGeometryGeneratorImpl[Sequencer[_]: Async] extends MapGeometry
       (-1, 1),  (0, 1),  (1, 1)
     )
     var pass = 0
-    while pass < 2 do
+    while pass < 1 do
       val next = current.clone()
       var yPixel = 0
       while yPixel < heightPixels do

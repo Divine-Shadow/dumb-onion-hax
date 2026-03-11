@@ -58,10 +58,13 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
 ## Progress
 - [x] Captured regression matrix from user screenshots and notes.
 - [x] Confirmed allocation profile bypass as root contributor for Oceania mismatch.
-- [ ] Add reproducible legacy-vs-current generation presets in repo (config files, not ad-hoc `/tmp` only).
-- [ ] Re-enable allocation policy for Anti-Kaiju scenario with non-empty nation profiles.
-- [ ] Validate scenario starts/thrones resolve to intended cells/provinces in emitted `.map`.
-- [ ] Tune geometry curvature/readability without reintroducing anchor snap.
+- [x] Added checked-in reproducible generation presets:
+  - `data/map-generation/presets/anti_kaiju_current_repro.conf`
+  - `data/map-generation/presets/anti_kaiju_parity_candidate.conf`
+- [x] Re-enabled allocation policy for parity preset with non-empty nation profile catalog.
+- [x] Added exact-first scenario start resolution and exact-province throne resolution path.
+- [x] Added visual readability changes (stronger rivers, seam smoothing) and reduced post-raster smoothing pass count.
+- [x] Generated both preset outputs and validated emitted `.map` invariants by script.
 - [ ] Validate in game with screenshot checklist.
 
 ## Execution Plan
@@ -118,6 +121,20 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
   - Rationale: repeated iterations regressed unrelated behavior.
 - Decision: Preserve anchor fix as non-negotiable baseline.
   - Rationale: center latching bug is resolved and must not return.
+- Decision: Keep throne placement service’s location validation, but resolve configured throne province first and then map to a known valid province location.
+  - Rationale: preserves deterministic scenario targets while remaining compatible with existing `ThronePlacementService` contract.
+- Decision: Use checked-in HOCON presets for reproducibility instead of only temporary runtime config files.
+  - Rationale: removes configuration drift and gives architects/reviewers exact regeneration inputs.
 
 ## Outcomes
-- Pending implementation cycle.
+- Generated parity candidate map:
+  - `C:/Users/Shadow's Throne/AppData/Roaming/Dominions6/maps/anti_kaiju_3p_parity_candidate`
+- Generated current repro map:
+  - `C:/Users/Shadow's Throne/AppData/Roaming/Dominions6/maps/anti_kaiju_3p_current_repro`
+- Scripted validation on parity candidate `.map` shows:
+  - `#hwraparound` map with 54 provinces
+  - no split provinces
+  - 5-row distribution remains populated (`{0:11, 1:11, 2:11, 3:11, 4:10}`)
+  - scenario throne targets resolve to intended top/bottom rows
+  - Oceania (`nation-id=41`) resolves to sea start province in parity preset
+- Remaining work for full parity is visual/gameplay confirmation in client screenshots and further curvature tuning if polygonal look remains too angular.

@@ -878,13 +878,18 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       provinceIdByCell: Map[ProvinceLocation, ProvinceId]
   ): Vector[ThronePlacement] =
     targets.map { target =>
+      val resolvedProvinceId =
+        target.provinceId
+          .orElse(target.location.flatMap(location => provinceIdByCell.get(location)))
       val resolvedLocation =
-        target.location
-          .flatMap(provinceIdByCell.get)
+        resolvedProvinceId
           .flatMap(state.provinceLocations.locationOf)
-          .orElse(target.location)
-          .flatMap(location => nearestProvinceLocation(location, state.provinceLocations))
-          .orElse(target.provinceId.flatMap(state.provinceLocations.locationOf))
+          .orElse(
+            target.location
+              .flatMap(provinceIdByCell.get)
+              .flatMap(state.provinceLocations.locationOf)
+          )
+          .orElse(target.location.flatMap(location => nearestProvinceLocation(location, state.provinceLocations)))
           .getOrElse(ProvinceLocation(XCell(-1), YCell(-1)))
       ThronePlacement(
         location = resolvedLocation,
