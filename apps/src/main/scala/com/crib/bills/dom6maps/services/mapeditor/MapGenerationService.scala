@@ -576,14 +576,19 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     location match
       case None => Right(None)
       case Some(value) =>
-        val preferSeaStart = isSeaStartNation(nation)
-        provinceIdByCell
-          .get(value)
-          .filter(provinceId => isProvinceTerrainCompatible(provinceId, terrainMaskByProvince, preferSeaStart))
-          .orElse(nearestCompatibleProvinceIdByCell(value, provinceIdByCell, terrainMaskByProvince, preferSeaStart))
-          .orElse(nearestProvinceIdForLocation(value, provinceCentroids, terrainMaskByProvince, preferSeaStart))
-          .map(Some(_))
-          .toRight(IllegalArgumentException(s"Could not resolve $label at (${value.x.value}, ${value.y.value}) to a province"))
+        // Scenario/location-based starts are expected to map deterministically to the configured
+        // cell whenever that cell resolves to a province.
+        provinceIdByCell.get(value) match
+          case Some(exactProvinceId) => Right(Some(exactProvinceId))
+          case None =>
+            val preferSeaStart = isSeaStartNation(nation)
+            provinceIdByCell
+              .get(value)
+              .filter(provinceId => isProvinceTerrainCompatible(provinceId, terrainMaskByProvince, preferSeaStart))
+              .orElse(nearestCompatibleProvinceIdByCell(value, provinceIdByCell, terrainMaskByProvince, preferSeaStart))
+              .orElse(nearestProvinceIdForLocation(value, provinceCentroids, terrainMaskByProvince, preferSeaStart))
+              .map(Some(_))
+              .toRight(IllegalArgumentException(s"Could not resolve $label at (${value.x.value}, ${value.y.value}) to a province"))
 
   private def buildProvinceIdByCell(
       provinceRuns: Vector[Pb],

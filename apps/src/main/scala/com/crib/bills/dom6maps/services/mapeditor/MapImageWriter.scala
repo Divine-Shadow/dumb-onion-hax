@@ -6,7 +6,7 @@ import cats.syntax.all.*
 import cats.effect.Async
 import fs2.io.file.{Files, Path}
 import fs2.Stream
-import model.map.{ImageFile, MapDirective, MapLayer, MapSizePixels, MapWidthPixels, MapHeightPixels, Pb}
+import model.map.{ImageFile, MapDirective, MapLayer, MapSizePixels, MapWidthPixels, MapHeightPixels, Pb, WrapState}
 import model.map.image.{
   BorderFlagMapConnectionOverlayPainter,
   MapConnectionOverlayPainter,
@@ -56,11 +56,12 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
       baseImage = mapTerrainPainter.paint(ownership, terrainMaskByProvince)
       overlaidImage = mapConnectionOverlayPainter.paint(baseImage, ownership, layer.state.borders)
       paintedImage = repaintProvinceAnchors(overlaidImage, ownership)
+      seamSmoothedImage = smoothWrapSeam(paintedImage, layer.state.wrap)
       bytes <- sequencer.fromEither(
         TargaImageEncoder.encodeRawBottomLeft24Bit(
-          paintedImage.widthPixels,
-          paintedImage.heightPixels,
-          paintedImage.redGreenBlueBytes
+          seamSmoothedImage.widthPixels,
+          seamSmoothedImage.heightPixels,
+          seamSmoothedImage.redGreenBlueBytes
         )
       )
       _ <- Files[Sequencer].createDirectories(outputImagePath.parent.getOrElse(outputImagePath))
@@ -114,6 +115,39 @@ class MapImageWriterImpl[Sequencer[_]: Async: Files](
       bytes(byteIndex + 2) = anchorColor.blue.toByte
     }
     MapImagePainter.MapImage(image.widthPixels, image.heightPixels, bytes)
+
+  private def smoothWrapSeam(
+      image: MapImagePainter.MapImage,
+      wrapState: WrapState
+  ): MapImagePainter.MapImage =
+    if wrapState != WrapState.HorizontalWrap && wrapState != WrapState.FullWrap then image
+    else
+      val seamBlendWidthPixels = 3
+      val widthPixels = image.widthPixels
+      val heightPixels = image.heightPixels
+      val bytes = image.redGreenBlueBytes.clone()
+
+      var yPixel = 0
+      while yPixel < heightPixels do
+        var seamOffset = 0
+        while seamOffset < seamBlendWidthPixels do
+          val leftXPixel = seamOffset
+          val rightXPixel = widthPixels - 1 - seamOffset
+          if leftXPixel >= 0 && rightXPixel >= 0 && leftXPixel < widthPixels && rightXPixel < widthPixels then
+            val leftPixelByteIndex = (yPixel * widthPixels + leftXPixel) * 3
+            val rightPixelByteIndex = (yPixel * widthPixels + rightXPixel) * 3
+            var colorChannel = 0
+            while colorChannel < 3 do
+              val leftColorValue = bytes(leftPixelByteIndex + colorChannel) & 0xff
+              val rightColorValue = bytes(rightPixelByteIndex + colorChannel) & 0xff
+              val averagedColor = ((leftColorValue + rightColorValue) / 2).toByte
+              bytes(leftPixelByteIndex + colorChannel) = averagedColor
+              bytes(rightPixelByteIndex + colorChannel) = averagedColor
+              colorChannel += 1
+          seamOffset += 1
+        yPixel += 1
+
+      MapImagePainter.MapImage(widthPixels, heightPixels, bytes)
 
 object MapImageWriter:
   def resolveImagePath(

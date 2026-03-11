@@ -256,12 +256,12 @@ object BorderFlagMapConnectionOverlayPainter:
 
   val defaultStyle: ConnectionStyle =
     ConnectionStyle(
-      roadColor = MapImagePainter.RedGreenBlueColor(145, 92, 46),
-      riverColor = MapImagePainter.RedGreenBlueColor(35, 146, 232),
-      mountainColor = MapImagePainter.RedGreenBlueColor(78, 78, 78),
+      roadColor = MapImagePainter.RedGreenBlueColor(156, 96, 40),
+      riverColor = MapImagePainter.RedGreenBlueColor(24, 182, 255),
+      mountainColor = MapImagePainter.RedGreenBlueColor(72, 72, 72),
       mountainPassColor = MapImagePainter.RedGreenBlueColor(160, 160, 160),
       roadThickness = 2,
-      riverThickness = 2,
+      riverThickness = 3,
       mountainThickness = 2,
       mountainPassThickness = 2,
       mountainPassDotPeriodPixels = 10,
