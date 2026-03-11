@@ -34,3 +34,4 @@ Item 2, the effect patterns are mandatory reading if you plan on writing code. I
 25. [Terrain Distribution Weighting ExecPlan](terrain_distribution_weighting_exec_plan.md)
 26. [Underground Pair Generation ExecPlan](underground_pair_generation_exec_plan.md)
 27. [Province Anchor Diagnostics and Surgical Fix Plan](province_anchor_diagnostics_exec_plan.md)
+28. [Province Anchor Mechanics and Snap Fix](province_anchor_mechanics_and_snap_fix.md)

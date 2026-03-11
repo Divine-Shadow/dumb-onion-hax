@@ -52,6 +52,7 @@ This page documents generation of province geometry for new maps.
   - `#neighbour`
   - derived centroid/province-location indexes
 - If these outputs are not remapped from the same ownership array, gameplay identity can drift from visual borders (clicking one tile selects another province).
+- Anchor and snap behavior details (including seam-split failure mode and fix): [Province Anchor Mechanics and Snap Fix](province_anchor_mechanics_and_snap_fix.md)
 
 ## Terrain Image Variants
 - `TerrainImageVariantService` writes optional additional terrain look images.
