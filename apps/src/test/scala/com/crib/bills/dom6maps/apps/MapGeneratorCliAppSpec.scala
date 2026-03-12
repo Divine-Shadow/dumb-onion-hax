@@ -4,7 +4,7 @@ package apps
 import cats.effect.IO
 import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorGeometryConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, MapScenarioPlayerConfig, MapScenarioPointConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.{Nation, ProvinceId}
-import model.map.{ThroneLevel, WrapState}
+import model.map.{MapDimensions, ThroneLevel, WrapState}
 import model.map.generation.{AllocationGenerationPolicy, BorderSpecGenerationPolicy, PlayerStartAssignment, TerrainImageVariantPolicy}
 import weaver.SimpleIOSuite
 
@@ -236,6 +236,15 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     )
 
     IO(expect(parsed.isRight))
+  }
+
+  test("derives scenario province count from dimensions") {
+    val parsed = for
+      mapDimensions <- MapDimensions.from(18, 5)
+      provinceCount <- MapGeneratorCliApp.deriveScenarioProvinceCountForTest(mapDimensions)
+    yield provinceCount
+
+    IO(expect(parsed == Right(90)))
   }
 
   private def parseDefaultTerrainDistribution() =

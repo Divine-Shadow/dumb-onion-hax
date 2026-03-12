@@ -277,6 +277,7 @@ connection-borders {
         .toRight(IllegalArgumentException(s"Scenario not found: ${selection.scenarioId}"))
       _ <- validateScenarioPrecedenceForTest(config)
       mapDimensions <- MapDimensions.from(scenario.dimensions.xSize, scenario.dimensions.ySize)
+      provinceCount <- deriveScenarioProvinceCountForTest(mapDimensions)
       wrapState <- parseWrapStateForTest(scenario.wrapState)
       terrainPolicy <- parseTerrainImagePolicyForTest(config.terrainImages.policy)
       terrainDistributionPolicy <- parseTerrainDistributionPolicyForTest(
@@ -308,7 +309,7 @@ connection-borders {
         mapDescription = config.mapDescription.orElse(Some(scenario.name)),
         geometryInput = GeometryGenerationInput(
           mapDimensions = mapDimensions,
-          provinceCount = config.geometry.provinceCount,
+          provinceCount = provinceCount,
           wrapState = wrapState,
           seed = seed,
           seaRatio = config.geometry.seaRatio,
@@ -325,6 +326,14 @@ connection-borders {
         playerStartLocations = playerStartLocations,
         allocationGenerationPolicy = allocationGenerationPolicy
       )
+
+  private[apps] def deriveScenarioProvinceCountForTest(
+      mapDimensions: MapDimensions
+  ): Either[Throwable, Int] =
+    val derivedProvinceCount = mapDimensions.width.value * mapDimensions.height.value
+    if derivedProvinceCount <= 0 then
+      Left(IllegalArgumentException("Scenario dimensions must derive a positive province count"))
+    else Right(derivedProvinceCount)
 
   private def scenarioAllocationConfig(
       config: MapGeneratorAllocationConfig,
