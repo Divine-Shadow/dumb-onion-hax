@@ -142,6 +142,7 @@ object MapNukeScenarioImportApp extends IOApp:
            |      surface-enabled=true
            |      underground-enabled=false
            |      underground-plane-name="The Underworld"
+           |      connect-every-province-with-tunnel=true
            |    }
            |    players=[
            |${players.mkString(",\n")}

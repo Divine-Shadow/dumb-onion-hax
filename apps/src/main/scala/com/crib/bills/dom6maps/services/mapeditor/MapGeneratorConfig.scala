@@ -49,7 +49,8 @@ final case class MapScenarioDimensionsConfig(
 final case class MapScenarioLayersConfig(
     surfaceEnabled: Boolean,
     undergroundEnabled: Boolean,
-    undergroundPlaneName: Option[String]
+    undergroundPlaneName: Option[String],
+    connectEveryProvinceWithTunnel: Option[Boolean] = None
 ) derives ConfigReader
 
 final case class MapScenarioPlayerConfig(

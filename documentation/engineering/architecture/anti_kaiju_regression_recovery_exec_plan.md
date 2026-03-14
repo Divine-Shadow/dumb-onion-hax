@@ -40,6 +40,13 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
   - Recent verification configs were generated with `allocation.enabled=false`.
 - Consequence: nation-specific environment shaping (for example Oceania water bias/cap-zone behavior) cannot take effect.
 
+## Key Discovery (Underground Starts)
+- Dominions cave-start behavior is sensitive to where `#specstart` is emitted in two-plane maps.
+- Legacy MapNuke cave variants (`abyssia_overworld` / `abyssia_cave`) encode cave starts as:
+  - `#specstart` in the surface `.map` using offset province ids (`surfaceProvinceCount + caveProvinceId`)
+  - no `#specstart` directives in `_plane2.map`
+- Matching this pattern resolved underground start drift and duplicate/spurious surface starts.
+
 ## What We Must Preserve
 - Anchor snap fix:
   - stronger interior anchor selection
@@ -52,8 +59,8 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
   - Allocation profile wiring and nation-specific zone generation
   - Visual readability (borders/rivers/seam)
   - Curvature quality level
-- Out of scope (for this pass):
-  - Underground anti-kaiju variant generation beyond preserving existing support
+- Follow-up scope:
+  - Underground anti-kaiju variant generation with scenario-driven tunnel policy (`no gates` support) and underground-specific starts/thrones.
 
 ## Progress
 - [x] Captured regression matrix from user screenshots and notes.
@@ -65,6 +72,11 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
 - [x] Added exact-first scenario start resolution and exact-province throne resolution path.
 - [x] Added visual readability changes (stronger rivers, seam smoothing) and reduced post-raster smoothing pass count.
 - [x] Generated both preset outputs and validated emitted `.map` invariants by script.
+- [x] Added scenario-layer tunnel policy (`connect-every-province-with-tunnel`) with default `true`.
+- [x] Added underground anti-kaiju scenario/preset with underground starts and throne placements and no inter-plane tunnel gates.
+- [x] Matched legacy cave start directive behavior:
+  - emit cave starts on surface map with province-id offset
+  - do not emit cave starts in `_plane2.map`
 - [ ] Validate in game with screenshot checklist.
 
 ## Execution Plan
@@ -125,6 +137,8 @@ This ExecPlan is a living document. Keep `Progress`, `Discoveries`, `Decision Lo
   - Rationale: preserves deterministic scenario targets while remaining compatible with existing `ThronePlacementService` contract.
 - Decision: Use checked-in HOCON presets for reproducibility instead of only temporary runtime config files.
   - Rationale: removes configuration drift and gives architects/reviewers exact regeneration inputs.
+- Decision: Mirror legacy MapNuke cave-start encoding for underground-only starts.
+  - Rationale: this is the only observed pattern that produced deterministic intended cave starts in-game.
 
 ## Outcomes
 - Generated parity candidate map:

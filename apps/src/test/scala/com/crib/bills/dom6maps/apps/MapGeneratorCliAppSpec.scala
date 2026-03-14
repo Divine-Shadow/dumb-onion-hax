@@ -2,7 +2,7 @@ package com.crib.bills.dom6maps
 package apps
 
 import cats.effect.IO
-import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorGeometryConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, MapScenarioPlayerConfig, MapScenarioPointConfig, ThroneGenerationMode, UndergroundGenerationMode}
+import apps.services.mapeditor.{MapGeneratorAllocationConfig, MapGeneratorConnectionBordersConfig, MapGeneratorGeometryConfig, MapGeneratorPlayerStartConfig, MapGeneratorTerrainDistributionConfig, MapGeneratorThroneDefenderSetPieceConfig, MapGeneratorThroneDefenderUnitConfig, MapGeneratorThronePlacementConfig, MapGeneratorThronesConfig, MapGeneratorUndergroundConfig, MapScenarioLayersConfig, MapScenarioPlayerConfig, MapScenarioPointConfig, ThroneGenerationMode, UndergroundGenerationMode}
 import model.{Nation, ProvinceId}
 import model.map.{MapDimensions, ThroneLevel, WrapState}
 import model.map.generation.{AllocationGenerationPolicy, BorderSpecGenerationPolicy, PlayerStartAssignment, TerrainImageVariantPolicy}
@@ -236,6 +236,32 @@ object MapGeneratorCliAppSpec extends SimpleIOSuite:
     )
 
     IO(expect(parsed.isRight))
+  }
+
+  test("parses scenario underground mode with tunnels disabled") {
+    val parsed = MapGeneratorCliApp.parseScenarioUndergroundModeForTest(
+      MapScenarioLayersConfig(
+        surfaceEnabled = true,
+        undergroundEnabled = true,
+        undergroundPlaneName = Some("The Underworld"),
+        connectEveryProvinceWithTunnel = Some(false)
+      )
+    )
+
+    IO(expect(parsed == Right(UndergroundGenerationMode.MirroredPlane("The Underworld", false))))
+  }
+
+  test("parses scenario underground mode with default tunnel policy enabled") {
+    val parsed = MapGeneratorCliApp.parseScenarioUndergroundModeForTest(
+      MapScenarioLayersConfig(
+        surfaceEnabled = true,
+        undergroundEnabled = true,
+        undergroundPlaneName = Some("The Underworld"),
+        connectEveryProvinceWithTunnel = None
+      )
+    )
+
+    IO(expect(parsed == Right(UndergroundGenerationMode.MirroredPlane("The Underworld", true))))
   }
 
   test("derives scenario province count from dimensions") {

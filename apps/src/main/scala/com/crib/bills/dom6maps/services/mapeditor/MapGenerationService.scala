@@ -350,8 +350,17 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
         .getOrElse(Vector.empty)
 
     val allPlayers = playerStarts.map(_.nation).distinct.sortBy(_.id).map(AllowedPlayer.apply)
+    val undergroundProvinceIdOffset = provinceIds.size
     val surfaceStarts = playerStarts.flatMap { start =>
-      start.surfaceStart.map(provinceId => SpecStart(start.nation, provinceId))
+      start.surfaceStart
+        .orElse {
+          mirroredUndergroundMode.flatMap { _ =>
+            start.undergroundStart.map(undergroundProvinceId =>
+              ProvinceId(undergroundProvinceId.value + undergroundProvinceIdOffset)
+            )
+          }
+        }
+        .map(provinceId => SpecStart(start.nation, provinceId))
     }
 
     val state = MapState.empty.copy(
@@ -415,10 +424,6 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       else Vector.empty
 
     val allPlayers = playerStarts.map(_.nation).distinct.sortBy(_.id).map(AllowedPlayer.apply)
-    val undergroundStarts = playerStarts.flatMap { start =>
-      start.undergroundStart.map(provinceId => SpecStart(start.nation, provinceId))
-    }
-
     val state = MapState.empty.copy(
       size = Some(request.geometryInput.mapDimensions),
       adjacency = generatedGeometry.adjacency,
@@ -428,7 +433,7 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
       title = None,
       description = request.mapDescription.map(MapDescription.apply),
       allowedPlayers = allPlayers,
-      startingPositions = undergroundStarts,
+      startingPositions = Vector.empty,
       terrains = undergroundTerrains,
       provinceLocations = ProvinceLocations.fromProvinceIdMap(generatedGeometry.provinceCentroids)
     )
@@ -598,20 +603,49 @@ class MapGenerationServiceImpl[Sequencer[_]: Async: Files](
     (for
       yCell <- 0 until mapDimensions.height.value
       xCell <- 0 until mapDimensions.width.value
-      yPixel = math.max(0, math.min(mapDimensions.height.value * 160 - 1, yCell * 160 + 80))
-      xPixel = math.max(0, math.min(mapDimensions.width.value * 256 - 1, xCell * 256 + 128))
-      provinceId <- provinceIdAtPixel(runsByY, xPixel, yPixel)
+      xStart = xCell * 256
+      xEndExclusive = math.min(mapDimensions.width.value * 256, xStart + 256)
+      yStart = yCell * 160
+      yEndExclusive = math.min(mapDimensions.height.value * 160, yStart + 160)
+      provinceId <- dominantProvinceIdInCell(
+        runsByY = runsByY,
+        xStartInclusive = xStart,
+        xEndExclusive = xEndExclusive,
+        yStartInclusive = yStart,
+        yEndExclusive = yEndExclusive
+      )
     yield ProvinceLocation(XCell(xCell), YCell(yCell)) -> provinceId).toMap
 
-  private def provinceIdAtPixel(
+  private def dominantProvinceIdInCell(
       runsByY: Map[Int, Vector[Pb]],
-      xPixel: Int,
-      yPixel: Int
+      xStartInclusive: Int,
+      xEndExclusive: Int,
+      yStartInclusive: Int,
+      yEndExclusive: Int
   ): Option[ProvinceId] =
-    runsByY
-      .get(yPixel)
-      .flatMap(_.find(run => xPixel >= run.x && xPixel < run.x + run.length))
-      .map(_.province)
+    val overlapByProvince = scala.collection.mutable.Map.empty[ProvinceId, Long].withDefaultValue(0L)
+
+    var yPixel = yStartInclusive
+    while yPixel < yEndExclusive do
+      runsByY.get(yPixel).foreach { runs =>
+        var runIndex = 0
+        while runIndex < runs.length do
+          val run = runs(runIndex)
+          val runStart = run.x
+          val runEndExclusive = run.x + run.length
+          val overlapStart = math.max(xStartInclusive, runStart)
+          val overlapEndExclusive = math.min(xEndExclusive, runEndExclusive)
+          val overlap = overlapEndExclusive - overlapStart
+          if overlap > 0 then
+            overlapByProvince.update(run.province, overlapByProvince(run.province) + overlap.toLong)
+          runIndex += 1
+      }
+      yPixel += 1
+
+    overlapByProvince.toVector
+      .sortBy { case (provinceId, overlap) => (-overlap, provinceId.value) }
+      .headOption
+      .map(_._1)
 
   private def nearestProvinceIdForLocation(
       target: ProvinceLocation,

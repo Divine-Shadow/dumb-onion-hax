@@ -28,6 +28,9 @@ In this iteration, every province can be connected to its counterpart undergroun
 - Observation: Existing real maps commonly duplicate matching `#gate id id` entries in both map files.
   Evidence: Sample map pairs under `data/sample-game-map-reader-input/*` include the same gate lines in both files.
 
+- Observation: Underground-only player starts are not reliably honored when emitted only in `_plane2.map`.
+  Evidence: Legacy MapNuke cave variants (`abyssia_overworld` / `abyssia_cave`) place cave starts in the surface map using offset ids (`surfaceProvinceCount + caveProvinceId`) and omit plane2 `#specstart`.
+
 ## Decision Log
 
 - Decision: Reuse surface generated `#pb` runs for underground.
@@ -41,6 +44,10 @@ In this iteration, every province can be connected to its counterpart undergroun
 - Decision: Strip cave and cavewall flags from surface terrains as a guardrail.
   Rationale: Enforces user requirement that cave terrains not appear above ground.
   Date/Author: 2026-03-03 / Codex
+
+- Decision: For underground-only starts, emit `#specstart` in the surface map with cave id offset, and emit no plane2 `#specstart`.
+  Rationale: Aligns with legacy behavior and resolves in-client underground start misplacement.
+  Date/Author: 2026-03-14 / Codex
 
 ## Outcomes & Retrospective
 

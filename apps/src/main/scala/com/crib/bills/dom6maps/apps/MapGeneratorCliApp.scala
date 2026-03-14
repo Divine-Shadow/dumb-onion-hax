@@ -406,7 +406,7 @@ connection-borders {
       Right(
         UndergroundGenerationMode.MirroredPlane(
           planeName = layers.undergroundPlaneName.getOrElse("The Underworld"),
-          connectEveryProvinceWithTunnel = true
+          connectEveryProvinceWithTunnel = layers.connectEveryProvinceWithTunnel.getOrElse(true)
         )
       )
 
